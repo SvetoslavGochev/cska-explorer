@@ -6,6 +6,8 @@ const statusEl = document.getElementById("status");
 const clubCard = document.getElementById("club-card");
 const squadList = document.getElementById("squad-list");
 const matchesList = document.getElementById("matches-list");
+const nextMatchesList = document.getElementById("next-matches-list");
+const summaryGrid = document.getElementById("summary-grid");
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -41,6 +43,8 @@ function setLoadingState(isLoading) {
   clubCard.setAttribute("aria-busy", String(isLoading));
   squadList.setAttribute("aria-busy", String(isLoading));
   matchesList.setAttribute("aria-busy", String(isLoading));
+  nextMatchesList.setAttribute("aria-busy", String(isLoading));
+  summaryGrid.setAttribute("aria-busy", String(isLoading));
 
   if (!isLoading) {
     return;
@@ -57,6 +61,13 @@ function setLoadingState(isLoading) {
   `;
   squadList.innerHTML = '<li class="empty loading-item">Зареждам състава...</li>';
   matchesList.innerHTML = '<li class="empty loading-item">Зареждам мачовете...</li>';
+  nextMatchesList.innerHTML = '<li class="empty loading-item">Зареждам следващите мачове...</li>';
+  summaryGrid.innerHTML = `
+    <article><span>Играчите</span><strong>...</strong></article>
+    <article><span>Последни мачове</span><strong>...</strong></article>
+    <article><span>Голове</span><strong>...</strong></article>
+    <article><span>Форма</span><strong>...</strong></article>
+  `;
 }
 
 function setStatus(message, type = "") {
@@ -185,6 +196,17 @@ function getOutcome(match, teamName) {
   return { key: "draw", label: "Равен" };
 }
 
+function matchIncludesTeam(match, teamName) {
+  const selected = (teamName || "").trim().toLowerCase();
+  if (!selected) {
+    return false;
+  }
+
+  return [match.strHomeTeam, match.strAwayTeam].some(
+    (team) => (team || "").trim().toLowerCase() === selected
+  );
+}
+
 function renderMatches(matches = [], selectedTeamName = "") {
   if (!matches.length) {
     matchesList.innerHTML = '<li class="empty">Няма налични данни за мачове.</li>';
@@ -204,6 +226,77 @@ function renderMatches(matches = [], selectedTeamName = "") {
     .join("");
 }
 
+function renderNextMatches(matches = []) {
+  if (!matches.length) {
+    nextMatchesList.innerHTML = '<li class="empty">Няма налични данни за предстоящи мачове.</li>';
+    return;
+  }
+
+  nextMatchesList.innerHTML = matches
+    .slice(0, 5)
+    .map((match, idx) => {
+      const home = formatText(match.strHomeTeam, "?");
+      const away = formatText(match.strAwayTeam, "?");
+      const date = formatText(match.dateEvent, "Няма дата");
+      const time = formatText(match.strTimeLocal || match.strTime, "Час TBD");
+      return `<li class="match-item upcoming-match"><span class="list-index">${idx + 1}.</span><div class="match-copy"><strong>${home} vs ${away}</strong><span>${date} • ${time}</span></div><span class="match-badge upcoming-badge">Предстои</span></li>`;
+    })
+    .join("");
+}
+
+function summarizeMatches(matches = [], selectedTeamName = "") {
+  return matches.reduce(
+    (summary, match) => {
+      const outcome = getOutcome(match, selectedTeamName);
+      const home = (match.strHomeTeam || "").toLowerCase();
+      const away = (match.strAwayTeam || "").toLowerCase();
+      const selected = (selectedTeamName || "").toLowerCase();
+      const homeScore = Number(match.intHomeScore);
+      const awayScore = Number(match.intAwayScore);
+
+      if (Number.isFinite(homeScore) && Number.isFinite(awayScore)) {
+        if (home === selected) {
+          summary.goalsFor += homeScore;
+          summary.goalsAgainst += awayScore;
+        } else if (away === selected) {
+          summary.goalsFor += awayScore;
+          summary.goalsAgainst += homeScore;
+        }
+      }
+
+      if (outcome.key === "win") summary.form.push("W");
+      if (outcome.key === "draw") summary.form.push("D");
+      if (outcome.key === "loss") summary.form.push("L");
+      return summary;
+    },
+    { goalsFor: 0, goalsAgainst: 0, form: [] }
+  );
+}
+
+function renderSummary(players = [], matches = [], selectedTeamName = "") {
+  const summary = summarizeMatches(matches, selectedTeamName);
+  const form = summary.form.slice(0, 5).join(" ") || "Няма данни";
+
+  summaryGrid.innerHTML = `
+    <article>
+      <span>Играчите</span>
+      <strong>${players.length || 0}</strong>
+    </article>
+    <article>
+      <span>Последни мачове</span>
+      <strong>${matches.length || 0}</strong>
+    </article>
+    <article>
+      <span>Голове</span>
+      <strong>${summary.goalsFor}:${summary.goalsAgainst}</strong>
+    </article>
+    <article>
+      <span>Форма</span>
+      <strong>${form}</strong>
+    </article>
+  `;
+}
+
 async function fetchTeamData(teamName) {
   const teamSearch = await apiGet(`/searchteams.php?t=${encodeURIComponent(teamName)}`);
   if (!teamSearch.teams || !teamSearch.teams.length) {
@@ -215,18 +308,23 @@ async function fetchTeamData(teamName) {
   // Pick the most useful candidate when search returns many teams with similar names.
   const scored = await Promise.all(
     candidates.map(async (team) => {
-      const [playersData, matchesData] = await Promise.all([
+      const [playersData, matchesData, nextMatchesData] = await Promise.all([
         apiGet(`/lookup_all_players.php?id=${team.idTeam}`),
         apiGet(`/eventslast.php?id=${team.idTeam}`),
+        apiGet(`/eventsnext.php?id=${team.idTeam}`),
       ]);
 
       const players = playersData.player || [];
       const matches = matchesData.results || [];
+      const nextMatches = (nextMatchesData.events || []).filter((match) =>
+        matchIncludesTeam(match, team.strTeam || teamName)
+      );
       return {
         team,
         players,
         matches,
-        score: players.length * 10 + matches.length,
+        nextMatches,
+        score: players.length * 10 + matches.length + nextMatches.length,
       };
     })
   );
@@ -252,10 +350,18 @@ async function fetchTeamData(teamName) {
     best.matches = nextMatches.events || [];
   }
 
+  if (!best.nextMatches?.length) {
+    const nextMatches = await apiGet(`/eventsnext.php?id=${best.team.idTeam}`);
+    best.nextMatches = (nextMatches.events || []).filter((match) =>
+      matchIncludesTeam(match, best.team.strTeam || teamName)
+    );
+  }
+
   return {
     team: best.team,
     players: best.players,
     matches: best.matches,
+    nextMatches: best.nextMatches || [],
   };
 }
 
@@ -275,10 +381,12 @@ async function loadData() {
     renderClub(teamData.team);
     renderSquad(teamData.players);
     renderMatches(teamData.matches, teamData.team.strTeam);
+    renderNextMatches(teamData.nextMatches);
+    renderSummary(teamData.players, teamData.matches, teamData.team.strTeam);
 
     const name = teamData.team.strTeam || "Клуб";
     setStatus(
-      `Данните за ${name} са заредени: ${teamData.players.length} играчи, ${teamData.matches.length} мача.`,
+      `Данните за ${name} са заредени: ${teamData.players.length} играчи, ${teamData.matches.length} последни мача и ${teamData.nextMatches.length} предстоящи.`,
       "ok"
     );
   } catch (error) {
@@ -292,6 +400,8 @@ async function loadData() {
     clubCard.textContent = "Неуспешно зареждане на клубната информация.";
     renderSquad([]);
     renderMatches([]);
+    renderNextMatches([]);
+    renderSummary([], [], "");
   } finally {
     setLoadingState(false);
   }

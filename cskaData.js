@@ -17,7 +17,31 @@ async function apiGet(path) {
 
 async function getTeam(teamName = TEAM_NAME) {
   const data = await apiGet(`/searchteams.php?t=${encodeURIComponent(teamName)}`);
-  return data.teams?.[0] || null;
+  const candidates = (data.teams || []).filter((team) => team.strSport === "Soccer");
+
+  if (!candidates.length) {
+    return null;
+  }
+
+  const scored = await Promise.all(
+    candidates.slice(0, 6).map(async (team) => {
+      const [playersData, lastMatchesData] = await Promise.all([
+        apiGet(`/lookup_all_players.php?id=${team.idTeam}`),
+        apiGet(`/eventslast.php?id=${team.idTeam}`),
+      ]);
+
+      const players = playersData.player || [];
+      const matches = lastMatchesData.results || [];
+
+      return {
+        team,
+        score: players.length * 10 + matches.length,
+      };
+    })
+  );
+
+  scored.sort((a, b) => b.score - a.score);
+  return scored[0]?.team || candidates[0];
 }
 
 async function getPlayers(teamId) {
@@ -30,6 +54,18 @@ async function getLastMatches(teamId) {
   return data.results || [];
 }
 
+async function getNextMatches(teamId) {
+  const data = await apiGet(`/eventsnext.php?id=${teamId}`);
+  return data.events || [];
+}
+
+function isTeamMatch(match, teamName) {
+  const selected = String(teamName || "").trim().toLowerCase();
+  return [match.strHomeTeam, match.strAwayTeam].some(
+    (team) => String(team || "").trim().toLowerCase() === selected
+  );
+}
+
 async function printTeamAndSquad(teamName = TEAM_NAME) {
   const team = await getTeam(teamName);
   if (!team) {
@@ -38,6 +74,9 @@ async function printTeamAndSquad(teamName = TEAM_NAME) {
 
   const players = await getPlayers(team.idTeam);
   const matches = await getLastMatches(team.idTeam);
+  const nextMatches = (await getNextMatches(team.idTeam)).filter((match) =>
+    isTeamMatch(match, team.strTeam)
+  );
 
   console.log("\nTeam info:");
   console.log("Name:", team.strTeam || "N/A");
@@ -56,6 +95,15 @@ async function printTeamAndSquad(teamName = TEAM_NAME) {
     const score = `${m.intHomeScore ?? "?"}:${m.intAwayScore ?? "?"}`;
     console.log(`${i + 1}. ${m.strHomeTeam} vs ${m.strAwayTeam} (${score})`);
   });
+
+  console.log("\nNext matches:");
+  if (!nextMatches.length) {
+    console.log("No reliable upcoming matches were returned by the API.");
+  } else {
+    nextMatches.slice(0, 5).forEach((m, i) => {
+      console.log(`${i + 1}. ${m.strHomeTeam} vs ${m.strAwayTeam} (${m.dateEvent || "TBD"})`);
+    });
+  }
 }
 
 async function run() {
