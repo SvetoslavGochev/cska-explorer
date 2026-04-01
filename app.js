@@ -808,21 +808,12 @@ function parseFlashscoreSquadFromText(text) {
 
 function parseFlashscoreStandingsFromText(text, targetTeamName = "") {
   const source = String(text || "");
-  const tableStart = source.search(/\bОтбор\b\s*[\r\n]+\s*ИМ\s*[\r\n]+\s*П\s*[\r\n]+\s*Р\s*[\r\n]+\s*3\s*[\r\n]+\s*Г\s*[\r\n]+\s*ГР\s*[\r\n]+\s*Т/i);
-  if (tableStart < 0) {
+  if (!source.trim()) {
     return { table: [], standing: null };
   }
 
-  const tail = source.slice(tableStart);
-  const tableEndCandidates = [
-    tail.search(/\bПромоция\b/i),
-    tail.search(/\bПоследни\b/i),
-    tail.search(/\bПредстоящи\b/i),
-  ].filter((idx) => idx > 0);
-  const tableEnd = tableEndCandidates.length ? Math.min(...tableEndCandidates) : tail.length;
-  const segment = tail.slice(0, tableEnd);
-
-  const rankToken = /(\d+)\.\s*/g;
+  const segment = source;
+  const rankToken = /(?:^|\n)\s*(\d+)\.\s*/g;
   const rankHits = [...segment.matchAll(rankToken)];
   const seasonMatch = source.match(/\b(20\d{2}-20\d{2})\b/);
   const season = seasonMatch?.[1] || UI.noData;
@@ -1148,12 +1139,27 @@ async function fetchStandings(team) {
     // If Flashscore standings parsing fails, fall back to TheSportsDB.
   }
 
-  if (!team?.idLeague) {
+  let apiTeam = team || null;
+  if (!apiTeam?.idLeague && apiTeam?.strTeam) {
+    try {
+      const lookup = await apiGet(`/searchteams.php?t=${encodeURIComponent(apiTeam.strTeam)}`);
+      const candidate = (lookup.teams || []).find(
+        (row) => row.strSport === "Soccer" && normalizeName(row.strTeam) === normalizeName(apiTeam.strTeam)
+      );
+      if (candidate) {
+        apiTeam = candidate;
+      }
+    } catch {
+      // Keep the original team object and continue to the final guard.
+    }
+  }
+
+  if (!apiTeam?.idLeague) {
     return { table: [], standing: null };
   }
 
   for (const season of getSeasonCandidates()) {
-    const data = await apiGet(`/lookuptable.php?l=${encodeURIComponent(team.idLeague)}&s=${encodeURIComponent(season)}`);
+    const data = await apiGet(`/lookuptable.php?l=${encodeURIComponent(apiTeam.idLeague)}&s=${encodeURIComponent(season)}`);
     const table = data.table || [];
 
     if (!table.length) {
@@ -1161,8 +1167,8 @@ async function fetchStandings(team) {
     }
 
     const standing =
-      table.find((row) => String(row.idTeam || "") === String(team.idTeam || "")) ||
-      table.find((row) => normalizeName(row.strTeam) === normalizeName(team.strTeam));
+      table.find((row) => String(row.idTeam || "") === String(apiTeam.idTeam || "")) ||
+      table.find((row) => normalizeName(row.strTeam) === normalizeName(apiTeam.strTeam));
 
     return { table, standing };
   }
