@@ -19,6 +19,145 @@ const heroStats = document.getElementById("hero-stats");
 let currentTeamData = null;
 let playerNameIndex = [];
 
+const CURRENT_LANG = document.documentElement.lang?.toLowerCase().startsWith("en") ? "en" : "bg";
+const UI_TEXT = {
+  bg: {
+    loadBtn: "Зареди данни",
+    loadingBtn: "Зареждане...",
+    profileBtn: "Профил",
+    searchingBtn: "Търсене...",
+    loadingStatus: "Зареждане на данни...",
+    enterTeamName: "Моля въведи име на отбор.",
+    networkError:
+      "Грешка при мрежова заявка. Ако си отворил файла през file://, пусни го през локален сървър.",
+    profileKicker: "Клубен профил",
+    founded: "Основан",
+    stadium: "Стадион",
+    capacity: "Капацитет",
+    location: "Локация",
+    country: "Държава",
+    keywords: "Ключови думи",
+    website: "Уебсайт",
+    description: "Описание",
+    noData: "Няма данни",
+    noDescription: "Няма налично описание.",
+    noSquadData: "Няма налични данни за състава.",
+    noMatchesData: "Няма налични данни за мачове.",
+    noUpcomingData: "Няма налични данни за предстоящи мачове.",
+    noStandingsData: "Няма налични данни за класирането в момента.",
+    unknownPosition: "Неуточнена позиция",
+    unknownPlayer: "Неизвестен играч",
+    noDate: "Няма дата",
+    timeTBD: "Час TBD",
+    win: "Победа",
+    draw: "Равен",
+    loss: "Загуба",
+    pending: "Потвърден",
+    fallback: "Fallback",
+    playerSearchNeedsTeam: "Първо зареди отбор, за да търсиш играч.",
+    playerSearchError: "Грешка при търсене на играч",
+    noPlayerInTeam: "Няма намерен играч в отбора",
+    noPlayerPrompt: "Търси играч, за да видиш профила му.",
+    selectedPlayer: "Избран играч",
+    number: "Номер",
+    born: "Роден",
+    height: "Ръст",
+    weight: "Тегло",
+    noBio: "Няма налична кратка биография.",
+    players: "Играчите",
+    lastMatches: "Последни мачове",
+    goals: "Голове",
+    form: "Форма",
+    season: "Сезон",
+    teamFormPrefix: "Форма на",
+    apiQualityPrefix: "API quality",
+    qualityHigh: "high",
+    qualityMedium: "medium",
+    qualityLimited: "limited",
+    qualityAnalyzing: "API quality: анализирам данните...",
+    qualityWaiting: "API quality: изчаква данни...",
+    fallbackUpcomingNotice:
+      "Няма потвърден следващ официален мач от API. Показани са последни 3 срещи:",
+  },
+  en: {
+    loadBtn: "Load Data",
+    loadingBtn: "Loading...",
+    profileBtn: "Profile",
+    searchingBtn: "Searching...",
+    loadingStatus: "Loading data...",
+    enterTeamName: "Please enter a team name.",
+    networkError:
+      "Network request failed. If you opened via file://, run the app through a local server.",
+    profileKicker: "Club Profile",
+    founded: "Founded",
+    stadium: "Stadium",
+    capacity: "Capacity",
+    location: "Location",
+    country: "Country",
+    keywords: "Keywords",
+    website: "Website",
+    description: "Description",
+    noData: "No data",
+    noDescription: "No description available.",
+    noSquadData: "No squad data available.",
+    noMatchesData: "No match data available.",
+    noUpcomingData: "No upcoming matches available.",
+    noStandingsData: "No standings data available right now.",
+    unknownPosition: "Position unknown",
+    unknownPlayer: "Unknown player",
+    noDate: "No date",
+    timeTBD: "Time TBD",
+    win: "Win",
+    draw: "Draw",
+    loss: "Loss",
+    pending: "Confirmed",
+    fallback: "Fallback",
+    playerSearchNeedsTeam: "Load a team first before searching players.",
+    playerSearchError: "Player search error",
+    noPlayerInTeam: "No player found in team",
+    noPlayerPrompt: "Search for a player to view profile details.",
+    selectedPlayer: "Selected Player",
+    number: "Number",
+    born: "Born",
+    height: "Height",
+    weight: "Weight",
+    noBio: "No short biography available.",
+    players: "Players",
+    lastMatches: "Last Matches",
+    goals: "Goals",
+    form: "Form",
+    season: "Season",
+    teamFormPrefix: "Form for",
+    apiQualityPrefix: "API quality",
+    qualityHigh: "high",
+    qualityMedium: "medium",
+    qualityLimited: "limited",
+    qualityAnalyzing: "API quality: analyzing data...",
+    qualityWaiting: "API quality: waiting for data...",
+    fallbackUpcomingNotice:
+      "No confirmed upcoming official match from API. Showing last 3 fixtures instead:",
+  },
+};
+
+const UI = UI_TEXT[CURRENT_LANG];
+
+function teamDescriptionForLang(team) {
+  if (CURRENT_LANG === "en") {
+    return formatText((team.strDescriptionEN || "").slice(0, 420), UI.noDescription);
+  }
+
+  const teamName = team.strTeam || "Отборът";
+  const normalized = normalizeName(teamName);
+  if (normalized === "cska sofia" || normalized === "цска") {
+    return escapeHtml(
+      "ЦСКА София е сред водещите клубове в българския футбол, с богата история, силна фенска култура и сериозно присъствие в националните турнири и европейските кампании."
+    );
+  }
+
+  const description = `${teamName} е футболен клуб от ${team.strCountry || "неизвестна държава"}, който се състезава в ${team.strLeague || "национално първенство"}. Основан е през ${team.intFormedYear || "неизвестна година"} и домакинства на ${team.strStadium || "своя стадион"} в ${team.strLocation || "своя град"}.`;
+  return escapeHtml(description);
+}
+
 function escapeHtml(value) {
   return String(value ?? "")
     .replace(/&/g, "&amp;")
@@ -65,7 +204,7 @@ function getSeasonCandidates(referenceDate = new Date()) {
 
 function setPlayerSearchLoading(isLoading) {
   searchPlayerBtn.disabled = isLoading;
-  searchPlayerBtn.textContent = isLoading ? "Търсене..." : "Профил";
+  searchPlayerBtn.textContent = isLoading ? UI.searchingBtn : UI.profileBtn;
 }
 
 function refreshPlayerAutocomplete(players = []) {
@@ -121,7 +260,7 @@ function handlePlayerAutocompleteInput(event) {
 
 function setLoadingState(isLoading) {
   loadBtn.disabled = isLoading;
-  loadBtn.textContent = isLoading ? "Зареждане..." : "Зареди данни";
+  loadBtn.textContent = isLoading ? UI.loadingBtn : UI.loadBtn;
   loadBtn.classList.toggle("is-loading", isLoading);
   clubCard.setAttribute("aria-busy", String(isLoading));
   squadList.setAttribute("aria-busy", String(isLoading));
@@ -148,36 +287,40 @@ function setLoadingState(isLoading) {
   `;
   squadList.innerHTML = '<li class="empty loading-item">Зареждам състава...</li>';
   matchesList.innerHTML = '<li class="empty loading-item">Зареждам мачовете...</li>';
-  nextMatchesList.innerHTML = '<li class="empty loading-item">Зареждам следващите мачове...</li>';
+  nextMatchesList.innerHTML = `<li class="empty loading-item">${
+    CURRENT_LANG === "en" ? "Loading upcoming matches..." : "Зареждам следващите мачове..."
+  }</li>`;
   dataQualityEl.className = "data-quality";
-  dataQualityEl.textContent = "API quality: анализирам данните...";
+  dataQualityEl.textContent = UI.qualityAnalyzing;
   summaryGrid.innerHTML = `
-    <article><span>Играчите</span><strong>...</strong></article>
-    <article><span>Последни мачове</span><strong>...</strong></article>
-    <article><span>Голове</span><strong>...</strong></article>
-    <article><span>Форма</span><strong>...</strong></article>
+    <article><span>${UI.players}</span><strong>...</strong></article>
+    <article><span>${UI.lastMatches}</span><strong>...</strong></article>
+    <article><span>${UI.goals}</span><strong>...</strong></article>
+    <article><span>${UI.form}</span><strong>...</strong></article>
   `;
   standingsCard.className = "standings-card empty";
-  standingsCard.textContent = "Зареждам класирането...";
+  standingsCard.textContent =
+    CURRENT_LANG === "en" ? "Loading standings..." : "Зареждам класирането...";
   playerCard.className = "player-card empty";
-  playerCard.textContent = "Зареждам профила на играч...";
+  playerCard.textContent =
+    CURRENT_LANG === "en" ? "Loading player profile..." : "Зареждам профила на играч...";
   heroStats.innerHTML = `
-    <article><span>Позиция</span><strong>...</strong></article>
-    <article><span>Точки</span><strong>...</strong></article>
-    <article><span>Играчите</span><strong>...</strong></article>
-    <article><span>Форма</span><strong>...</strong></article>
+    <article><span>${CURRENT_LANG === "en" ? "Position" : "Позиция"}</span><strong>...</strong></article>
+    <article><span>${CURRENT_LANG === "en" ? "Points" : "Точки"}</span><strong>...</strong></article>
+    <article><span>${UI.players}</span><strong>...</strong></article>
+    <article><span>${UI.form}</span><strong>...</strong></article>
   `;
 }
 
 function getDataQualityLabel(quality = {}) {
   const level = quality.level || "limited";
   if (level === "high") {
-    return "API quality: high";
+    return `${UI.apiQualityPrefix}: ${UI.qualityHigh}`;
   }
   if (level === "medium") {
-    return "API quality: medium";
+    return `${UI.apiQualityPrefix}: ${UI.qualityMedium}`;
   }
-  return "API quality: limited";
+  return `${UI.apiQualityPrefix}: ${UI.qualityLimited}`;
 }
 
 function renderDataQuality(quality = {}) {
@@ -207,21 +350,18 @@ async function apiGet(path) {
 }
 
 function renderClub(team) {
-  const founded = formatText(team.intFormedYear);
-  const venue = formatText(team.strStadium);
-  const location = formatText(team.strLocation);
+  const founded = formatText(team.intFormedYear, UI.noData);
+  const venue = formatText(team.strStadium, UI.noData);
+  const location = formatText(team.strLocation, UI.noData);
   const website = team.strWebsite || "";
-  const description = formatText(
-    (team.strDescriptionEN || "").slice(0, 420),
-    "Няма налично описание."
-  );
+  const description = teamDescriptionForLang(team);
   const badge = safeMediaUrl(team.strBadge);
   const banner = safeMediaUrl(team.strTeamBanner || team.strTeamFanart1 || team.strFanart1);
-  const league = formatText(team.strLeague);
-  const country = formatText(team.strCountry);
-  const capacity = formatText(team.intStadiumCapacity);
-  const keywords = formatText(team.strKeywords, "Футбол, България, ЦСКА");
-  const teamName = formatText(team.strTeam, "Няма данни");
+  const league = formatText(team.strLeague, UI.noData);
+  const country = formatText(team.strCountry, UI.noData);
+  const capacity = formatText(team.intStadiumCapacity, UI.noData);
+  const keywords = formatText(team.strKeywords, CURRENT_LANG === "en" ? "Football" : "Футбол, България, ЦСКА");
+  const teamName = formatText(team.strTeam, UI.noData);
   const stadiumThumb = safeMediaUrl(team.strStadiumThumb);
 
   clubCard.classList.remove("empty");
@@ -231,7 +371,7 @@ function renderClub(team) {
       <div class="club-identity">
         ${badge ? `<img class="club-badge" src="${badge}" alt="Емблема на ${teamName}" />` : ""}
         <div>
-          <p class="club-kicker">Клубен профил</p>
+          <p class="club-kicker">${UI.profileKicker}</p>
           <h3>${teamName}</h3>
           <p class="club-summary">${league} • ${country}</p>
         </div>
@@ -240,31 +380,31 @@ function renderClub(team) {
     </div>
     <div class="fact-grid">
       <article>
-        <span>Основан</span>
+        <span>${UI.founded}</span>
         <strong>${founded}</strong>
       </article>
       <article>
-        <span>Стадион</span>
+        <span>${UI.stadium}</span>
         <strong>${venue}</strong>
       </article>
       <article>
-        <span>Капацитет</span>
+        <span>${UI.capacity}</span>
         <strong>${capacity}</strong>
       </article>
       <article>
-        <span>Локация</span>
+        <span>${UI.location}</span>
         <strong>${location}</strong>
       </article>
     </div>
     <div class="club-copy">
-      <p><strong>Държава:</strong> ${country}</p>
-      <p><strong>Ключови думи:</strong> ${keywords}</p>
-      <p><strong>Уебсайт:</strong> ${
+      <p><strong>${UI.country}:</strong> ${country}</p>
+      <p><strong>${UI.keywords}:</strong> ${keywords}</p>
+      <p><strong>${UI.website}:</strong> ${
       website
         ? `<a href="https://${website.replace(/^https?:\/\//, "")}" target="_blank" rel="noreferrer">${escapeHtml(website)}</a>`
-        : "Няма данни"
+        : UI.noData
     }</p>
-      <p><strong>Описание:</strong> ${description}${description.endsWith(".") ? "" : "..."}</p>
+      <p><strong>${UI.description}:</strong> ${description}${description.endsWith(".") ? "" : "..."}</p>
     </div>
     ${stadiumThumb ? `<img class="club-stadium" src="${stadiumThumb}" alt="Стадион на ${teamName}" />` : ""}
   `;
@@ -273,10 +413,10 @@ function renderClub(team) {
 function renderHeroStats(team = null, standing = null, players = [], matches = []) {
   if (!team) {
     heroStats.innerHTML = `
-      <article><span>Позиция</span><strong>-</strong></article>
-      <article><span>Точки</span><strong>-</strong></article>
-      <article><span>Играчите</span><strong>-</strong></article>
-      <article><span>Форма</span><strong>-</strong></article>
+      <article><span>${CURRENT_LANG === "en" ? "Position" : "Позиция"}</span><strong>-</strong></article>
+      <article><span>${CURRENT_LANG === "en" ? "Points" : "Точки"}</span><strong>-</strong></article>
+      <article><span>${UI.players}</span><strong>-</strong></article>
+      <article><span>${UI.form}</span><strong>-</strong></article>
     `;
     return;
   }
@@ -284,19 +424,19 @@ function renderHeroStats(team = null, standing = null, players = [], matches = [
   const summary = summarizeMatches(matches, team.strTeam);
   heroStats.innerHTML = `
     <article>
-      <span>Позиция</span>
+      <span>${CURRENT_LANG === "en" ? "Position" : "Позиция"}</span>
       <strong>${standing?.intRank ? `#${standing.intRank}` : "-"}</strong>
     </article>
     <article>
-      <span>Точки</span>
+      <span>${CURRENT_LANG === "en" ? "Points" : "Точки"}</span>
       <strong>${standing?.intPoints || "-"}</strong>
     </article>
     <article>
-      <span>Играчите</span>
+      <span>${UI.players}</span>
       <strong>${players.length || 0}</strong>
     </article>
     <article>
-      <span>Форма</span>
+      <span>${UI.form}</span>
       <strong>${standing?.strForm ? formatFormSequence(standing.strForm) : summary.form.slice(0, 5).join(" ") || "Няма данни"}</strong>
     </article>
   `;
@@ -304,15 +444,15 @@ function renderHeroStats(team = null, standing = null, players = [], matches = [
 
 function renderSquad(players = []) {
   if (!players.length) {
-    squadList.innerHTML = '<li class="empty">Няма налични данни за състава.</li>';
+    squadList.innerHTML = `<li class="empty">${UI.noSquadData}</li>`;
     return;
   }
 
   squadList.innerHTML = players
     .slice(0, 25)
     .map((player, idx) => {
-      const position = formatText(player.strPosition, "Неуточнена позиция");
-      const playerName = formatText(player.strPlayer, "Неизвестен играч");
+      const position = formatText(player.strPosition, UI.unknownPosition);
+      const playerName = formatText(player.strPlayer, UI.unknownPlayer);
       const number = formatText(player.strNumber, "-");
       return `<li><span class="list-index">${idx + 1}.</span> <span class="player-name">${playerName}</span> <span class="player-meta">#${number} • ${position}</span></li>`;
     })
@@ -331,18 +471,18 @@ function getOutcome(match, teamName) {
   }
 
   if (home === selected) {
-    if (homeScore > awayScore) return { key: "win", label: "Победа" };
-    if (homeScore < awayScore) return { key: "loss", label: "Загуба" };
-    return { key: "draw", label: "Равен" };
+    if (homeScore > awayScore) return { key: "win", label: UI.win };
+    if (homeScore < awayScore) return { key: "loss", label: UI.loss };
+    return { key: "draw", label: UI.draw };
   }
 
   if (away === selected) {
-    if (awayScore > homeScore) return { key: "win", label: "Победа" };
-    if (awayScore < homeScore) return { key: "loss", label: "Загуба" };
-    return { key: "draw", label: "Равен" };
+    if (awayScore > homeScore) return { key: "win", label: UI.win };
+    if (awayScore < homeScore) return { key: "loss", label: UI.loss };
+    return { key: "draw", label: UI.draw };
   }
 
-  return { key: "draw", label: "Равен" };
+  return { key: "draw", label: UI.draw };
 }
 
 function matchIncludesTeam(match, teamName) {
@@ -360,33 +500,45 @@ function buildDataQuality(nextMatches = [], fallbackMatches = []) {
   if (nextMatches.length >= 3) {
     return {
       level: "high",
-      details: `потвърдени ${nextMatches.length} предстоящи мача`,
+      details:
+        CURRENT_LANG === "en"
+          ? `${nextMatches.length} confirmed upcoming fixtures`
+          : `потвърдени ${nextMatches.length} предстоящи мача`,
     };
   }
 
   if (nextMatches.length > 0) {
     return {
       level: "medium",
-      details: `налични са само ${nextMatches.length} потвърдени мача`,
+      details:
+        CURRENT_LANG === "en"
+          ? `only ${nextMatches.length} confirmed fixtures are available`
+          : `налични са само ${nextMatches.length} потвърдени мача`,
     };
   }
 
   if (fallbackMatches.length > 0) {
     return {
       level: "limited",
-      details: "няма потвърден следващ мач; показани са последни 3 срещи",
+      details:
+        CURRENT_LANG === "en"
+          ? "no confirmed next match; showing last 3 fixtures"
+          : "няма потвърден следващ мач; показани са последни 3 срещи",
     };
   }
 
   return {
     level: "limited",
-    details: "API не върна достатъчно надеждни данни",
+    details:
+      CURRENT_LANG === "en"
+        ? "API did not return enough reliable data"
+        : "API не върна достатъчно надеждни данни",
   };
 }
 
 function renderMatches(matches = [], selectedTeamName = "") {
   if (!matches.length) {
-    matchesList.innerHTML = '<li class="empty">Няма налични данни за мачове.</li>';
+    matchesList.innerHTML = `<li class="empty">${UI.noMatchesData}</li>`;
     return;
   }
 
@@ -396,7 +548,7 @@ function renderMatches(matches = [], selectedTeamName = "") {
       const home = match.strHomeTeam || "?";
       const away = match.strAwayTeam || "?";
       const score = `${match.intHomeScore ?? "?"}:${match.intAwayScore ?? "?"}`;
-      const date = match.dateEvent || "Няма дата";
+      const date = match.dateEvent || UI.noDate;
       const outcome = getOutcome(match, selectedTeamName);
       return `<li class="match-item match-${outcome.key}"><span class="list-index">${idx + 1}.</span><div class="match-copy"><strong>${escapeHtml(home)} vs ${escapeHtml(away)}</strong><span>${escapeHtml(score)} • ${escapeHtml(date)}</span></div><span class="match-badge">${escapeHtml(outcome.label)}</span></li>`;
     })
@@ -410,27 +562,27 @@ function renderNextMatches(matches = [], fallbackMatches = []) {
       .map((match, idx) => {
         const home = formatText(match.strHomeTeam, "?");
         const away = formatText(match.strAwayTeam, "?");
-        const date = formatText(match.dateEvent, "Няма дата");
-        const time = formatText(match.strTimeLocal || match.strTime, "Час TBD");
-        return `<li class="match-item upcoming-match"><span class="list-index">${idx + 1}.</span><div class="match-copy"><strong>${home} vs ${away}</strong><span>${date} • ${time}</span></div><span class="match-badge confirmed-badge">Потвърден</span></li>`;
+        const date = formatText(match.dateEvent, UI.noDate);
+        const time = formatText(match.strTimeLocal || match.strTime, UI.timeTBD);
+        return `<li class="match-item upcoming-match"><span class="list-index">${idx + 1}.</span><div class="match-copy"><strong>${home} vs ${away}</strong><span>${date} • ${time}</span></div><span class="match-badge confirmed-badge">${UI.pending}</span></li>`;
       })
       .join("");
     return;
   }
 
   if (!fallbackMatches.length) {
-    nextMatchesList.innerHTML = '<li class="empty">Няма налични данни за предстоящи мачове.</li>';
+    nextMatchesList.innerHTML = `<li class="empty">${UI.noUpcomingData}</li>`;
     return;
   }
 
   nextMatchesList.innerHTML = [
-    '<li class="empty">Няма потвърден следващ официален мач от API. Показани са последни 3 срещи:</li>',
+    `<li class="empty">${UI.fallbackUpcomingNotice}</li>`,
     ...fallbackMatches.slice(0, 3).map((match, idx) => {
       const home = formatText(match.strHomeTeam, "?");
       const away = formatText(match.strAwayTeam, "?");
       const score = `${match.intHomeScore ?? "?"}:${match.intAwayScore ?? "?"}`;
-      const date = formatText(match.dateEvent, "Няма дата");
-      return `<li class="match-item"><span class="list-index">${idx + 1}.</span><div class="match-copy"><strong>${home} vs ${away}</strong><span>${escapeHtml(score)} • ${date}</span></div><span class="match-badge fallback-badge">Fallback</span></li>`;
+      const date = formatText(match.dateEvent, UI.noDate);
+      return `<li class="match-item"><span class="list-index">${idx + 1}.</span><div class="match-copy"><strong>${home} vs ${away}</strong><span>${escapeHtml(score)} • ${date}</span></div><span class="match-badge fallback-badge">${UI.fallback}</span></li>`;
     }),
   ].join("");
 }
@@ -438,7 +590,7 @@ function renderNextMatches(matches = [], fallbackMatches = []) {
 function renderStandings(table = [], currentTeam = null) {
   if (!table.length) {
     standingsCard.className = "standings-card empty";
-    standingsCard.textContent = "Няма налични данни за класирането в момента.";
+    standingsCard.textContent = UI.noStandingsData;
     return;
   }
 
@@ -467,18 +619,24 @@ function renderStandings(table = [], currentTeam = null) {
           return `
             <article class="standing-row ${isCurrent ? "is-current" : ""}">
               <span class="standing-rank">#${escapeHtml(row.intRank || "-")}</span>
-              ${badge ? `<img class="standing-badge" src="${badge}" alt="Емблема на ${formatText(row.strTeam, "Отбор")}" />` : ""}
+              ${
+                badge
+                  ? `<img class="standing-badge" src="${badge}" alt="${
+                      CURRENT_LANG === "en" ? "Badge for" : "Емблема на"
+                    } ${formatText(row.strTeam, UI.noData)}" />`
+                  : ""
+              }
               <div class="standing-copy">
-                <strong>${formatText(row.strTeam, "Отбор")}</strong>
-                <span>${escapeHtml(row.intPlayed || "0")} мача • ${escapeHtml(row.intGoalDifference || "0")} голова разлика</span>
+                <strong>${formatText(row.strTeam, UI.noData)}</strong>
+                <span>${escapeHtml(row.intPlayed || "0")} ${CURRENT_LANG === "en" ? "played" : "мача"} • ${escapeHtml(row.intGoalDifference || "0")} ${CURRENT_LANG === "en" ? "goal diff" : "голова разлика"}</span>
               </div>
-              <span class="standing-points">${escapeHtml(row.intPoints || "0")} т.</span>
+              <span class="standing-points">${escapeHtml(row.intPoints || "0")} ${CURRENT_LANG === "en" ? "pts" : "т."}</span>
             </article>
           `;
         })
         .join("")}
     </div>
-    <p class="standings-note">Сезон: ${escapeHtml(table[0]?.strSeason || "Няма данни")} • Форма на ЦСКА: ${currentRow?.strForm ? formatFormSequence(currentRow.strForm) : "Няма данни"}</p>
+    <p class="standings-note">${UI.season}: ${escapeHtml(table[0]?.strSeason || UI.noData)} • ${UI.teamFormPrefix} ${escapeHtml(currentTeamName || "team")}: ${currentRow?.strForm ? formatFormSequence(currentRow.strForm) : UI.noData}</p>
   `;
 }
 
@@ -486,41 +644,41 @@ function renderPlayerCard(player = null, teamName = "") {
   if (!player) {
     playerCard.className = "player-card empty";
     playerCard.textContent = teamName
-      ? `Няма намерен играч в отбора ${teamName}.`
-      : "Търси играч, за да видиш профила му.";
+      ? `${UI.noPlayerInTeam} ${teamName}.`
+      : UI.noPlayerPrompt;
     return;
   }
 
-  const playerName = formatText(player.strPlayer, "Неизвестен играч");
+  const playerName = formatText(player.strPlayer, UI.unknownPlayer);
   const image = safeMediaUrl(player.strThumb || player.strCutout || player.strRender || player.strFanart1);
-  const bio = formatText((player.strDescriptionEN || "").slice(0, 340), "Няма налична кратка биография.");
+  const bio = formatText((player.strDescriptionEN || "").slice(0, 340), UI.noBio);
 
   playerCard.className = "player-card";
   playerCard.innerHTML = `
     <div class="player-hero">
       ${image ? `<img class="player-photo" src="${image}" alt="Снимка на ${playerName}" />` : ""}
       <div>
-        <p class="club-kicker">Избран играч</p>
+        <p class="club-kicker">${UI.selectedPlayer}</p>
         <h3>${playerName}</h3>
-        <p class="club-summary">${formatText(player.strPosition, "Позиция неизвестна")} • ${formatText(player.strNationality, "Националност неизвестна")}</p>
+        <p class="club-summary">${formatText(player.strPosition, UI.unknownPosition)} • ${formatText(player.strNationality, UI.noData)}</p>
       </div>
     </div>
     <div class="fact-grid player-facts">
       <article>
-        <span>Номер</span>
+        <span>${UI.number}</span>
         <strong>${formatText(player.strNumber, "-")}</strong>
       </article>
       <article>
-        <span>Роден</span>
-        <strong>${formatText(player.dateBorn, "Няма данни")}</strong>
+        <span>${UI.born}</span>
+        <strong>${formatText(player.dateBorn, UI.noData)}</strong>
       </article>
       <article>
-        <span>Ръст</span>
-        <strong>${formatText(player.strHeight, "Няма данни")}</strong>
+        <span>${UI.height}</span>
+        <strong>${formatText(player.strHeight, UI.noData)}</strong>
       </article>
       <article>
-        <span>Тегло</span>
-        <strong>${formatText(player.strWeight, "Няма данни")}</strong>
+        <span>${UI.weight}</span>
+        <strong>${formatText(player.strWeight, UI.noData)}</strong>
       </article>
     </div>
     <p class="player-bio">${bio}${bio.endsWith(".") ? "" : "..."}</p>
@@ -558,23 +716,23 @@ function summarizeMatches(matches = [], selectedTeamName = "") {
 
 function renderSummary(players = [], matches = [], selectedTeamName = "") {
   const summary = summarizeMatches(matches, selectedTeamName);
-  const form = summary.form.slice(0, 5).join(" ") || "Няма данни";
+  const form = summary.form.slice(0, 5).join(" ") || UI.noData;
 
   summaryGrid.innerHTML = `
     <article>
-      <span>Играчите</span>
+      <span>${UI.players}</span>
       <strong>${players.length || 0}</strong>
     </article>
     <article>
-      <span>Последни мачове</span>
+      <span>${UI.lastMatches}</span>
       <strong>${matches.length || 0}</strong>
     </article>
     <article>
-      <span>Голове</span>
+      <span>${UI.goals}</span>
       <strong>${summary.goalsFor}:${summary.goalsAgainst}</strong>
     </article>
     <article>
-      <span>Форма</span>
+      <span>${UI.form}</span>
       <strong>${form}</strong>
     </article>
   `;
@@ -646,7 +804,7 @@ async function fetchPlayerProfile(query = "", teamData = currentTeamData) {
 
 async function searchPlayer() {
   if (!currentTeamData) {
-    setStatus("Първо зареди отбор, за да търсиш играч.", "error");
+    setStatus(UI.playerSearchNeedsTeam, "error");
     return;
   }
 
@@ -657,7 +815,7 @@ async function searchPlayer() {
     renderPlayerCard(player, currentTeamData.team?.strTeam || "");
   } catch (error) {
     renderPlayerCard(null, currentTeamData.team?.strTeam || "");
-    setStatus(`Грешка при търсене на играч: ${error.message}`, "error");
+    setStatus(`${UI.playerSearchError}: ${error.message}`, "error");
   } finally {
     setPlayerSearchLoading(false);
   }
@@ -666,7 +824,7 @@ async function searchPlayer() {
 async function fetchTeamData(teamName) {
   const teamSearch = await apiGet(`/searchteams.php?t=${encodeURIComponent(teamName)}`);
   if (!teamSearch.teams || !teamSearch.teams.length) {
-    throw new Error("Няма намерен отбор с това име.");
+    throw new Error(CURRENT_LANG === "en" ? "No team found with this name." : "Няма намерен отбор с това име.");
   }
 
   const candidates = teamSearch.teams.filter((t) => t.strSport === "Soccer").slice(0, 6);
@@ -701,7 +859,7 @@ async function fetchTeamData(teamName) {
   let best = scored[0];
 
   if (!best) {
-    throw new Error("Не е открит подходящ отбор.");
+    throw new Error(CURRENT_LANG === "en" ? "No suitable team candidate found." : "Не е открит подходящ отбор.");
   }
 
   // Fallback 1: search players by team name if roster endpoint is empty.
@@ -742,11 +900,11 @@ async function loadData() {
   const teamName = teamNameInput.value.trim();
 
   if (!teamName) {
-    setStatus("Моля въведи име на отбор.", "error");
+    setStatus(UI.enterTeamName, "error");
     return;
   }
 
-  setStatus("Зареждане на данни...", "");
+  setStatus(UI.loadingStatus, "");
   setLoadingState(true);
 
   try {
@@ -770,18 +928,23 @@ async function loadData() {
 
     const name = teamData.team.strTeam || "Клуб";
     setStatus(
-      `Данните за ${name} са заредени: ${teamData.players.length} играчи, ${teamData.matches.length} последни мача и ${teamData.nextMatches.length} потвърдени предстоящи (${getDataQualityLabel(teamData.dataQuality).replace("API quality: ", "")}).`,
+      CURRENT_LANG === "en"
+        ? `Data for ${name} loaded: ${teamData.players.length} players, ${teamData.matches.length} last matches and ${teamData.nextMatches.length} confirmed upcoming fixtures (${getDataQualityLabel(teamData.dataQuality).replace(`${UI.apiQualityPrefix}: `, "")}).`
+        : `Данните за ${name} са заредени: ${teamData.players.length} играчи, ${teamData.matches.length} последни мача и ${teamData.nextMatches.length} потвърдени предстоящи (${getDataQualityLabel(teamData.dataQuality).replace(`${UI.apiQualityPrefix}: `, "")}).`,
       "ok"
     );
   } catch (error) {
     const message =
       error instanceof TypeError
-        ? "Грешка при мрежова заявка. Ако си отворил файла през file://, пусни го през локален сървър."
-        : `Грешка: ${error.message}`;
+        ? UI.networkError
+        : `${CURRENT_LANG === "en" ? "Error" : "Грешка"}: ${error.message}`;
     setStatus(message, "error");
     clubCard.classList.add("empty");
     clubCard.classList.remove("loading-state");
-    clubCard.textContent = "Неуспешно зареждане на клубната информация.";
+    clubCard.textContent =
+      CURRENT_LANG === "en"
+        ? "Failed to load club information."
+        : "Неуспешно зареждане на клубната информация.";
     currentTeamData = null;
     refreshPlayerAutocomplete([]);
     renderSquad([]);

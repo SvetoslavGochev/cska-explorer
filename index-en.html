@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="bg">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -19,33 +19,32 @@
       <p class="tag">CSKA Single Page App</p>
       <h1>CSKA Explorer</h1>
       <p class="subtitle">
-        Разглеждай основна информация, текущ състав и факти за ЦСКА с данни от
-        публичен източник без token.
+        Explore club info, current squad, and key CSKA facts from a public no-token source.
       </p>
-      <div class="hero-points" aria-label="Акценти">
-        <span>Автоматично начално зареждане</span>
-        <span>Лого и снимки от клуба</span>
-        <span>По-добро mobile изживяване</span>
+      <div class="hero-points" aria-label="Highlights">
+        <span>Auto load on startup</span>
+        <span>Club media and visuals</span>
+        <span>Improved mobile UX</span>
       </div>
       <div class="lang-switch" aria-label="Language switch">
-        <a href="index.html" class="active">BG</a>
-        <a href="index-en.html">EN</a>
+        <a href="index.html">BG</a>
+        <a href="index-en.html" class="active">EN</a>
       </div>
-      <div id="hero-stats" class="hero-stats" aria-label="Клубни акценти">
+      <div id="hero-stats" class="hero-stats" aria-label="Club highlights">
         <article>
-          <span>Позиция</span>
+          <span>Position</span>
           <strong>-</strong>
         </article>
         <article>
-          <span>Точки</span>
+          <span>Points</span>
           <strong>-</strong>
         </article>
         <article>
-          <span>Играчите</span>
+          <span>Players</span>
           <strong>-</strong>
         </article>
         <article>
-          <span>Форма</span>
+          <span>Form</span>
           <strong>-</strong>
         </article>
       </div>
@@ -53,34 +52,34 @@
 
     <main class="layout">
       <section class="panel controls" aria-labelledby="controls-title">
-        <h2 id="controls-title">Настройки</h2>
+        <h2 id="controls-title">Settings</h2>
 
-        <label for="team-name">Име на отбор</label>
+        <label for="team-name">Team Name</label>
         <div class="row">
           <input
             type="text"
             id="team-name"
             value="CSKA Sofia"
-            placeholder="Например: CSKA Sofia"
+            placeholder="Example: CSKA Sofia"
             autocomplete="off"
           />
-          <button id="load-btn" class="btn primary">Зареди данни</button>
+          <button id="load-btn" class="btn primary">Load Data</button>
         </div>
 
         <p class="hint">
-          Данните идват от безплатния публичен API на TheSportsDB (без API ключ).
+          Data is loaded from the free public TheSportsDB API (no API key required).
         </p>
 
-        <label for="player-search">Търси играч</label>
+        <label for="player-search">Search Player</label>
         <div class="row">
           <input
             type="text"
             id="player-search"
             list="player-suggestions"
-            placeholder="Например: Amos Youga"
+            placeholder="Example: Amos Youga"
             autocomplete="off"
           />
-          <button id="search-player-btn" class="btn secondary">Профил</button>
+          <button id="search-player-btn" class="btn secondary">Profile</button>
         </div>
         <datalist id="player-suggestions"></datalist>
 
@@ -88,95 +87,93 @@
       </section>
 
       <section class="panel club-panel" aria-labelledby="club-title">
-        <h2 id="club-title">Клубна информация</h2>
+        <h2 id="club-title">Club Information</h2>
         <div id="club-card" class="club-card empty">
-          Данните за клуба ще се заредят автоматично.
+          Club data will auto-load on page open.
         </div>
       </section>
 
       <section class="panel squad-panel" aria-labelledby="squad-title">
-        <h2 id="squad-title">Текущ състав</h2>
+        <h2 id="squad-title">Current Squad</h2>
         <ul id="squad-list" class="squad-list">
-          <li class="empty">Няма заредени играчи.</li>
+          <li class="empty">No players loaded yet.</li>
         </ul>
       </section>
 
       <section class="panel standings-panel" aria-labelledby="standings-title">
-        <h2 id="standings-title">Класиране</h2>
+        <h2 id="standings-title">Standings</h2>
         <div id="standings-card" class="standings-card empty">
-          Данните за класирането ще се покажат след зареждане на отбора.
+          Standings will appear after team data is loaded.
         </div>
       </section>
 
       <section class="panel matches-panel" aria-labelledby="matches-title">
-        <h2 id="matches-title">Последни мачове</h2>
+        <h2 id="matches-title">Last Matches</h2>
         <ul id="matches-list" class="matches-list">
-          <li class="empty">Няма заредени мачове.</li>
+          <li class="empty">No matches loaded yet.</li>
         </ul>
       </section>
 
       <section class="panel next-matches-panel" aria-labelledby="next-matches-title">
-        <h2 id="next-matches-title">Следващи мачове</h2>
+        <h2 id="next-matches-title">Upcoming Matches</h2>
         <p id="data-quality" class="data-quality" aria-live="polite">
-          API quality: изчаква данни...
+          API quality: waiting for data...
         </p>
         <ul id="next-matches-list" class="matches-list">
-          <li class="empty">Няма заредени предстоящи мачове.</li>
+          <li class="empty">No upcoming matches loaded yet.</li>
         </ul>
       </section>
 
       <section class="panel player-panel" aria-labelledby="player-title">
-        <h2 id="player-title">Профил на играч</h2>
+        <h2 id="player-title">Player Profile</h2>
         <div id="player-card" class="player-card empty">
-          Избери играч чрез търсене, за да видиш профил, позиция и допълнителни данни.
+          Search for a player to see profile, position, and additional details.
         </div>
       </section>
 
       <section class="panel summary-panel" aria-labelledby="summary-title">
-        <h2 id="summary-title">Бързо резюме</h2>
+        <h2 id="summary-title">Quick Summary</h2>
         <div id="summary-grid" class="summary-grid">
           <article>
-            <span>Играчите</span>
+            <span>Players</span>
             <strong>-</strong>
           </article>
           <article>
-            <span>Последни мачове</span>
+            <span>Last Matches</span>
             <strong>-</strong>
           </article>
           <article>
-            <span>Голове</span>
+            <span>Goals</span>
             <strong>-</strong>
           </article>
           <article>
-            <span>Форма</span>
+            <span>Form</span>
             <strong>-</strong>
           </article>
         </div>
       </section>
 
       <section class="panel history-panel" aria-labelledby="history-title">
-        <h2 id="history-title">История и успехи</h2>
+        <h2 id="history-title">History & Achievements</h2>
         <div class="history-grid">
           <article>
-            <h3>Кратка история</h3>
+            <h3>Short History</h3>
             <p>
-              ЦСКА е един от най-разпознаваемите клубове в България с богата
-              традиция, силна фенска култура и дългогодишно участие в топ
-              футбола.
+              CSKA is one of the most recognizable clubs in Bulgaria with a rich tradition,
+              strong fan culture, and long-standing top-flight presence.
             </p>
           </article>
           <article>
-            <h3>Успехи</h3>
+            <h3>Achievements</h3>
             <p>
-              Клубът е многократен шампион и носител на национални купи.
-              Европейските кампании също са важна част от идентичността му.
+              The club is a multiple-time national champion and cup winner. European campaigns
+              are also a key part of its identity.
             </p>
           </article>
           <article>
-            <h3>Състав днес</h3>
+            <h3>Squad Today</h3>
             <p>
-              Използвай секцията "Текущ състав" за да видиш играчите по данни от
-              API в реално време.
+              Use the "Current Squad" section to see real-time player data from the API.
             </p>
           </article>
         </div>
