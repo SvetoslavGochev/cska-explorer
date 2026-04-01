@@ -65,11 +65,26 @@
             autocomplete="off"
           />
           <button id="load-btn" class="btn primary">Зареди данни</button>
+          <button id="refresh-btn" class="btn secondary">Обнови сега</button>
         </div>
 
         <p class="hint">
           Основен източник: Flashscore (team/squad), с локален 5-часов кеш и резервно превключване към TheSportsDB/fccska.
         </p>
+        <div class="source-grid" aria-label="Източници на секциите">
+          <article>
+            <span>Текущ състав</span>
+            <strong>Flashscore squad</strong>
+          </article>
+          <article>
+            <span>Следващи мачове</span>
+            <strong>Flashscore team</strong>
+          </article>
+          <article>
+            <span>Fallback</span>
+            <strong>TheSportsDB / fccska</strong>
+          </article>
+        </div>
 
         <label for="player-search">Търси играч</label>
         <div class="row">

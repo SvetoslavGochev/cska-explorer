@@ -7,6 +7,7 @@ const CACHE_VERSION = "v2";
 
 const teamNameInput = document.getElementById("team-name");
 const loadBtn = document.getElementById("load-btn");
+const refreshBtn = document.getElementById("refresh-btn");
 const playerSearchInput = document.getElementById("player-search");
 const playerSuggestions = document.getElementById("player-suggestions");
 const searchPlayerBtn = document.getElementById("search-player-btn");
@@ -29,7 +30,9 @@ const CURRENT_LANG = document.documentElement.lang?.toLowerCase().startsWith("en
 const UI_TEXT = {
   bg: {
     loadBtn: "Зареди данни",
+    refreshBtn: "Обнови сега",
     loadingBtn: "Зареждане...",
+    refreshingBtn: "Обновяване...",
     profileBtn: "Профил",
     searchingBtn: "Търсене...",
     loadingStatus: "Зареждане на данни...",
@@ -97,7 +100,9 @@ const UI_TEXT = {
   },
   en: {
     loadBtn: "Load Data",
+    refreshBtn: "Refresh Now",
     loadingBtn: "Loading...",
+    refreshingBtn: "Refreshing...",
     profileBtn: "Profile",
     searchingBtn: "Searching...",
     loadingStatus: "Loading data...",
@@ -363,6 +368,11 @@ function setLoadingState(isLoading) {
   loadBtn.disabled = isLoading;
   loadBtn.textContent = isLoading ? UI.loadingBtn : UI.loadBtn;
   loadBtn.classList.toggle("is-loading", isLoading);
+  if (refreshBtn) {
+    refreshBtn.disabled = isLoading;
+    refreshBtn.textContent = isLoading ? UI.refreshingBtn : UI.refreshBtn;
+    refreshBtn.classList.toggle("is-loading", isLoading);
+  }
   clubCard.setAttribute("aria-busy", String(isLoading));
   squadList.setAttribute("aria-busy", String(isLoading));
   matchesList.setAttribute("aria-busy", String(isLoading));
@@ -737,7 +747,17 @@ function mapFlashscorePosition(label) {
 }
 
 function parseFlashscoreSquadFromText(text) {
-  const lines = String(text || "").split(/\r?\n/);
+  const source = String(text || "");
+  const startIdx = source.search(/\bВратари\b/i);
+  const endCandidates = [
+    source.search(/##\s*Последни\s+новини/i),
+    source.search(/##\s*Предстоящи/i),
+    source.search(/##\s*Последни/i),
+    source.search(/##\s*Трансфери/i),
+  ].filter((idx) => idx > startIdx);
+  const endIdx = endCandidates.length ? Math.min(...endCandidates) : source.length;
+  const segment = startIdx >= 0 ? source.slice(startIdx, endIdx) : source;
+  const lines = segment.split(/\r?\n/);
   const headingPattern = /^(Вратари|Защитници|Халфове|Нападатели|Треньор)$/i;
   const playerPattern = /^\[(.+?)\]\(https?:\/\/www\.flashscore\.bg\/player\//i;
   const players = [];
@@ -1192,7 +1212,8 @@ async function fetchTeamData(teamName) {
   };
 }
 
-async function loadData() {
+async function loadData(options = {}) {
+  const { forceRefresh = false } = options;
   const teamName = teamNameInput.value.trim();
 
   if (!teamName) {
@@ -1201,7 +1222,7 @@ async function loadData() {
   }
 
   const cachedSnapshot = readTeamSnapshot(teamName);
-  if (cachedSnapshot && isSnapshotFresh(cachedSnapshot) && cachedSnapshot.source === "flashscore") {
+  if (!forceRefresh && cachedSnapshot && isSnapshotFresh(cachedSnapshot) && cachedSnapshot.source === "flashscore") {
     renderAll(
       cachedSnapshot.teamData,
       cachedSnapshot.standingsData || { table: [], standing: null },
@@ -1325,12 +1346,15 @@ async function loadData() {
 }
 
 function init() {
-  loadBtn.addEventListener("click", loadData);
+  loadBtn.addEventListener("click", () => loadData({ forceRefresh: false }));
+  if (refreshBtn) {
+    refreshBtn.addEventListener("click", () => loadData({ forceRefresh: true }));
+  }
   searchPlayerBtn.addEventListener("click", searchPlayer);
   playerSearchInput.addEventListener("input", handlePlayerAutocompleteInput);
   teamNameInput.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
-      loadData();
+      loadData({ forceRefresh: false });
     }
   });
   playerSearchInput.addEventListener("keydown", (event) => {
@@ -1340,7 +1364,7 @@ function init() {
   });
   setSourceMeta(null, "");
   refreshPlayerAutocomplete([]);
-  loadData();
+  loadData({ forceRefresh: false });
 }
 
 init();

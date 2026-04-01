@@ -64,11 +64,26 @@
             autocomplete="off"
           />
           <button id="load-btn" class="btn primary">Load Data</button>
+          <button id="refresh-btn" class="btn secondary">Refresh Now</button>
         </div>
 
         <p class="hint">
           Primary source: Flashscore (team/squad), with 5-hour local cache and automatic fallback to TheSportsDB/fccska.
         </p>
+        <div class="source-grid" aria-label="Section data sources">
+          <article>
+            <span>Current Squad</span>
+            <strong>Flashscore squad</strong>
+          </article>
+          <article>
+            <span>Upcoming Matches</span>
+            <strong>Flashscore team</strong>
+          </article>
+          <article>
+            <span>Fallback</span>
+            <strong>TheSportsDB / fccska</strong>
+          </article>
+        </div>
 
         <label for="player-search">Search Player</label>
         <div class="row">
