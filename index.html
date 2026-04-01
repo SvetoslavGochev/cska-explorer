@@ -72,11 +72,13 @@
           <input
             type="text"
             id="player-search"
+            list="player-suggestions"
             placeholder="Например: Amos Youga"
             autocomplete="off"
           />
           <button id="search-player-btn" class="btn secondary">Профил</button>
         </div>
+        <datalist id="player-suggestions"></datalist>
 
         <p id="status" class="status hidden" aria-live="polite"></p>
       </section>

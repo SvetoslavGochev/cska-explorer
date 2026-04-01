@@ -3,6 +3,7 @@ const API_BASE = "https://www.thesportsdb.com/api/v1/json/3";
 const teamNameInput = document.getElementById("team-name");
 const loadBtn = document.getElementById("load-btn");
 const playerSearchInput = document.getElementById("player-search");
+const playerSuggestions = document.getElementById("player-suggestions");
 const searchPlayerBtn = document.getElementById("search-player-btn");
 const statusEl = document.getElementById("status");
 const clubCard = document.getElementById("club-card");
@@ -16,6 +17,7 @@ const playerCard = document.getElementById("player-card");
 const heroStats = document.getElementById("hero-stats");
 
 let currentTeamData = null;
+let playerNameIndex = [];
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -64,6 +66,57 @@ function getSeasonCandidates(referenceDate = new Date()) {
 function setPlayerSearchLoading(isLoading) {
   searchPlayerBtn.disabled = isLoading;
   searchPlayerBtn.textContent = isLoading ? "Търсене..." : "Профил";
+}
+
+function refreshPlayerAutocomplete(players = []) {
+  const names = [...new Set(players.map((player) => String(player.strPlayer || "").trim()).filter(Boolean))];
+  playerNameIndex = names.sort((a, b) => a.localeCompare(b, "bg"));
+
+  if (!playerSuggestions) {
+    return;
+  }
+
+  playerSuggestions.innerHTML = playerNameIndex
+    .map((name) => `<option value="${escapeHtml(name)}"></option>`)
+    .join("");
+}
+
+function findPlayerSuggestion(fragment) {
+  const query = normalizeName(fragment);
+  if (query.length < 2) {
+    return null;
+  }
+
+  return playerNameIndex.find((name) => normalizeName(name).startsWith(query)) || null;
+}
+
+function handlePlayerAutocompleteInput(event) {
+  if (event.isComposing) {
+    return;
+  }
+
+  const typed = playerSearchInput.value;
+  const caret = playerSearchInput.selectionStart ?? typed.length;
+
+  if (caret !== typed.length) {
+    return;
+  }
+
+  if (typed.length < 2) {
+    return;
+  }
+
+  if (event.inputType && event.inputType.startsWith("delete")) {
+    return;
+  }
+
+  const suggestion = findPlayerSuggestion(typed);
+  if (!suggestion || normalizeName(suggestion) === normalizeName(typed)) {
+    return;
+  }
+
+  playerSearchInput.value = suggestion;
+  playerSearchInput.setSelectionRange(typed.length, suggestion.length);
 }
 
 function setLoadingState(isLoading) {
@@ -704,6 +757,7 @@ async function loadData() {
     ]);
 
     currentTeamData = teamData;
+    refreshPlayerAutocomplete(teamData.players);
     renderClub(teamData.team);
     renderSquad(teamData.players);
     renderMatches(teamData.matches, teamData.team.strTeam);
@@ -729,6 +783,7 @@ async function loadData() {
     clubCard.classList.remove("loading-state");
     clubCard.textContent = "Неуспешно зареждане на клубната информация.";
     currentTeamData = null;
+    refreshPlayerAutocomplete([]);
     renderSquad([]);
     renderMatches([]);
     renderNextMatches([], []);
@@ -745,6 +800,7 @@ async function loadData() {
 function init() {
   loadBtn.addEventListener("click", loadData);
   searchPlayerBtn.addEventListener("click", searchPlayer);
+  playerSearchInput.addEventListener("input", handlePlayerAutocompleteInput);
   teamNameInput.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
       loadData();
@@ -755,6 +811,7 @@ function init() {
       searchPlayer();
     }
   });
+  refreshPlayerAutocomplete([]);
   loadData();
 }
 
