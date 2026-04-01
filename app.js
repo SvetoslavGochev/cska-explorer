@@ -2,12 +2,19 @@ const API_BASE = "https://www.thesportsdb.com/api/v1/json/3";
 
 const teamNameInput = document.getElementById("team-name");
 const loadBtn = document.getElementById("load-btn");
+const playerSearchInput = document.getElementById("player-search");
+const searchPlayerBtn = document.getElementById("search-player-btn");
 const statusEl = document.getElementById("status");
 const clubCard = document.getElementById("club-card");
 const squadList = document.getElementById("squad-list");
 const matchesList = document.getElementById("matches-list");
 const nextMatchesList = document.getElementById("next-matches-list");
 const summaryGrid = document.getElementById("summary-grid");
+const standingsCard = document.getElementById("standings-card");
+const playerCard = document.getElementById("player-card");
+const heroStats = document.getElementById("hero-stats");
+
+let currentTeamData = null;
 
 function escapeHtml(value) {
   return String(value ?? "")
@@ -36,6 +43,28 @@ function safeMediaUrl(value) {
   }
 }
 
+function normalizeName(value) {
+  return String(value ?? "").trim().toLowerCase();
+}
+
+function formatFormSequence(form) {
+  const compact = String(form ?? "").trim();
+  return compact ? compact.split("").join(" ") : "Няма данни";
+}
+
+function getSeasonCandidates(referenceDate = new Date()) {
+  const year = referenceDate.getFullYear();
+  const month = referenceDate.getMonth();
+  const splitSeason = month >= 6 ? `${year}-${year + 1}` : `${year - 1}-${year}`;
+
+  return [...new Set([splitSeason, String(year), String(year - 1)])];
+}
+
+function setPlayerSearchLoading(isLoading) {
+  searchPlayerBtn.disabled = isLoading;
+  searchPlayerBtn.textContent = isLoading ? "Търсене..." : "Профил";
+}
+
 function setLoadingState(isLoading) {
   loadBtn.disabled = isLoading;
   loadBtn.textContent = isLoading ? "Зареждане..." : "Зареди данни";
@@ -45,6 +74,9 @@ function setLoadingState(isLoading) {
   matchesList.setAttribute("aria-busy", String(isLoading));
   nextMatchesList.setAttribute("aria-busy", String(isLoading));
   summaryGrid.setAttribute("aria-busy", String(isLoading));
+  standingsCard.setAttribute("aria-busy", String(isLoading));
+  playerCard.setAttribute("aria-busy", String(isLoading));
+  heroStats.setAttribute("aria-busy", String(isLoading));
 
   if (!isLoading) {
     return;
@@ -66,6 +98,16 @@ function setLoadingState(isLoading) {
     <article><span>Играчите</span><strong>...</strong></article>
     <article><span>Последни мачове</span><strong>...</strong></article>
     <article><span>Голове</span><strong>...</strong></article>
+    <article><span>Форма</span><strong>...</strong></article>
+  `;
+  standingsCard.className = "standings-card empty";
+  standingsCard.textContent = "Зареждам класирането...";
+  playerCard.className = "player-card empty";
+  playerCard.textContent = "Зареждам профила на играч...";
+  heroStats.innerHTML = `
+    <article><span>Позиция</span><strong>...</strong></article>
+    <article><span>Точки</span><strong>...</strong></article>
+    <article><span>Играчите</span><strong>...</strong></article>
     <article><span>Форма</span><strong>...</strong></article>
   `;
 }
@@ -150,6 +192,38 @@ function renderClub(team) {
       <p><strong>Описание:</strong> ${description}${description.endsWith(".") ? "" : "..."}</p>
     </div>
     ${stadiumThumb ? `<img class="club-stadium" src="${stadiumThumb}" alt="Стадион на ${teamName}" />` : ""}
+  `;
+}
+
+function renderHeroStats(team = null, standing = null, players = [], matches = []) {
+  if (!team) {
+    heroStats.innerHTML = `
+      <article><span>Позиция</span><strong>-</strong></article>
+      <article><span>Точки</span><strong>-</strong></article>
+      <article><span>Играчите</span><strong>-</strong></article>
+      <article><span>Форма</span><strong>-</strong></article>
+    `;
+    return;
+  }
+
+  const summary = summarizeMatches(matches, team.strTeam);
+  heroStats.innerHTML = `
+    <article>
+      <span>Позиция</span>
+      <strong>${standing?.intRank ? `#${standing.intRank}` : "-"}</strong>
+    </article>
+    <article>
+      <span>Точки</span>
+      <strong>${standing?.intPoints || "-"}</strong>
+    </article>
+    <article>
+      <span>Играчите</span>
+      <strong>${players.length || 0}</strong>
+    </article>
+    <article>
+      <span>Форма</span>
+      <strong>${standing?.strForm ? formatFormSequence(standing.strForm) : summary.form.slice(0, 5).join(" ") || "Няма данни"}</strong>
+    </article>
   `;
 }
 
@@ -244,6 +318,98 @@ function renderNextMatches(matches = []) {
     .join("");
 }
 
+function renderStandings(table = [], currentTeam = null) {
+  if (!table.length) {
+    standingsCard.className = "standings-card empty";
+    standingsCard.textContent = "Няма налични данни за класирането в момента.";
+    return;
+  }
+
+  const currentTeamId = String(currentTeam?.idTeam || "");
+  const currentTeamName = currentTeam?.strTeam || "";
+  const leaders = table.slice(0, 5);
+  const currentRow = table.find(
+    (row) =>
+      String(row.idTeam || "") === currentTeamId || normalizeName(row.strTeam) === normalizeName(currentTeamName)
+  );
+  const visibleRows = leaders.slice();
+
+  if (currentRow && !leaders.some((row) => String(row.idTeam || "") === String(currentRow.idTeam || ""))) {
+    visibleRows.push(currentRow);
+  }
+
+  standingsCard.className = "standings-card";
+  standingsCard.innerHTML = `
+    <div class="standings-list">
+      ${visibleRows
+        .map((row) => {
+          const isCurrent =
+            String(row.idTeam || "") === currentTeamId ||
+            normalizeName(row.strTeam) === normalizeName(currentTeamName);
+          const badge = safeMediaUrl(row.strBadge);
+          return `
+            <article class="standing-row ${isCurrent ? "is-current" : ""}">
+              <span class="standing-rank">#${escapeHtml(row.intRank || "-")}</span>
+              ${badge ? `<img class="standing-badge" src="${badge}" alt="Емблема на ${formatText(row.strTeam, "Отбор")}" />` : ""}
+              <div class="standing-copy">
+                <strong>${formatText(row.strTeam, "Отбор")}</strong>
+                <span>${escapeHtml(row.intPlayed || "0")} мача • ${escapeHtml(row.intGoalDifference || "0")} голова разлика</span>
+              </div>
+              <span class="standing-points">${escapeHtml(row.intPoints || "0")} т.</span>
+            </article>
+          `;
+        })
+        .join("")}
+    </div>
+    <p class="standings-note">Сезон: ${escapeHtml(table[0]?.strSeason || "Няма данни")} • Форма на ЦСКА: ${currentRow?.strForm ? formatFormSequence(currentRow.strForm) : "Няма данни"}</p>
+  `;
+}
+
+function renderPlayerCard(player = null, teamName = "") {
+  if (!player) {
+    playerCard.className = "player-card empty";
+    playerCard.textContent = teamName
+      ? `Няма намерен играч в отбора ${teamName}.`
+      : "Търси играч, за да видиш профила му.";
+    return;
+  }
+
+  const playerName = formatText(player.strPlayer, "Неизвестен играч");
+  const image = safeMediaUrl(player.strThumb || player.strCutout || player.strRender || player.strFanart1);
+  const bio = formatText((player.strDescriptionEN || "").slice(0, 340), "Няма налична кратка биография.");
+
+  playerCard.className = "player-card";
+  playerCard.innerHTML = `
+    <div class="player-hero">
+      ${image ? `<img class="player-photo" src="${image}" alt="Снимка на ${playerName}" />` : ""}
+      <div>
+        <p class="club-kicker">Избран играч</p>
+        <h3>${playerName}</h3>
+        <p class="club-summary">${formatText(player.strPosition, "Позиция неизвестна")} • ${formatText(player.strNationality, "Националност неизвестна")}</p>
+      </div>
+    </div>
+    <div class="fact-grid player-facts">
+      <article>
+        <span>Номер</span>
+        <strong>${formatText(player.strNumber, "-")}</strong>
+      </article>
+      <article>
+        <span>Роден</span>
+        <strong>${formatText(player.dateBorn, "Няма данни")}</strong>
+      </article>
+      <article>
+        <span>Ръст</span>
+        <strong>${formatText(player.strHeight, "Няма данни")}</strong>
+      </article>
+      <article>
+        <span>Тегло</span>
+        <strong>${formatText(player.strWeight, "Няма данни")}</strong>
+      </article>
+    </div>
+    <p class="player-bio">${bio}${bio.endsWith(".") ? "" : "..."}</p>
+  `;
+}
+
 function summarizeMatches(matches = [], selectedTeamName = "") {
   return matches.reduce(
     (summary, match) => {
@@ -295,6 +461,89 @@ function renderSummary(players = [], matches = [], selectedTeamName = "") {
       <strong>${form}</strong>
     </article>
   `;
+}
+
+async function fetchStandings(team) {
+  if (!team?.idLeague) {
+    return { table: [], standing: null };
+  }
+
+  for (const season of getSeasonCandidates()) {
+    const data = await apiGet(`/lookuptable.php?l=${encodeURIComponent(team.idLeague)}&s=${encodeURIComponent(season)}`);
+    const table = data.table || [];
+
+    if (!table.length) {
+      continue;
+    }
+
+    const standing =
+      table.find((row) => String(row.idTeam || "") === String(team.idTeam || "")) ||
+      table.find((row) => normalizeName(row.strTeam) === normalizeName(team.strTeam));
+
+    return { table, standing };
+  }
+
+  return { table: [], standing: null };
+}
+
+async function fetchPlayerProfile(query = "", teamData = currentTeamData) {
+  if (!teamData?.team) {
+    return null;
+  }
+
+  const players = teamData.players || [];
+  const normalizedQuery = normalizeName(query);
+  let rosterMatch = null;
+
+  if (normalizedQuery) {
+    rosterMatch =
+      players.find((player) => normalizeName(player.strPlayer) === normalizedQuery) ||
+      players.find((player) => normalizeName(player.strPlayer).includes(normalizedQuery));
+  } else {
+    rosterMatch = players[0] || null;
+  }
+
+  if (rosterMatch?.idPlayer) {
+    const details = await apiGet(`/lookupplayer.php?id=${encodeURIComponent(rosterMatch.idPlayer)}`);
+    return details.players?.[0] || rosterMatch;
+  }
+
+  if (!normalizedQuery) {
+    return rosterMatch;
+  }
+
+  const search = await apiGet(`/searchplayers.php?p=${encodeURIComponent(query)}`);
+  const candidate = (search.player || []).find(
+    (player) =>
+      String(player.idTeam || "") === String(teamData.team.idTeam || "") ||
+      normalizeName(player.strTeam) === normalizeName(teamData.team.strTeam)
+  );
+
+  if (candidate?.idPlayer) {
+    const details = await apiGet(`/lookupplayer.php?id=${encodeURIComponent(candidate.idPlayer)}`);
+    return details.players?.[0] || candidate;
+  }
+
+  return candidate || null;
+}
+
+async function searchPlayer() {
+  if (!currentTeamData) {
+    setStatus("Първо зареди отбор, за да търсиш играч.", "error");
+    return;
+  }
+
+  setPlayerSearchLoading(true);
+
+  try {
+    const player = await fetchPlayerProfile(playerSearchInput.value.trim(), currentTeamData);
+    renderPlayerCard(player, currentTeamData.team?.strTeam || "");
+  } catch (error) {
+    renderPlayerCard(null, currentTeamData.team?.strTeam || "");
+    setStatus(`Грешка при търсене на играч: ${error.message}`, "error");
+  } finally {
+    setPlayerSearchLoading(false);
+  }
 }
 
 async function fetchTeamData(teamName) {
@@ -378,11 +627,20 @@ async function loadData() {
 
   try {
     const teamData = await fetchTeamData(teamName);
+    const [standingsData, featuredPlayer] = await Promise.all([
+      fetchStandings(teamData.team),
+      fetchPlayerProfile(playerSearchInput.value.trim(), teamData),
+    ]);
+
+    currentTeamData = teamData;
     renderClub(teamData.team);
     renderSquad(teamData.players);
     renderMatches(teamData.matches, teamData.team.strTeam);
     renderNextMatches(teamData.nextMatches);
     renderSummary(teamData.players, teamData.matches, teamData.team.strTeam);
+    renderStandings(standingsData.table, teamData.team);
+    renderPlayerCard(featuredPlayer, teamData.team.strTeam);
+    renderHeroStats(teamData.team, standingsData.standing, teamData.players, teamData.matches);
 
     const name = teamData.team.strTeam || "Клуб";
     setStatus(
@@ -398,10 +656,14 @@ async function loadData() {
     clubCard.classList.add("empty");
     clubCard.classList.remove("loading-state");
     clubCard.textContent = "Неуспешно зареждане на клубната информация.";
+    currentTeamData = null;
     renderSquad([]);
     renderMatches([]);
     renderNextMatches([]);
     renderSummary([], [], "");
+    renderStandings([], null);
+    renderPlayerCard(null, "");
+    renderHeroStats();
   } finally {
     setLoadingState(false);
   }
@@ -409,9 +671,15 @@ async function loadData() {
 
 function init() {
   loadBtn.addEventListener("click", loadData);
+  searchPlayerBtn.addEventListener("click", searchPlayer);
   teamNameInput.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
       loadData();
+    }
+  });
+  playerSearchInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      searchPlayer();
     }
   });
   loadData();

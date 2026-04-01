@@ -27,6 +27,24 @@
         <span>Лого и снимки от клуба</span>
         <span>По-добро mobile изживяване</span>
       </div>
+      <div id="hero-stats" class="hero-stats" aria-label="Клубни акценти">
+        <article>
+          <span>Позиция</span>
+          <strong>-</strong>
+        </article>
+        <article>
+          <span>Точки</span>
+          <strong>-</strong>
+        </article>
+        <article>
+          <span>Играчите</span>
+          <strong>-</strong>
+        </article>
+        <article>
+          <span>Форма</span>
+          <strong>-</strong>
+        </article>
+      </div>
     </header>
 
     <main class="layout">
@@ -48,6 +66,18 @@
         <p class="hint">
           Данните идват от безплатния публичен API на TheSportsDB (без API ключ).
         </p>
+
+        <label for="player-search">Търси играч</label>
+        <div class="row">
+          <input
+            type="text"
+            id="player-search"
+            placeholder="Например: Amos Youga"
+            autocomplete="off"
+          />
+          <button id="search-player-btn" class="btn secondary">Профил</button>
+        </div>
+
         <p id="status" class="status hidden" aria-live="polite"></p>
       </section>
 
@@ -65,6 +95,13 @@
         </ul>
       </section>
 
+      <section class="panel standings-panel" aria-labelledby="standings-title">
+        <h2 id="standings-title">Класиране</h2>
+        <div id="standings-card" class="standings-card empty">
+          Данните за класирането ще се покажат след зареждане на отбора.
+        </div>
+      </section>
+
       <section class="panel matches-panel" aria-labelledby="matches-title">
         <h2 id="matches-title">Последни мачове</h2>
         <ul id="matches-list" class="matches-list">
@@ -77,6 +114,13 @@
         <ul id="next-matches-list" class="matches-list">
           <li class="empty">Няма заредени предстоящи мачове.</li>
         </ul>
+      </section>
+
+      <section class="panel player-panel" aria-labelledby="player-title">
+        <h2 id="player-title">Профил на играч</h2>
+        <div id="player-card" class="player-card empty">
+          Избери играч чрез търсене, за да видиш профил, позиция и допълнителни данни.
+        </div>
       </section>
 
       <section class="panel summary-panel" aria-labelledby="summary-title">
