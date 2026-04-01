@@ -3,7 +3,7 @@ const FLASHSCORE_TEAM_MIRROR_URL = "https://r.jina.ai/http://www.flashscore.bg/t
 const FLASHSCORE_SQUAD_MIRROR_URL = "https://r.jina.ai/http://www.flashscore.bg/team/cska-sofia/0xFNNECi/squad/";
 const FCCSKA_MIRROR_URL = "https://r.jina.ai/http://www.fccska.com/";
 const CACHE_TTL_MS = 5 * 60 * 60 * 1000;
-const CACHE_VERSION = "v1";
+const CACHE_VERSION = "v2";
 
 const teamNameInput = document.getElementById("team-name");
 const loadBtn = document.getElementById("load-btn");
@@ -1201,7 +1201,7 @@ async function loadData() {
   }
 
   const cachedSnapshot = readTeamSnapshot(teamName);
-  if (cachedSnapshot && isSnapshotFresh(cachedSnapshot)) {
+  if (cachedSnapshot && isSnapshotFresh(cachedSnapshot) && cachedSnapshot.source === "flashscore") {
     renderAll(
       cachedSnapshot.teamData,
       cachedSnapshot.standingsData || { table: [], standing: null },
