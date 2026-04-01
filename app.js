@@ -9,6 +9,7 @@ const playerSearchInput = document.getElementById("player-search");
 const playerSuggestions = document.getElementById("player-suggestions");
 const searchPlayerBtn = document.getElementById("search-player-btn");
 const statusEl = document.getElementById("status");
+const sourceMetaEl = document.getElementById("source-meta");
 const clubCard = document.getElementById("club-card");
 const squadList = document.getElementById("squad-list");
 const matchesList = document.getElementById("matches-list");
@@ -87,6 +88,8 @@ const UI_TEXT = {
     sourceLabelApi: "източник: TheSportsDB",
     sourceLabelCache: "източник: local cache",
     sourceLabelFccska: "източник: fccska mirror",
+    lastUpdatedPrefix: "Последно обновяване",
+    unknownUpdateTime: "неизвестно",
   },
   en: {
     loadBtn: "Load Data",
@@ -151,6 +154,8 @@ const UI_TEXT = {
     sourceLabelApi: "source: TheSportsDB",
     sourceLabelCache: "source: local cache",
     sourceLabelFccska: "source: fccska mirror",
+    lastUpdatedPrefix: "Last updated",
+    unknownUpdateTime: "unknown",
   },
 };
 
@@ -239,6 +244,41 @@ function isSnapshotFresh(snapshot) {
     return false;
   }
   return Date.now() - snapshot.savedAt <= CACHE_TTL_MS;
+}
+
+function formatTimestamp(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return UI.unknownUpdateTime;
+  }
+
+  return date.toLocaleString(CURRENT_LANG === "en" ? "en-GB" : "bg-BG", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function resolveSourceLabel(source) {
+  if (source === "sportsdb") {
+    return UI.sourceLabelApi;
+  }
+  if (source === "fccska") {
+    return UI.sourceLabelFccska;
+  }
+  return UI.sourceLabelCache;
+}
+
+function setSourceMeta(savedAt, sourceLabel) {
+  if (!sourceMetaEl) {
+    return;
+  }
+
+  const timeLabel = savedAt ? formatTimestamp(savedAt) : UI.unknownUpdateTime;
+  const sourcePart = sourceLabel ? ` • ${sourceLabel}` : "";
+  sourceMetaEl.textContent = `${UI.lastUpdatedPrefix}: ${timeLabel}${sourcePart}`;
 }
 
 function formatFormSequence(form) {
@@ -1009,6 +1049,7 @@ async function loadData() {
       cachedSnapshot.standingsData || { table: [], standing: null },
       cachedSnapshot.featuredPlayer || null
     );
+    setSourceMeta(cachedSnapshot.savedAt, `${UI.sourceLabelCache} (${resolveSourceLabel(cachedSnapshot.source)})`);
     setStatus(`${UI.cacheFreshUsed} (${UI.sourceLabelCache})`, "ok");
     return;
   }
@@ -1032,6 +1073,7 @@ async function loadData() {
       standingsData,
       featuredPlayer,
     });
+    setSourceMeta(Date.now(), UI.sourceLabelApi);
 
     const name = teamData.team.strTeam || "Клуб";
     setStatus(
@@ -1048,6 +1090,7 @@ async function loadData() {
         staleSnapshot.standingsData || { table: [], standing: null },
         staleSnapshot.featuredPlayer || null
       );
+      setSourceMeta(staleSnapshot.savedAt, `${UI.sourceLabelCache} (${resolveSourceLabel(staleSnapshot.source)})`);
       setStatus(`${UI.cacheStaleUsed} (${UI.sourceLabelCache})`, "ok");
       return;
     }
@@ -1062,6 +1105,7 @@ async function loadData() {
         standingsData: { table: [], standing: null },
         featuredPlayer: null,
       });
+      setSourceMeta(Date.now(), UI.sourceLabelFccska);
       setStatus(UI.sourceFccskaUsed, "ok");
       return;
     } catch {
@@ -1086,6 +1130,7 @@ async function loadData() {
       renderStandings([], null);
       renderPlayerCard(null, "");
       renderHeroStats();
+      setSourceMeta(null, "");
     }
   } finally {
     setLoadingState(false);
@@ -1106,6 +1151,7 @@ function init() {
       searchPlayer();
     }
   });
+  setSourceMeta(null, "");
   refreshPlayerAutocomplete([]);
   loadData();
 }

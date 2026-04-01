@@ -228,6 +228,12 @@ input {
   margin: 0.6rem 0;
 }
 
+.source-meta {
+  margin: 0.45rem 0 0.6rem;
+  color: #d7dee8;
+  font-size: 0.9rem;
+}
+
 .status {
   margin: 0;
   font-size: 0.95rem;
