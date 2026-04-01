@@ -1,4 +1,5 @@
 const API_BASE = "https://www.thesportsdb.com/api/v1/json/3";
+const FLASHSCORE_TEAM_MIRROR_URL = "https://r.jina.ai/http://www.flashscore.bg/team/cska-sofia/0xFNNECi/";
 const FCCSKA_MIRROR_URL = "https://r.jina.ai/http://www.fccska.com/";
 const CACHE_TTL_MS = 5 * 60 * 60 * 1000;
 const CACHE_VERSION = "v1";
@@ -85,8 +86,10 @@ const UI_TEXT = {
     cacheFreshUsed: "Заредени са кеширани данни (до 5 часа).",
     cacheStaleUsed: "Няма връзка с API. Показани са последните кеширани данни.",
     sourceFccskaUsed: "API е недостъпен. Показан е резервен профил от fccska.com.",
+    sourceFlashscoreUsed: "API е недостъпен. Показани са резервни мачове от flashscore.bg.",
     sourceLabelApi: "източник: TheSportsDB",
     sourceLabelCache: "източник: local cache",
+    sourceLabelFlashscore: "източник: flashscore mirror",
     sourceLabelFccska: "източник: fccska mirror",
     lastUpdatedPrefix: "Последно обновяване",
     unknownUpdateTime: "неизвестно",
@@ -151,8 +154,10 @@ const UI_TEXT = {
     cacheFreshUsed: "Loaded cached data (up to 5 hours old).",
     cacheStaleUsed: "API is unavailable. Showing latest cached snapshot.",
     sourceFccskaUsed: "API is unavailable. Showing backup club profile from fccska.com.",
+    sourceFlashscoreUsed: "API is unavailable. Showing backup fixtures from flashscore.bg.",
     sourceLabelApi: "source: TheSportsDB",
     sourceLabelCache: "source: local cache",
+    sourceLabelFlashscore: "source: flashscore mirror",
     sourceLabelFccska: "source: fccska mirror",
     lastUpdatedPrefix: "Last updated",
     unknownUpdateTime: "unknown",
@@ -264,6 +269,9 @@ function formatTimestamp(value) {
 function resolveSourceLabel(source) {
   if (source === "sportsdb") {
     return UI.sourceLabelApi;
+  }
+  if (source === "flashscore") {
+    return UI.sourceLabelFlashscore;
   }
   if (source === "fccska") {
     return UI.sourceLabelFccska;
@@ -670,6 +678,74 @@ async function fetchFccskaSnapshot(teamName) {
     dataQuality: {
       level: "limited",
       details: UI.sourceLabelFccska,
+    },
+  };
+}
+
+function parseFlashscoreUpcomingFromText(text) {
+  const compact = text.replace(/\s+/g, " ").trim();
+  const summaryMatch = compact.match(/Следващи мачове:\s*([^\n]+)/i);
+  if (!summaryMatch) {
+    return [];
+  }
+
+  const rawList = summaryMatch[1]
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .slice(0, 5);
+
+  return rawList
+    .map((item) => {
+      const parts = item.match(/^(\d{2}\.\d{2})\.\s+(.+?)\s+-\s+(.+)$/);
+      if (!parts) {
+        return null;
+      }
+
+      const [, dayMonth, home, away] = parts;
+      const [day, month] = dayMonth.split(".");
+      const year = new Date().getFullYear();
+      return {
+        strHomeTeam: home.trim(),
+        strAwayTeam: away.trim(),
+        dateEvent: `${year}-${month}-${day}`,
+        strTime: "",
+      };
+    })
+    .filter(Boolean);
+}
+
+async function fetchFlashscoreSnapshot(teamName) {
+  const response = await fetch(FLASHSCORE_TEAM_MIRROR_URL);
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status} while loading flashscore mirror`);
+  }
+
+  const text = await response.text();
+  const upcoming = parseFlashscoreUpcomingFromText(text);
+  const excerptStart = text.toLowerCase().indexOf("футбол, българия: цска");
+  const excerpt =
+    excerptStart >= 0
+      ? text.slice(excerptStart, excerptStart + 380).replace(/\s+/g, " ").trim()
+      : text.slice(0, 380).replace(/\s+/g, " ").trim();
+
+  return {
+    team: {
+      strTeam: teamName,
+      strLeague: "efbet Liga",
+      strCountry: "Bulgaria",
+      intFormedYear: "1948",
+      strLocation: "Sofia",
+      strWebsite: "www.flashscore.bg",
+      strDescriptionEN: excerpt,
+    },
+    players: [],
+    matches: [],
+    fallbackMatches: [],
+    nextMatches: upcoming,
+    dataQuality: {
+      level: upcoming.length ? "medium" : "limited",
+      details: UI.sourceLabelFlashscore,
     },
   };
 }
@@ -1096,18 +1172,33 @@ async function loadData() {
     }
 
     try {
-      const fccskaData = await fetchFccskaSnapshot(teamName);
-      renderAll(fccskaData, { table: [], standing: null }, null);
-      saveTeamSnapshot(teamName, {
-        savedAt: Date.now(),
-        source: "fccska",
-        teamData: fccskaData,
-        standingsData: { table: [], standing: null },
-        featuredPlayer: null,
-      });
-      setSourceMeta(Date.now(), UI.sourceLabelFccska);
-      setStatus(UI.sourceFccskaUsed, "ok");
-      return;
+      try {
+        const flashscoreData = await fetchFlashscoreSnapshot(teamName);
+        renderAll(flashscoreData, { table: [], standing: null }, null);
+        saveTeamSnapshot(teamName, {
+          savedAt: Date.now(),
+          source: "flashscore",
+          teamData: flashscoreData,
+          standingsData: { table: [], standing: null },
+          featuredPlayer: null,
+        });
+        setSourceMeta(Date.now(), UI.sourceLabelFlashscore);
+        setStatus(UI.sourceFlashscoreUsed, "ok");
+        return;
+      } catch {
+        const fccskaData = await fetchFccskaSnapshot(teamName);
+        renderAll(fccskaData, { table: [], standing: null }, null);
+        saveTeamSnapshot(teamName, {
+          savedAt: Date.now(),
+          source: "fccska",
+          teamData: fccskaData,
+          standingsData: { table: [], standing: null },
+          featuredPlayer: null,
+        });
+        setSourceMeta(Date.now(), UI.sourceLabelFccska);
+        setStatus(UI.sourceFccskaUsed, "ok");
+        return;
+      }
     } catch {
       const message =
         error instanceof TypeError
