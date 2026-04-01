@@ -9,6 +9,7 @@ const clubCard = document.getElementById("club-card");
 const squadList = document.getElementById("squad-list");
 const matchesList = document.getElementById("matches-list");
 const nextMatchesList = document.getElementById("next-matches-list");
+const dataQualityEl = document.getElementById("data-quality");
 const summaryGrid = document.getElementById("summary-grid");
 const standingsCard = document.getElementById("standings-card");
 const playerCard = document.getElementById("player-card");
@@ -73,6 +74,7 @@ function setLoadingState(isLoading) {
   squadList.setAttribute("aria-busy", String(isLoading));
   matchesList.setAttribute("aria-busy", String(isLoading));
   nextMatchesList.setAttribute("aria-busy", String(isLoading));
+  dataQualityEl.setAttribute("aria-busy", String(isLoading));
   summaryGrid.setAttribute("aria-busy", String(isLoading));
   standingsCard.setAttribute("aria-busy", String(isLoading));
   playerCard.setAttribute("aria-busy", String(isLoading));
@@ -94,6 +96,8 @@ function setLoadingState(isLoading) {
   squadList.innerHTML = '<li class="empty loading-item">Зареждам състава...</li>';
   matchesList.innerHTML = '<li class="empty loading-item">Зареждам мачовете...</li>';
   nextMatchesList.innerHTML = '<li class="empty loading-item">Зареждам следващите мачове...</li>';
+  dataQualityEl.className = "data-quality";
+  dataQualityEl.textContent = "API quality: анализирам данните...";
   summaryGrid.innerHTML = `
     <article><span>Играчите</span><strong>...</strong></article>
     <article><span>Последни мачове</span><strong>...</strong></article>
@@ -110,6 +114,24 @@ function setLoadingState(isLoading) {
     <article><span>Играчите</span><strong>...</strong></article>
     <article><span>Форма</span><strong>...</strong></article>
   `;
+}
+
+function getDataQualityLabel(quality = {}) {
+  const level = quality.level || "limited";
+  if (level === "high") {
+    return "API quality: high";
+  }
+  if (level === "medium") {
+    return "API quality: medium";
+  }
+  return "API quality: limited";
+}
+
+function renderDataQuality(quality = {}) {
+  const level = quality.level || "limited";
+  dataQualityEl.className = `data-quality data-quality-${level}`;
+  const details = quality.details ? ` - ${quality.details}` : "";
+  dataQualityEl.textContent = `${getDataQualityLabel(quality)}${details}`;
 }
 
 function setStatus(message, type = "") {
@@ -281,6 +303,34 @@ function matchIncludesTeam(match, teamName) {
   );
 }
 
+function buildDataQuality(nextMatches = [], fallbackMatches = []) {
+  if (nextMatches.length >= 3) {
+    return {
+      level: "high",
+      details: `потвърдени ${nextMatches.length} предстоящи мача`,
+    };
+  }
+
+  if (nextMatches.length > 0) {
+    return {
+      level: "medium",
+      details: `налични са само ${nextMatches.length} потвърдени мача`,
+    };
+  }
+
+  if (fallbackMatches.length > 0) {
+    return {
+      level: "limited",
+      details: "няма потвърден следващ мач; показани са последни 3 срещи",
+    };
+  }
+
+  return {
+    level: "limited",
+    details: "API не върна достатъчно надеждни данни",
+  };
+}
+
 function renderMatches(matches = [], selectedTeamName = "") {
   if (!matches.length) {
     matchesList.innerHTML = '<li class="empty">Няма налични данни за мачове.</li>';
@@ -300,22 +350,36 @@ function renderMatches(matches = [], selectedTeamName = "") {
     .join("");
 }
 
-function renderNextMatches(matches = []) {
-  if (!matches.length) {
+function renderNextMatches(matches = [], fallbackMatches = []) {
+  if (matches.length) {
+    nextMatchesList.innerHTML = matches
+      .slice(0, 5)
+      .map((match, idx) => {
+        const home = formatText(match.strHomeTeam, "?");
+        const away = formatText(match.strAwayTeam, "?");
+        const date = formatText(match.dateEvent, "Няма дата");
+        const time = formatText(match.strTimeLocal || match.strTime, "Час TBD");
+        return `<li class="match-item upcoming-match"><span class="list-index">${idx + 1}.</span><div class="match-copy"><strong>${home} vs ${away}</strong><span>${date} • ${time}</span></div><span class="match-badge confirmed-badge">Потвърден</span></li>`;
+      })
+      .join("");
+    return;
+  }
+
+  if (!fallbackMatches.length) {
     nextMatchesList.innerHTML = '<li class="empty">Няма налични данни за предстоящи мачове.</li>';
     return;
   }
 
-  nextMatchesList.innerHTML = matches
-    .slice(0, 5)
-    .map((match, idx) => {
+  nextMatchesList.innerHTML = [
+    '<li class="empty">Няма потвърден следващ официален мач от API. Показани са последни 3 срещи:</li>',
+    ...fallbackMatches.slice(0, 3).map((match, idx) => {
       const home = formatText(match.strHomeTeam, "?");
       const away = formatText(match.strAwayTeam, "?");
+      const score = `${match.intHomeScore ?? "?"}:${match.intAwayScore ?? "?"}`;
       const date = formatText(match.dateEvent, "Няма дата");
-      const time = formatText(match.strTimeLocal || match.strTime, "Час TBD");
-      return `<li class="match-item upcoming-match"><span class="list-index">${idx + 1}.</span><div class="match-copy"><strong>${home} vs ${away}</strong><span>${date} • ${time}</span></div><span class="match-badge upcoming-badge">Предстои</span></li>`;
-    })
-    .join("");
+      return `<li class="match-item"><span class="list-index">${idx + 1}.</span><div class="match-copy"><strong>${home} vs ${away}</strong><span>${escapeHtml(score)} • ${date}</span></div><span class="match-badge fallback-badge">Fallback</span></li>`;
+    }),
+  ].join("");
 }
 
 function renderStandings(table = [], currentTeam = null) {
@@ -565,6 +629,7 @@ async function fetchTeamData(teamName) {
 
       const players = playersData.player || [];
       const matches = matchesData.results || [];
+      const fallbackMatches = matches.slice(0, 3);
       const nextMatches = (nextMatchesData.events || []).filter((match) =>
         matchIncludesTeam(match, team.strTeam || teamName)
       );
@@ -572,6 +637,7 @@ async function fetchTeamData(teamName) {
         team,
         players,
         matches,
+        fallbackMatches,
         nextMatches,
         score: players.length * 10 + matches.length + nextMatches.length,
       };
@@ -606,11 +672,16 @@ async function fetchTeamData(teamName) {
     );
   }
 
+  best.fallbackMatches = (best.matches || []).slice(0, 3);
+  const dataQuality = buildDataQuality(best.nextMatches || [], best.fallbackMatches || []);
+
   return {
     team: best.team,
     players: best.players,
     matches: best.matches,
+    fallbackMatches: best.fallbackMatches || [],
     nextMatches: best.nextMatches || [],
+    dataQuality,
   };
 }
 
@@ -636,7 +707,8 @@ async function loadData() {
     renderClub(teamData.team);
     renderSquad(teamData.players);
     renderMatches(teamData.matches, teamData.team.strTeam);
-    renderNextMatches(teamData.nextMatches);
+    renderNextMatches(teamData.nextMatches, teamData.fallbackMatches);
+    renderDataQuality(teamData.dataQuality);
     renderSummary(teamData.players, teamData.matches, teamData.team.strTeam);
     renderStandings(standingsData.table, teamData.team);
     renderPlayerCard(featuredPlayer, teamData.team.strTeam);
@@ -644,7 +716,7 @@ async function loadData() {
 
     const name = teamData.team.strTeam || "Клуб";
     setStatus(
-      `Данните за ${name} са заредени: ${teamData.players.length} играчи, ${teamData.matches.length} последни мача и ${teamData.nextMatches.length} предстоящи.`,
+      `Данните за ${name} са заредени: ${teamData.players.length} играчи, ${teamData.matches.length} последни мача и ${teamData.nextMatches.length} потвърдени предстоящи (${getDataQualityLabel(teamData.dataQuality).replace("API quality: ", "")}).`,
       "ok"
     );
   } catch (error) {
@@ -659,7 +731,8 @@ async function loadData() {
     currentTeamData = null;
     renderSquad([]);
     renderMatches([]);
-    renderNextMatches([]);
+    renderNextMatches([], []);
+    renderDataQuality({ level: "limited", details: "данните не могат да бъдат потвърдени" });
     renderSummary([], [], "");
     renderStandings([], null);
     renderPlayerCard(null, "");
