@@ -1,4 +1,7 @@
 const API_BASE = "https://www.thesportsdb.com/api/v1/json/3";
+const FCCSKA_MIRROR_URL = "https://r.jina.ai/http://www.fccska.com/";
+const CACHE_TTL_MS = 5 * 60 * 60 * 1000;
+const CACHE_VERSION = "v1";
 
 const teamNameInput = document.getElementById("team-name");
 const loadBtn = document.getElementById("load-btn");
@@ -78,6 +81,12 @@ const UI_TEXT = {
     qualityWaiting: "API quality: изчаква данни...",
     fallbackUpcomingNotice:
       "Няма потвърден следващ официален мач от API. Показани са последни 3 срещи:",
+    cacheFreshUsed: "Заредени са кеширани данни (до 5 часа).",
+    cacheStaleUsed: "Няма връзка с API. Показани са последните кеширани данни.",
+    sourceFccskaUsed: "API е недостъпен. Показан е резервен профил от fccska.com.",
+    sourceLabelApi: "източник: TheSportsDB",
+    sourceLabelCache: "източник: local cache",
+    sourceLabelFccska: "източник: fccska mirror",
   },
   en: {
     loadBtn: "Load Data",
@@ -136,6 +145,12 @@ const UI_TEXT = {
     qualityWaiting: "API quality: waiting for data...",
     fallbackUpcomingNotice:
       "No confirmed upcoming official match from API. Showing last 3 fixtures instead:",
+    cacheFreshUsed: "Loaded cached data (up to 5 hours old).",
+    cacheStaleUsed: "API is unavailable. Showing latest cached snapshot.",
+    sourceFccskaUsed: "API is unavailable. Showing backup club profile from fccska.com.",
+    sourceLabelApi: "source: TheSportsDB",
+    sourceLabelCache: "source: local cache",
+    sourceLabelFccska: "source: fccska mirror",
   },
 };
 
@@ -187,6 +202,43 @@ function safeMediaUrl(value) {
 
 function normalizeName(value) {
   return String(value ?? "").trim().toLowerCase();
+}
+
+function getCacheKey(teamName) {
+  return `cska-explorer:${CACHE_VERSION}:${normalizeName(teamName)}`;
+}
+
+function saveTeamSnapshot(teamName, snapshot) {
+  try {
+    localStorage.setItem(getCacheKey(teamName), JSON.stringify(snapshot));
+  } catch {
+    // Ignore storage write failures (private mode/quota) and continue.
+  }
+}
+
+function readTeamSnapshot(teamName) {
+  try {
+    const raw = localStorage.getItem(getCacheKey(teamName));
+    if (!raw) {
+      return null;
+    }
+
+    const parsed = JSON.parse(raw);
+    if (!parsed?.savedAt || !parsed?.teamData?.team) {
+      return null;
+    }
+
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+function isSnapshotFresh(snapshot) {
+  if (!snapshot?.savedAt) {
+    return false;
+  }
+  return Date.now() - snapshot.savedAt <= CACHE_TTL_MS;
 }
 
 function formatFormSequence(form) {
@@ -533,6 +585,52 @@ function buildDataQuality(nextMatches = [], fallbackMatches = []) {
       CURRENT_LANG === "en"
         ? "API did not return enough reliable data"
         : "API не върна достатъчно надеждни данни",
+  };
+}
+
+function renderAll(teamData, standingsData = { table: [], standing: null }, featuredPlayer = null) {
+  currentTeamData = teamData;
+  refreshPlayerAutocomplete(teamData.players || []);
+  renderClub(teamData.team || {});
+  renderSquad(teamData.players || []);
+  renderMatches(teamData.matches || [], teamData.team?.strTeam || "");
+  renderNextMatches(teamData.nextMatches || [], teamData.fallbackMatches || []);
+  renderDataQuality(teamData.dataQuality || { level: "limited" });
+  renderSummary(teamData.players || [], teamData.matches || [], teamData.team?.strTeam || "");
+  renderStandings(standingsData?.table || [], teamData.team || null);
+  renderPlayerCard(featuredPlayer, teamData.team?.strTeam || "");
+  renderHeroStats(teamData.team || null, standingsData?.standing || null, teamData.players || [], teamData.matches || []);
+}
+
+async function fetchFccskaSnapshot(teamName) {
+  const response = await fetch(FCCSKA_MIRROR_URL);
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status} while loading fccska mirror`);
+  }
+
+  const text = await response.text();
+  const compact = text.replace(/\s+/g, " ").trim();
+  const mentionIdx = compact.toLowerCase().indexOf("цска");
+  const excerpt = mentionIdx >= 0 ? compact.slice(mentionIdx, mentionIdx + 380) : compact.slice(0, 380);
+
+  return {
+    team: {
+      strTeam: teamName,
+      strLeague: "efbet Liga",
+      strCountry: "Bulgaria",
+      intFormedYear: "1948",
+      strLocation: "Sofia",
+      strWebsite: "www.fccska.com",
+      strDescriptionEN: excerpt,
+    },
+    players: [],
+    matches: [],
+    fallbackMatches: [],
+    nextMatches: [],
+    dataQuality: {
+      level: "limited",
+      details: UI.sourceLabelFccska,
+    },
   };
 }
 
@@ -904,6 +1002,17 @@ async function loadData() {
     return;
   }
 
+  const cachedSnapshot = readTeamSnapshot(teamName);
+  if (cachedSnapshot && isSnapshotFresh(cachedSnapshot)) {
+    renderAll(
+      cachedSnapshot.teamData,
+      cachedSnapshot.standingsData || { table: [], standing: null },
+      cachedSnapshot.featuredPlayer || null
+    );
+    setStatus(`${UI.cacheFreshUsed} (${UI.sourceLabelCache})`, "ok");
+    return;
+  }
+
   setStatus(UI.loadingStatus, "");
   setLoadingState(true);
 
@@ -914,47 +1023,70 @@ async function loadData() {
       fetchPlayerProfile(playerSearchInput.value.trim(), teamData),
     ]);
 
-    currentTeamData = teamData;
-    refreshPlayerAutocomplete(teamData.players);
-    renderClub(teamData.team);
-    renderSquad(teamData.players);
-    renderMatches(teamData.matches, teamData.team.strTeam);
-    renderNextMatches(teamData.nextMatches, teamData.fallbackMatches);
-    renderDataQuality(teamData.dataQuality);
-    renderSummary(teamData.players, teamData.matches, teamData.team.strTeam);
-    renderStandings(standingsData.table, teamData.team);
-    renderPlayerCard(featuredPlayer, teamData.team.strTeam);
-    renderHeroStats(teamData.team, standingsData.standing, teamData.players, teamData.matches);
+    renderAll(teamData, standingsData, featuredPlayer);
+
+    saveTeamSnapshot(teamName, {
+      savedAt: Date.now(),
+      source: "sportsdb",
+      teamData,
+      standingsData,
+      featuredPlayer,
+    });
 
     const name = teamData.team.strTeam || "Клуб";
     setStatus(
       CURRENT_LANG === "en"
-        ? `Data for ${name} loaded: ${teamData.players.length} players, ${teamData.matches.length} last matches and ${teamData.nextMatches.length} confirmed upcoming fixtures (${getDataQualityLabel(teamData.dataQuality).replace(`${UI.apiQualityPrefix}: `, "")}).`
-        : `Данните за ${name} са заредени: ${teamData.players.length} играчи, ${teamData.matches.length} последни мача и ${teamData.nextMatches.length} потвърдени предстоящи (${getDataQualityLabel(teamData.dataQuality).replace(`${UI.apiQualityPrefix}: `, "")}).`,
+        ? `Data for ${name} loaded: ${teamData.players.length} players, ${teamData.matches.length} last matches and ${teamData.nextMatches.length} confirmed upcoming fixtures (${getDataQualityLabel(teamData.dataQuality).replace(`${UI.apiQualityPrefix}: `, "")}; ${UI.sourceLabelApi}).`
+        : `Данните за ${name} са заредени: ${teamData.players.length} играчи, ${teamData.matches.length} последни мача и ${teamData.nextMatches.length} потвърдени предстоящи (${getDataQualityLabel(teamData.dataQuality).replace(`${UI.apiQualityPrefix}: `, "")}; ${UI.sourceLabelApi}).`,
       "ok"
     );
   } catch (error) {
-    const message =
-      error instanceof TypeError
-        ? UI.networkError
-        : `${CURRENT_LANG === "en" ? "Error" : "Грешка"}: ${error.message}`;
-    setStatus(message, "error");
-    clubCard.classList.add("empty");
-    clubCard.classList.remove("loading-state");
-    clubCard.textContent =
-      CURRENT_LANG === "en"
-        ? "Failed to load club information."
-        : "Неуспешно зареждане на клубната информация.";
-    currentTeamData = null;
-    refreshPlayerAutocomplete([]);
-    renderSquad([]);
-    renderMatches([]);
-    renderNextMatches([], []);
-    renderDataQuality({ level: "limited", details: "данните не могат да бъдат потвърдени" });
-    renderSummary([], [], "");
-    renderStandings([], null);
-    renderPlayerCard(null, "");
-    renderHeroStats();
+    const staleSnapshot = cachedSnapshot;
+    if (staleSnapshot) {
+      renderAll(
+        staleSnapshot.teamData,
+        staleSnapshot.standingsData || { table: [], standing: null },
+        staleSnapshot.featuredPlayer || null
+      );
+      setStatus(`${UI.cacheStaleUsed} (${UI.sourceLabelCache})`, "ok");
+      return;
+    }
+
+    try {
+      const fccskaData = await fetchFccskaSnapshot(teamName);
+      renderAll(fccskaData, { table: [], standing: null }, null);
+      saveTeamSnapshot(teamName, {
+        savedAt: Date.now(),
+        source: "fccska",
+        teamData: fccskaData,
+        standingsData: { table: [], standing: null },
+        featuredPlayer: null,
+      });
+      setStatus(UI.sourceFccskaUsed, "ok");
+      return;
+    } catch {
+      const message =
+        error instanceof TypeError
+          ? UI.networkError
+          : `${CURRENT_LANG === "en" ? "Error" : "Грешка"}: ${error.message}`;
+      setStatus(message, "error");
+      clubCard.classList.add("empty");
+      clubCard.classList.remove("loading-state");
+      clubCard.textContent =
+        CURRENT_LANG === "en"
+          ? "Failed to load club information."
+          : "Неуспешно зареждане на клубната информация.";
+      currentTeamData = null;
+      refreshPlayerAutocomplete([]);
+      renderSquad([]);
+      renderMatches([]);
+      renderNextMatches([], []);
+      renderDataQuality({ level: "limited", details: "данните не могат да бъдат потвърдени" });
+      renderSummary([], [], "");
+      renderStandings([], null);
+      renderPlayerCard(null, "");
+      renderHeroStats();
+    }
   } finally {
     setLoadingState(false);
   }
