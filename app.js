@@ -694,13 +694,16 @@ async function fetchFccskaSnapshot(teamName) {
 }
 
 function parseFlashscoreUpcomingFromText(text) {
-  const compact = text.replace(/\s+/g, " ").trim();
-  const summaryMatch = compact.match(/Следващи мачове:\s*([^\n]+)/i);
+  const summaryMatch = String(text || "").match(
+    /Следващи мачове:\s*([\s\S]*?)(?:Покажи още|Топ\s*\[футбол\]|Flashscore\.bg|$)/i
+  );
   if (!summaryMatch) {
     return [];
   }
 
-  const rawList = summaryMatch[1]
+  const summaryText = summaryMatch[1].replace(/\s+/g, " ").trim();
+
+  const rawList = summaryText
     .split(",")
     .map((item) => item.trim())
     .filter(Boolean)
@@ -716,9 +719,12 @@ function parseFlashscoreUpcomingFromText(text) {
       const [, dayMonth, home, away] = parts;
       const [day, month] = dayMonth.split(".");
       const year = new Date().getFullYear();
+      const awayClean = away
+        .replace(/\s*(Покажи още|Топ\s*\[футбол\]).*$/i, "")
+        .trim();
       return {
         strHomeTeam: home.trim(),
-        strAwayTeam: away.trim(),
+        strAwayTeam: awayClean,
         dateEvent: `${year}-${month}-${day}`,
         strTime: "",
       };
