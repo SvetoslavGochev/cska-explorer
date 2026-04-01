@@ -1,0 +1,278 @@
+:root {
+  --bg-dark: #0b0e13;
+  --bg-mid: #151a22;
+  --accent: #d20f1c;
+  --accent-soft: #f04853;
+  --text: #f3f5f7;
+  --muted: #b6becb;
+  --card: rgba(20, 24, 32, 0.88);
+  --ok: #2bb673;
+  --error: #ff5c5c;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "IBM Plex Sans", sans-serif;
+  color: var(--text);
+  background: radial-gradient(circle at 20% 0%, #2b0d10 0%, var(--bg-dark) 40%),
+    linear-gradient(180deg, #07090d 0%, #0d1118 100%);
+}
+
+.page-bg {
+  position: fixed;
+  inset: 0;
+  background-image: linear-gradient(
+      140deg,
+      rgba(210, 15, 28, 0.18),
+      rgba(255, 255, 255, 0)
+    ),
+    repeating-linear-gradient(
+      -35deg,
+      rgba(255, 255, 255, 0.025) 0,
+      rgba(255, 255, 255, 0.025) 1px,
+      transparent 1px,
+      transparent 14px
+    );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero,
+.layout {
+  position: relative;
+  z-index: 1;
+}
+
+.hero {
+  padding: 2.5rem 1rem 1rem;
+  max-width: 1080px;
+  margin: 0 auto;
+  animation: reveal 700ms ease-out;
+}
+
+.tag {
+  margin: 0;
+  letter-spacing: 0.15em;
+  color: var(--accent-soft);
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+
+h1,
+h2,
+h3 {
+  margin-top: 0;
+  font-family: "Bebas Neue", sans-serif;
+  letter-spacing: 0.03em;
+}
+
+h1 {
+  font-size: clamp(2.4rem, 7vw, 4.4rem);
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  margin: 0;
+  color: var(--muted);
+  max-width: 65ch;
+}
+
+.layout {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(12, 1fr);
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 1rem 1rem 2rem;
+}
+
+.panel {
+  grid-column: span 12;
+  background: var(--card);
+  border: 1px solid rgba(240, 72, 83, 0.2);
+  border-radius: 18px;
+  padding: 1rem;
+  backdrop-filter: blur(4px);
+  animation: reveal 700ms ease-out;
+}
+
+.controls {
+  grid-column: span 12;
+}
+
+.row {
+  display: flex;
+  gap: 0.55rem;
+  margin-bottom: 0.9rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--muted);
+}
+
+input {
+  flex: 1;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 0.7rem 0.75rem;
+  min-width: 0;
+}
+
+.btn {
+  border: 0;
+  border-radius: 10px;
+  padding: 0.7rem 0.95rem;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 120ms ease, filter 120ms ease;
+  white-space: nowrap;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.btn.primary {
+  background: linear-gradient(135deg, #b20f1a, #f04853);
+}
+
+.btn.secondary {
+  background: linear-gradient(135deg, #2d313b, #4d5564);
+}
+
+.hint {
+  color: var(--muted);
+  margin: 0.6rem 0;
+}
+
+.status {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.status.hidden {
+  display: none;
+}
+
+.status.ok {
+  color: var(--ok);
+}
+
+.status.error {
+  color: var(--error);
+}
+
+.club-card.empty,
+.squad-list .empty {
+  color: var(--muted);
+}
+
+.club-card p {
+  margin: 0.35rem 0;
+}
+
+.club-card a {
+  color: #ffd6d9;
+}
+
+.squad-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.matches-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.match-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.match-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 0.14rem 0.55rem;
+  border: 1px solid transparent;
+}
+
+.match-win .match-badge {
+  color: #dffff0;
+  background: rgba(43, 182, 115, 0.26);
+  border-color: rgba(43, 182, 115, 0.45);
+}
+
+.match-draw .match-badge {
+  color: #fff8d7;
+  background: rgba(228, 187, 54, 0.24);
+  border-color: rgba(228, 187, 54, 0.42);
+}
+
+.match-loss .match-badge {
+  color: #ffe8e8;
+  background: rgba(255, 92, 92, 0.24);
+  border-color: rgba(255, 92, 92, 0.45);
+}
+
+.history-grid {
+  display: grid;
+  gap: 0.8rem;
+  grid-template-columns: 1fr;
+}
+
+.history-grid article {
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 12px;
+  padding: 0.7rem;
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.history-grid p {
+  margin: 0;
+  color: var(--muted);
+}
+
+@media (min-width: 880px) {
+  .controls {
+    grid-column: span 4;
+  }
+
+  .layout > .panel:not(.controls) {
+    grid-column: span 8;
+  }
+
+  .history-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

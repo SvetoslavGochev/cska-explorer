@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="bg">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSKA Explorer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-bg" aria-hidden="true"></div>
+
+    <header class="hero">
+      <p class="tag">CSKA Single Page App</p>
+      <h1>CSKA Explorer</h1>
+      <p class="subtitle">
+        Разглеждай основна информация, текущ състав и факти за ЦСКА с данни от
+        публичен източник без token.
+      </p>
+    </header>
+
+    <main class="layout">
+      <section class="panel controls" aria-labelledby="controls-title">
+        <h2 id="controls-title">Настройки</h2>
+
+        <label for="team-name">Име на отбор</label>
+        <div class="row">
+          <input
+            type="text"
+            id="team-name"
+            value="CSKA Sofia"
+            placeholder="Например: CSKA Sofia"
+            autocomplete="off"
+          />
+          <button id="load-btn" class="btn primary">Зареди данни</button>
+        </div>
+
+        <p class="hint">
+          Данните идват от безплатния публичен API на TheSportsDB (без API ключ).
+        </p>
+        <p id="status" class="status hidden" aria-live="polite"></p>
+      </section>
+
+      <section class="panel" aria-labelledby="club-title">
+        <h2 id="club-title">Клубна информация</h2>
+        <div id="club-card" class="club-card empty">
+          Натисни "Зареди данни" за да видиш информация.
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="squad-title">
+        <h2 id="squad-title">Текущ състав</h2>
+        <ul id="squad-list" class="squad-list">
+          <li class="empty">Няма заредени играчи.</li>
+        </ul>
+      </section>
+
+      <section class="panel" aria-labelledby="matches-title">
+        <h2 id="matches-title">Последни мачове</h2>
+        <ul id="matches-list" class="matches-list">
+          <li class="empty">Няма заредени мачове.</li>
+        </ul>
+      </section>
+
+      <section class="panel" aria-labelledby="history-title">
+        <h2 id="history-title">История и успехи</h2>
+        <div class="history-grid">
+          <article>
+            <h3>Кратка история</h3>
+            <p>
+              ЦСКА е един от най-разпознаваемите клубове в България с богата
+              традиция, силна фенска култура и дългогодишно участие в топ
+              футбола.
+            </p>
+          </article>
+          <article>
+            <h3>Успехи</h3>
+            <p>
+              Клубът е многократен шампион и носител на национални купи.
+              Европейските кампании също са важна част от идентичността му.
+            </p>
+          </article>
+          <article>
+            <h3>Състав днес</h3>
+            <p>
+              Използвай секцията "Текущ състав" за да видиш играчите по данни от
+              API в реално време.
+            </p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
