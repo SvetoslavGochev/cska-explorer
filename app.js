@@ -176,7 +176,7 @@ const UI = UI_TEXT[CURRENT_LANG];
 
 function teamDescriptionForLang(team) {
   if (CURRENT_LANG === "en") {
-    return formatText((team.strDescriptionEN || "").slice(0, 420), UI.noDescription);
+    return formatText(cleanMirrorText(team.strDescriptionEN || "").slice(0, 420), UI.noDescription);
   }
 
   const teamName = team.strTeam || "Отборът";
@@ -203,6 +203,24 @@ function escapeHtml(value) {
 function formatText(value, fallback = "Няма данни") {
   const trimmed = String(value ?? "").trim();
   return trimmed ? escapeHtml(trimmed) : fallback;
+}
+
+function cleanMirrorText(value) {
+  return String(value ?? "")
+    .replace(/!\[[^\]]*\]\([^)]+\)/g, " ")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/https?:\/\/\S+/g, " ")
+    .replace(/\b(Image|Screenshot|Реклама|ЛОГИН|Любими)\b/gi, " ")
+    .replace(/[_*#>`]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function extractFlashscoreDescription(text, fallback = "") {
+  const source = String(text || "");
+  const helpMatch = source.match(/ПОМОЩ:\s*([\s\S]*?)(?:Следващи мачове:|Покажи още|$)/i);
+  const raw = helpMatch?.[1] || fallback || source;
+  return cleanMirrorText(raw).slice(0, 420).trim();
 }
 
 function safeMediaUrl(value) {
@@ -927,11 +945,7 @@ async function fetchFlashscoreSnapshot(teamName) {
   const [text, squadText] = await Promise.all([teamResponse.text(), squadResponse.text()]);
   const upcoming = parseFlashscoreUpcomingFromText(text);
   const squad = parseFlashscoreSquadFromText(squadText);
-  const excerptStart = text.toLowerCase().indexOf("футбол, българия: цска");
-  const excerpt =
-    excerptStart >= 0
-      ? text.slice(excerptStart, excerptStart + 380).replace(/\s+/g, " ").trim()
-      : text.slice(0, 380).replace(/\s+/g, " ").trim();
+  const excerpt = extractFlashscoreDescription(text, text.slice(0, 600));
 
   return {
     team: {
