@@ -1,6 +1,8 @@
 const API_BASE = "https://www.thesportsdb.com/api/v1/json/3";
 const FLASHSCORE_TEAM_MIRROR_URL = "https://r.jina.ai/http://www.flashscore.bg/team/cska-sofia/0xFNNECi/";
 const FLASHSCORE_SQUAD_MIRROR_URL = "https://r.jina.ai/http://www.flashscore.bg/team/cska-sofia/0xFNNECi/squad/";
+const FLASHSCORE_STANDINGS_MIRROR_URL =
+  "https://r.jina.ai/http://www.flashscore.bg/team/cska-sofia/0xFNNECi/standings/ID1TwQHr/standings/overall/";
 const FCCSKA_MIRROR_URL = "https://r.jina.ai/http://www.fccska.com/";
 const CACHE_TTL_MS = 5 * 60 * 60 * 1000;
 const CACHE_VERSION = "v2";
@@ -804,6 +806,76 @@ function parseFlashscoreSquadFromText(text) {
   return players;
 }
 
+function parseFlashscoreStandingsFromText(text, targetTeamName = "") {
+  const source = String(text || "");
+  const tableStart = source.search(/\bОтбор\b\s*[\r\n]+\s*ИМ\s*[\r\n]+\s*П\s*[\r\n]+\s*Р\s*[\r\n]+\s*3\s*[\r\n]+\s*Г\s*[\r\n]+\s*ГР\s*[\r\n]+\s*Т/i);
+  if (tableStart < 0) {
+    return { table: [], standing: null };
+  }
+
+  const tail = source.slice(tableStart);
+  const tableEndCandidates = [
+    tail.search(/\bПромоция\b/i),
+    tail.search(/\bПоследни\b/i),
+    tail.search(/\bПредстоящи\b/i),
+  ].filter((idx) => idx > 0);
+  const tableEnd = tableEndCandidates.length ? Math.min(...tableEndCandidates) : tail.length;
+  const segment = tail.slice(0, tableEnd);
+
+  const rankToken = /(\d+)\.\s*/g;
+  const rankHits = [...segment.matchAll(rankToken)];
+  const seasonMatch = source.match(/\b(20\d{2}-20\d{2})\b/);
+  const season = seasonMatch?.[1] || UI.noData;
+  const table = [];
+
+  for (let index = 0; index < rankHits.length; index += 1) {
+    const current = rankHits[index];
+    const next = rankHits[index + 1];
+    const chunkStart = current.index ?? 0;
+    const chunkEnd = next?.index ?? segment.length;
+    const chunk = segment.slice(chunkStart, chunkEnd);
+
+    const rank = current[1];
+    const teamMatch = chunk.match(/\[(?!Image\b)([^\]]+)\]\(https?:\/\/www\.flashscore\.bg\/team\/[^)]+\)/i);
+    const statsMatch = chunk.match(/(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+):(\d+)\s*([+-]?\d+)\s+(\d+)/);
+
+    if (!teamMatch || !statsMatch) {
+      continue;
+    }
+
+    const [, played, wins, draws, losses, goalsFor, goalsAgainst, goalDiff, points] = statsMatch;
+    const teamName = teamMatch[1].trim();
+
+    table.push({
+      idTeam: normalizeName(teamName),
+      strTeam: teamName,
+      intRank: rank,
+      intPlayed: played,
+      intWin: wins,
+      intDraw: draws,
+      intLoss: losses,
+      intGoalsFor: goalsFor,
+      intGoalsAgainst: goalsAgainst,
+      intGoalDifference: goalDiff,
+      intPoints: points,
+      strSeason: season,
+      strForm: "",
+    });
+  }
+
+  if (!table.length) {
+    return { table: [], standing: null };
+  }
+
+  const normalizedTarget = normalizeName(targetTeamName);
+  const standing =
+    table.find((row) => normalizeName(row.strTeam) === normalizedTarget) ||
+    table.find((row) => normalizeName(row.strTeam).includes(normalizedTarget) || normalizedTarget.includes(normalizeName(row.strTeam))) ||
+    null;
+
+  return { table, standing };
+}
+
 async function fetchFlashscoreSnapshot(teamName) {
   const [teamResponse, squadResponse] = await Promise.all([
     fetch(FLASHSCORE_TEAM_MIRROR_URL),
@@ -1061,6 +1133,21 @@ function renderSummary(players = [], matches = [], selectedTeamName = "") {
 }
 
 async function fetchStandings(team) {
+  try {
+    const response = await fetch(FLASHSCORE_STANDINGS_MIRROR_URL);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status} while loading flashscore standings mirror`);
+    }
+
+    const text = await response.text();
+    const parsed = parseFlashscoreStandingsFromText(text, team?.strTeam || "");
+    if (parsed.table.length) {
+      return parsed;
+    }
+  } catch {
+    // If Flashscore standings parsing fails, fall back to TheSportsDB.
+  }
+
   if (!team?.idLeague) {
     return { table: [], standing: null };
   }
