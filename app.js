@@ -302,6 +302,43 @@ function formatFormSequence(form) {
   return compact ? compact.split("").join(" ") : "Няма данни";
 }
 
+function normalizeFormSymbol(symbol) {
+  const raw = String(symbol || "").trim().toUpperCase();
+  if (raw === "W" || raw === "П") {
+    return "W";
+  }
+  if (raw === "D" || raw === "Р" || raw === "X") {
+    return "D";
+  }
+  if (raw === "L" || raw === "З" || raw === "3") {
+    return "L";
+  }
+  return "";
+}
+
+function normalizeFormSequence(form) {
+  return String(form || "")
+    .split("")
+    .map((char) => normalizeFormSymbol(char))
+    .filter(Boolean)
+    .slice(0, 5);
+}
+
+function renderFormSquares(form) {
+  const sequence = normalizeFormSequence(form);
+  if (!sequence.length) {
+    return `<span class="form-empty">${UI.noData}</span>`;
+  }
+
+  return `<span class="form-squares">${sequence
+    .map((result) => {
+      const kind = result === "W" ? "win" : result === "D" ? "draw" : "loss";
+      const label = result === "W" ? UI.win : result === "D" ? UI.draw : UI.loss;
+      return `<span class="form-square ${kind}" title="${escapeHtml(label)}" aria-label="${escapeHtml(label)}"></span>`;
+    })
+    .join("")}</span>`;
+}
+
 function getSeasonCandidates(referenceDate = new Date()) {
   const year = referenceDate.getFullYear();
   const month = referenceDate.getMonth();
@@ -838,6 +875,11 @@ function parseFlashscoreStandingsFromText(text, targetTeamName = "") {
     const [, played, wins, draws, losses, goalsFor, goalsAgainst, goalDiff, points] = statsMatch;
     const teamName = teamMatch[1].trim();
     const badge = badgeMatch?.[1] || "";
+    const formTokens = [...chunk.matchAll(/\[([^\]\s])\]\(https?:\/\/www\.flashscore\.bg\/match\//gi)]
+      .map((token) => normalizeFormSymbol(token[1]))
+      .filter(Boolean)
+      .slice(0, 5)
+      .join("");
 
     table.push({
       idTeam: normalizeName(teamName),
@@ -853,7 +895,7 @@ function parseFlashscoreStandingsFromText(text, targetTeamName = "") {
       intGoalDifference: goalDiff,
       intPoints: points,
       strSeason: season,
-      strForm: "",
+      strForm: formTokens,
     });
   }
 
@@ -996,6 +1038,7 @@ function renderStandings(table = [], currentTeam = null) {
   }
 
   standingsCard.className = "standings-card";
+  const currentFormSquares = renderFormSquares(currentRow?.strForm || "");
   standingsCard.innerHTML = `
     <div class="standings-list">
       ${visibleRows
@@ -1024,7 +1067,11 @@ function renderStandings(table = [], currentTeam = null) {
         })
         .join("")}
     </div>
-    <p class="standings-note">${UI.season}: ${escapeHtml(table[0]?.strSeason || UI.noData)} • ${UI.teamFormPrefix} ${escapeHtml(currentTeamName || "team")}: ${currentRow?.strForm ? formatFormSequence(currentRow.strForm) : UI.noData}</p>
+    <p class="standings-note">${UI.season}: ${escapeHtml(table[0]?.strSeason || UI.noData)} • ${UI.teamFormPrefix} ${escapeHtml(currentTeamName || "team")}:</p>
+    <div class="standings-form-row">
+      <span>${CURRENT_LANG === "en" ? "Last 5" : "Последни 5"}</span>
+      ${currentFormSquares}
+    </div>
   `;
 }
 
