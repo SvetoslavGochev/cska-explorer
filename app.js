@@ -828,6 +828,7 @@ function parseFlashscoreStandingsFromText(text, targetTeamName = "") {
 
     const rank = current[1];
     const teamMatch = chunk.match(/\[(?!Image\b)([^\]]+)\]\(https?:\/\/www\.flashscore\.bg\/team\/[^)]+\)/i);
+    const badgeMatch = chunk.match(/\!\[[^\]]*\]\((https?:\/\/[^)]+\.(?:png|jpg|jpeg|webp))\)/i);
     const statsMatch = chunk.match(/(\d+)\s+(\d+)\s+(\d+)\s+(\d+)\s+(\d+):(\d+)\s*([+-]?\d+)\s+(\d+)/);
 
     if (!teamMatch || !statsMatch) {
@@ -836,10 +837,12 @@ function parseFlashscoreStandingsFromText(text, targetTeamName = "") {
 
     const [, played, wins, draws, losses, goalsFor, goalsAgainst, goalDiff, points] = statsMatch;
     const teamName = teamMatch[1].trim();
+    const badge = badgeMatch?.[1] || "";
 
     table.push({
       idTeam: normalizeName(teamName),
       strTeam: teamName,
+      strBadge: badge,
       intRank: rank,
       intPlayed: played,
       intWin: wins,
