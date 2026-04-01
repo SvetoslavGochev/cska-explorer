@@ -82,6 +82,22 @@ h1 {
   max-width: 65ch;
 }
 
+.hero-points {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 1rem;
+}
+
+.hero-points span {
+  padding: 0.45rem 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #f7d9dc;
+  font-size: 0.88rem;
+}
+
 .layout {
   display: grid;
   gap: 1rem;
@@ -143,6 +159,11 @@ input {
   filter: brightness(1.05);
 }
 
+.btn:disabled {
+  cursor: wait;
+  opacity: 0.88;
+}
+
 .btn.primary {
   background: linear-gradient(135deg, #b20f1a, #f04853);
 }
@@ -174,8 +195,14 @@ input {
 }
 
 .club-card.empty,
-.squad-list .empty {
+.squad-list .empty,
+.matches-list .empty {
   color: var(--muted);
+}
+
+.club-card {
+  display: grid;
+  gap: 1rem;
 }
 
 .club-card p {
@@ -186,18 +213,160 @@ input {
   color: #ffd6d9;
 }
 
+.club-hero {
+  display: grid;
+  gap: 0.9rem;
+}
+
+.club-identity {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.club-badge {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.28));
+}
+
+.club-kicker {
+  color: var(--accent-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.75rem;
+}
+
+.club-summary {
+  color: var(--muted);
+}
+
+.club-banner,
+.club-stadium {
+  width: 100%;
+  border-radius: 14px;
+  object-fit: cover;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.club-banner {
+  min-height: 120px;
+  max-height: 220px;
+}
+
+.club-stadium {
+  min-height: 160px;
+  max-height: 260px;
+}
+
+.fact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.fact-grid article {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 0.8rem;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.fact-grid span {
+  display: block;
+  margin-bottom: 0.3rem;
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.fact-grid strong {
+  display: block;
+  line-height: 1.35;
+}
+
+.club-copy {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.loading-state {
+  border: 1px dashed rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.club-loading-lines {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.club-loading-lines span {
+  display: block;
+  height: 12px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.06));
+  background-size: 200% 100%;
+  animation: shimmer 1.2s linear infinite;
+}
+
+.club-loading-lines span:nth-child(2) {
+  width: 82%;
+}
+
+.club-loading-lines span:nth-child(3) {
+  width: 68%;
+}
+
 .squad-list {
   margin: 0;
-  padding-left: 1.25rem;
+  padding-left: 0;
+  list-style: none;
   display: grid;
-  gap: 0.35rem;
+  gap: 0.55rem;
 }
 
 .matches-list {
   margin: 0;
-  padding-left: 1.25rem;
+  padding-left: 0;
+  list-style: none;
   display: grid;
-  gap: 0.35rem;
+  gap: 0.55rem;
+}
+
+.squad-list li,
+.matches-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.55rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.list-index {
+  color: var(--accent-soft);
+  font-weight: 700;
+  min-width: 1.5rem;
+}
+
+.player-name {
+  font-weight: 700;
+}
+
+.player-meta,
+.match-copy span,
+.loading-item {
+  color: var(--muted);
+}
+
+.match-copy {
+  display: grid;
+  gap: 0.14rem;
+  flex: 1;
 }
 
 .match-item {
@@ -256,12 +425,54 @@ input {
     grid-column: span 4;
   }
 
-  .layout > .panel:not(.controls) {
+  .club-panel {
     grid-column: span 8;
+  }
+
+  .squad-panel,
+  .matches-panel {
+    grid-column: span 6;
+  }
+
+  .history-panel {
+    grid-column: span 12;
+  }
+
+  .club-hero {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr);
+    align-items: center;
   }
 
   .history-grid {
     grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .hero {
+    padding-top: 1.8rem;
+  }
+
+  .row {
+    flex-direction: column;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  .fact-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .squad-list li,
+  .matches-list li,
+  .match-item {
+    align-items: flex-start;
+  }
+
+  .match-badge {
+    margin-left: 2rem;
   }
 }
 
@@ -274,5 +485,15 @@ input {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+
+  to {
+    background-position: -200% 0;
   }
 }

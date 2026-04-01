@@ -7,6 +7,58 @@ const clubCard = document.getElementById("club-card");
 const squadList = document.getElementById("squad-list");
 const matchesList = document.getElementById("matches-list");
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function formatText(value, fallback = "Няма данни") {
+  const trimmed = String(value ?? "").trim();
+  return trimmed ? escapeHtml(trimmed) : fallback;
+}
+
+function safeMediaUrl(value) {
+  if (!value) {
+    return "";
+  }
+
+  try {
+    const url = new URL(value);
+    return /^https?:$/.test(url.protocol) ? url.toString() : "";
+  } catch {
+    return "";
+  }
+}
+
+function setLoadingState(isLoading) {
+  loadBtn.disabled = isLoading;
+  loadBtn.textContent = isLoading ? "Зареждане..." : "Зареди данни";
+  loadBtn.classList.toggle("is-loading", isLoading);
+  clubCard.setAttribute("aria-busy", String(isLoading));
+  squadList.setAttribute("aria-busy", String(isLoading));
+  matchesList.setAttribute("aria-busy", String(isLoading));
+
+  if (!isLoading) {
+    return;
+  }
+
+  clubCard.className = "club-card loading-state";
+  clubCard.innerHTML = `
+    <div class="club-loading-lines" aria-hidden="true">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <p>Зареждам клубната информация...</p>
+  `;
+  squadList.innerHTML = '<li class="empty loading-item">Зареждам състава...</li>';
+  matchesList.innerHTML = '<li class="empty loading-item">Зареждам мачовете...</li>';
+}
+
 function setStatus(message, type = "") {
   statusEl.textContent = message;
   statusEl.classList.remove("ok", "error");
@@ -27,25 +79,66 @@ async function apiGet(path) {
 }
 
 function renderClub(team) {
-  const founded = team.intFormedYear || "Няма данни";
-  const venue = team.strStadium || "Няма данни";
-  const location = team.strLocation || "Няма данни";
+  const founded = formatText(team.intFormedYear);
+  const venue = formatText(team.strStadium);
+  const location = formatText(team.strLocation);
   const website = team.strWebsite || "";
-  const description = team.strDescriptionEN || "Няма налично описание.";
+  const description = formatText(
+    (team.strDescriptionEN || "").slice(0, 420),
+    "Няма налично описание."
+  );
+  const badge = safeMediaUrl(team.strBadge);
+  const banner = safeMediaUrl(team.strTeamBanner || team.strTeamFanart1 || team.strFanart1);
+  const league = formatText(team.strLeague);
+  const country = formatText(team.strCountry);
+  const capacity = formatText(team.intStadiumCapacity);
+  const keywords = formatText(team.strKeywords, "Футбол, България, ЦСКА");
+  const teamName = formatText(team.strTeam, "Няма данни");
+  const stadiumThumb = safeMediaUrl(team.strStadiumThumb);
 
   clubCard.classList.remove("empty");
+  clubCard.classList.remove("loading-state");
   clubCard.innerHTML = `
-    <p><strong>Клуб:</strong> ${team.strTeam || "Няма данни"}</p>
-    <p><strong>Основан:</strong> ${founded}</p>
-    <p><strong>Стадион:</strong> ${venue}</p>
-    <p><strong>Локация:</strong> ${location}</p>
-    <p><strong>Държава:</strong> ${team.strCountry || "Няма данни"}</p>
-    <p><strong>Уебсайт:</strong> ${
+    <div class="club-hero">
+      <div class="club-identity">
+        ${badge ? `<img class="club-badge" src="${badge}" alt="Емблема на ${teamName}" />` : ""}
+        <div>
+          <p class="club-kicker">Клубен профил</p>
+          <h3>${teamName}</h3>
+          <p class="club-summary">${league} • ${country}</p>
+        </div>
+      </div>
+      ${banner ? `<img class="club-banner" src="${banner}" alt="Банер на ${teamName}" />` : ""}
+    </div>
+    <div class="fact-grid">
+      <article>
+        <span>Основан</span>
+        <strong>${founded}</strong>
+      </article>
+      <article>
+        <span>Стадион</span>
+        <strong>${venue}</strong>
+      </article>
+      <article>
+        <span>Капацитет</span>
+        <strong>${capacity}</strong>
+      </article>
+      <article>
+        <span>Локация</span>
+        <strong>${location}</strong>
+      </article>
+    </div>
+    <div class="club-copy">
+      <p><strong>Държава:</strong> ${country}</p>
+      <p><strong>Ключови думи:</strong> ${keywords}</p>
+      <p><strong>Уебсайт:</strong> ${
       website
-        ? `<a href="https://${website.replace(/^https?:\/\//, "")}" target="_blank" rel="noreferrer">${website}</a>`
+        ? `<a href="https://${website.replace(/^https?:\/\//, "")}" target="_blank" rel="noreferrer">${escapeHtml(website)}</a>`
         : "Няма данни"
     }</p>
-    <p><strong>Описание:</strong> ${description.slice(0, 320)}...</p>
+      <p><strong>Описание:</strong> ${description}${description.endsWith(".") ? "" : "..."}</p>
+    </div>
+    ${stadiumThumb ? `<img class="club-stadium" src="${stadiumThumb}" alt="Стадион на ${teamName}" />` : ""}
   `;
 }
 
@@ -58,8 +151,10 @@ function renderSquad(players = []) {
   squadList.innerHTML = players
     .slice(0, 25)
     .map((player, idx) => {
-      const position = player.strPosition || "Неуточнена позиция";
-      return `<li>${idx + 1}. ${player.strPlayer} (${position})</li>`;
+      const position = formatText(player.strPosition, "Неуточнена позиция");
+      const playerName = formatText(player.strPlayer, "Неизвестен играч");
+      const number = formatText(player.strNumber, "-");
+      return `<li><span class="list-index">${idx + 1}.</span> <span class="player-name">${playerName}</span> <span class="player-meta">#${number} • ${position}</span></li>`;
     })
     .join("");
 }
@@ -104,7 +199,7 @@ function renderMatches(matches = [], selectedTeamName = "") {
       const score = `${match.intHomeScore ?? "?"}:${match.intAwayScore ?? "?"}`;
       const date = match.dateEvent || "Няма дата";
       const outcome = getOutcome(match, selectedTeamName);
-      return `<li class="match-item match-${outcome.key}">${idx + 1}. ${home} vs ${away} (${score}) - ${date} <span class="match-badge">${outcome.label}</span></li>`;
+      return `<li class="match-item match-${outcome.key}"><span class="list-index">${idx + 1}.</span><div class="match-copy"><strong>${escapeHtml(home)} vs ${escapeHtml(away)}</strong><span>${escapeHtml(score)} • ${escapeHtml(date)}</span></div><span class="match-badge">${escapeHtml(outcome.label)}</span></li>`;
     })
     .join("");
 }
@@ -173,6 +268,7 @@ async function loadData() {
   }
 
   setStatus("Зареждане на данни...", "");
+  setLoadingState(true);
 
   try {
     const teamData = await fetchTeamData(teamName);
@@ -192,14 +288,23 @@ async function loadData() {
         : `Грешка: ${error.message}`;
     setStatus(message, "error");
     clubCard.classList.add("empty");
+    clubCard.classList.remove("loading-state");
     clubCard.textContent = "Неуспешно зареждане на клубната информация.";
     renderSquad([]);
     renderMatches([]);
+  } finally {
+    setLoadingState(false);
   }
 }
 
 function init() {
   loadBtn.addEventListener("click", loadData);
+  teamNameInput.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      loadData();
+    }
+  });
+  loadData();
 }
 
 init();
