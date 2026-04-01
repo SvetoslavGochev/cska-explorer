@@ -1,5 +1,6 @@
 const API_BASE = "https://www.thesportsdb.com/api/v1/json/3";
 const FLASHSCORE_TEAM_MIRROR_URL = "https://r.jina.ai/http://www.flashscore.bg/team/cska-sofia/0xFNNECi/";
+const FLASHSCORE_SQUAD_MIRROR_URL = "https://r.jina.ai/http://www.flashscore.bg/team/cska-sofia/0xFNNECi/squad/";
 const FCCSKA_MIRROR_URL = "https://r.jina.ai/http://www.fccska.com/";
 const CACHE_TTL_MS = 5 * 60 * 60 * 1000;
 const CACHE_VERSION = "v1";
@@ -715,14 +716,83 @@ function parseFlashscoreUpcomingFromText(text) {
     .filter(Boolean);
 }
 
-async function fetchFlashscoreSnapshot(teamName) {
-  const response = await fetch(FLASHSCORE_TEAM_MIRROR_URL);
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status} while loading flashscore mirror`);
+function mapFlashscorePosition(label) {
+  const normalized = String(label || "").trim().toLowerCase();
+  if (normalized === "вратари") {
+    return CURRENT_LANG === "en" ? "Goalkeeper" : "Вратар";
+  }
+  if (normalized === "защитници") {
+    return CURRENT_LANG === "en" ? "Defender" : "Защитник";
+  }
+  if (normalized === "халфове") {
+    return CURRENT_LANG === "en" ? "Midfielder" : "Халф";
+  }
+  if (normalized === "нападатели") {
+    return CURRENT_LANG === "en" ? "Forward" : "Нападател";
+  }
+  if (normalized === "треньор") {
+    return CURRENT_LANG === "en" ? "Coach" : "Треньор";
+  }
+  return UI.unknownPosition;
+}
+
+function parseFlashscoreSquadFromText(text) {
+  const lines = String(text || "").split(/\r?\n/);
+  const headingPattern = /^(Вратари|Защитници|Халфове|Нападатели|Треньор)$/i;
+  const playerPattern = /^\[(.+?)\]\(https?:\/\/www\.flashscore\.bg\/player\//i;
+  const players = [];
+  const seen = new Set();
+  let currentGroup = "";
+
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+    if (!line) {
+      continue;
+    }
+
+    const heading = line.match(headingPattern);
+    if (heading) {
+      currentGroup = heading[1];
+      continue;
+    }
+
+    const player = line.match(playerPattern);
+    if (!player) {
+      continue;
+    }
+
+    const name = player[1].trim();
+    const key = normalizeName(name);
+    if (!name || seen.has(key)) {
+      continue;
+    }
+
+    seen.add(key);
+    players.push({
+      strPlayer: name,
+      strPosition: mapFlashscorePosition(currentGroup),
+      strNumber: "-",
+    });
   }
 
-  const text = await response.text();
+  return players;
+}
+
+async function fetchFlashscoreSnapshot(teamName) {
+  const [teamResponse, squadResponse] = await Promise.all([
+    fetch(FLASHSCORE_TEAM_MIRROR_URL),
+    fetch(FLASHSCORE_SQUAD_MIRROR_URL),
+  ]);
+  if (!teamResponse.ok) {
+    throw new Error(`HTTP ${teamResponse.status} while loading flashscore team mirror`);
+  }
+  if (!squadResponse.ok) {
+    throw new Error(`HTTP ${squadResponse.status} while loading flashscore squad mirror`);
+  }
+
+  const [text, squadText] = await Promise.all([teamResponse.text(), squadResponse.text()]);
   const upcoming = parseFlashscoreUpcomingFromText(text);
+  const squad = parseFlashscoreSquadFromText(squadText);
   const excerptStart = text.toLowerCase().indexOf("футбол, българия: цска");
   const excerpt =
     excerptStart >= 0
@@ -736,18 +806,30 @@ async function fetchFlashscoreSnapshot(teamName) {
       strCountry: "Bulgaria",
       intFormedYear: "1948",
       strLocation: "Sofia",
+      strStadium: "Нац. стадион \"Васил Левски\"",
+      intStadiumCapacity: "43230",
       strWebsite: "www.flashscore.bg",
       strDescriptionEN: excerpt,
     },
-    players: [],
+    players: squad,
     matches: [],
     fallbackMatches: [],
     nextMatches: upcoming,
+    source: "flashscore",
     dataQuality: {
       level: upcoming.length ? "medium" : "limited",
       details: UI.sourceLabelFlashscore,
     },
   };
+}
+
+async function fetchPrimaryTeamData(teamName) {
+  try {
+    return await fetchFlashscoreSnapshot(teamName);
+  } catch {
+    const apiData = await fetchTeamData(teamName);
+    return { ...apiData, source: "sportsdb" };
+  }
 }
 
 function renderMatches(matches = [], selectedTeamName = "") {
@@ -1134,28 +1216,42 @@ async function loadData() {
   setLoadingState(true);
 
   try {
-    const teamData = await fetchTeamData(teamName);
-    const [standingsData, featuredPlayer] = await Promise.all([
-      fetchStandings(teamData.team),
-      fetchPlayerProfile(playerSearchInput.value.trim(), teamData),
-    ]);
+    const teamData = await fetchPrimaryTeamData(teamName);
+    let standingsData = { table: [], standing: null };
+    let featuredPlayer = null;
+
+    try {
+      standingsData = await fetchStandings(teamData.team);
+    } catch {
+      standingsData = { table: [], standing: null };
+    }
+
+    try {
+      featuredPlayer = await fetchPlayerProfile(playerSearchInput.value.trim(), teamData);
+    } catch {
+      featuredPlayer = null;
+    }
 
     renderAll(teamData, standingsData, featuredPlayer);
 
+    const resolvedSource = teamData.source || "sportsdb";
+    const now = Date.now();
+
     saveTeamSnapshot(teamName, {
-      savedAt: Date.now(),
-      source: "sportsdb",
+      savedAt: now,
+      source: resolvedSource,
       teamData,
       standingsData,
       featuredPlayer,
     });
-    setSourceMeta(Date.now(), UI.sourceLabelApi);
+    setSourceMeta(now, resolveSourceLabel(resolvedSource));
 
     const name = teamData.team.strTeam || "Клуб";
+    const sourceLabel = resolveSourceLabel(resolvedSource);
     setStatus(
       CURRENT_LANG === "en"
-        ? `Data for ${name} loaded: ${teamData.players.length} players, ${teamData.matches.length} last matches and ${teamData.nextMatches.length} confirmed upcoming fixtures (${getDataQualityLabel(teamData.dataQuality).replace(`${UI.apiQualityPrefix}: `, "")}; ${UI.sourceLabelApi}).`
-        : `Данните за ${name} са заредени: ${teamData.players.length} играчи, ${teamData.matches.length} последни мача и ${teamData.nextMatches.length} потвърдени предстоящи (${getDataQualityLabel(teamData.dataQuality).replace(`${UI.apiQualityPrefix}: `, "")}; ${UI.sourceLabelApi}).`,
+        ? `Data for ${name} loaded: ${teamData.players.length} players, ${teamData.matches.length} last matches and ${teamData.nextMatches.length} confirmed upcoming fixtures (${getDataQualityLabel(teamData.dataQuality).replace(`${UI.apiQualityPrefix}: `, "")}; ${sourceLabel}).`
+        : `Данните за ${name} са заредени: ${teamData.players.length} играчи, ${teamData.matches.length} последни мача и ${teamData.nextMatches.length} потвърдени предстоящи (${getDataQualityLabel(teamData.dataQuality).replace(`${UI.apiQualityPrefix}: `, "")}; ${sourceLabel}).`,
       "ok"
     );
   } catch (error) {
