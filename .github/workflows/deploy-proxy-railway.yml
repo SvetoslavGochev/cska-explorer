@@ -27,10 +27,15 @@ jobs:
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
           RAILWAY_SERVICE: ${{ secrets.RAILWAY_SERVICE }}
+          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
         run: |
           if [ -z "$RAILWAY_TOKEN" ]; then
             echo "Missing RAILWAY_TOKEN secret"
             exit 1
+          fi
+
+          if [ -n "$RAILWAY_PROJECT_ID" ]; then
+            railway link --project "$RAILWAY_PROJECT_ID"
           fi
 
           cd proxy

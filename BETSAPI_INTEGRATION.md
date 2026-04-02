@@ -23,7 +23,8 @@ Workflow file: `.github/workflows/deploy-proxy-railway.yml`
 Required repository secrets:
 
 - `RAILWAY_TOKEN`
-- `RAILWAY_SERVICE`
+- `RAILWAY_SERVICE` (optional, but recommended)
+- `RAILWAY_PROJECT_ID` (optional, recommended if repo is not linked in CI)
 
 The workflow deploys automatically on push when `proxy/**` changes.
 
