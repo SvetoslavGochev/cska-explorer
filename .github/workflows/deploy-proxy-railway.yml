@@ -29,6 +29,7 @@ jobs:
           RAILWAY_SERVICE: ${{ secrets.RAILWAY_SERVICE || 'cska-betsapi-proxy' }}
           RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
         run: |
+          # Retry trigger: keep workflow deterministic while allowing manual retrigger via commit.
           if [ -z "$RAILWAY_TOKEN" ]; then
             echo "Missing RAILWAY_TOKEN secret"
             exit 1
