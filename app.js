@@ -1,4 +1,4 @@
-const LOCAL_CACHE_KEY = "cska_explorer_root_cache_v4";
+const LOCAL_CACHE_KEY = "cska_explorer_root_cache_v5";
 const LOCAL_CACHE_TTL_MS = 10 * 60 * 1000;
 
 const FALLBACK_DATA = {
@@ -88,11 +88,19 @@ function buildFullStandings(standings) {
   });
 }
 
+function sortStandingsByRank(standings) {
+  return [...(standings || [])].sort((left, right) => {
+    const leftRank = Number(left?.rank) || Number.MAX_SAFE_INTEGER;
+    const rightRank = Number(right?.rank) || Number.MAX_SAFE_INTEGER;
+    return leftRank - rightRank;
+  });
+}
+
 function renderStandings(standings) {
   const body = document.querySelector("#standingsTable tbody");
   body.innerHTML = "";
 
-  standings.forEach((row) => {
+  sortStandingsByRank(standings).forEach((row) => {
     const logo = getTeamLogo(row.team);
     const tr = document.createElement("tr");
     tr.innerHTML = `

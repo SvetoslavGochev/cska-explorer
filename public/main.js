@@ -62,7 +62,13 @@ function render(data, fromLocalCache) {
 
   const standingsBody = document.querySelector("#standingsTable tbody");
   standingsBody.innerHTML = "";
-  (data.standings || []).forEach((row) => {
+  [...(data.standings || [])]
+    .sort((left, right) => {
+      const leftRank = Number(left?.rank) || Number.MAX_SAFE_INTEGER;
+      const rightRank = Number(right?.rank) || Number.MAX_SAFE_INTEGER;
+      return leftRank - rightRank;
+    })
+    .forEach((row) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${row.rank ?? "-"}</td>
@@ -75,7 +81,7 @@ function render(data, fromLocalCache) {
       <td><strong>${row.pts ?? "-"}</strong></td>
     `;
     standingsBody.appendChild(tr);
-  });
+    });
 
   const nextMatches = document.getElementById("nextMatches");
   nextMatches.innerHTML = "";
