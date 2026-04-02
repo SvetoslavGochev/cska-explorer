@@ -1,12 +1,12 @@
 :root {
   --bg: #efe8dc;
-  --surface: rgba(255, 253, 248, 0.42);
-  --surface-2: rgba(255, 255, 255, 0.38);
+  --surface: rgba(255, 253, 248, 0.34);
+  --surface-2: rgba(255, 255, 255, 0.3);
   --ink: #201711;
   --muted: #77685a;
   --red: #b0121a;
   --red-dark: #6f0b10;
-  --line: rgba(232, 216, 193, 0.56);
+  --line: rgba(232, 216, 193, 0.45);
   --ok: #0d7f48;
 }
 
@@ -85,8 +85,8 @@ body {
   color: #2e1f14;
   padding: 8px 10px;
   border-radius: 10px;
-  background: linear-gradient(180deg, rgba(255, 251, 242, 0.62) 0%, rgba(247, 235, 212, 0.24) 100%);
-  border: 1px solid rgba(232, 216, 193, 0.62);
+  background: linear-gradient(180deg, rgba(255, 251, 242, 0.5) 0%, rgba(247, 235, 212, 0.19) 100%);
+  border: 1px solid rgba(232, 216, 193, 0.5);
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
 }
 
@@ -108,7 +108,7 @@ body {
 .table th {
   color: var(--muted);
   font-weight: 600;
-  background: linear-gradient(180deg, rgba(255, 252, 246, 0.58) 0%, rgba(247, 235, 212, 0.2) 100%);
+  background: linear-gradient(180deg, rgba(255, 252, 246, 0.46) 0%, rgba(247, 235, 212, 0.16) 100%);
 }
 
 .table tr:hover td {
@@ -215,8 +215,8 @@ body {
   color: var(--red-dark);
   padding: 6px 8px;
   border-radius: 8px;
-  background: linear-gradient(180deg, rgba(255, 249, 239, 0.56) 0%, rgba(246, 229, 202, 0.18) 100%);
-  border: 1px solid rgba(232, 216, 193, 0.55);
+  background: linear-gradient(180deg, rgba(255, 249, 239, 0.45) 0%, rgba(246, 229, 202, 0.14) 100%);
+  border: 1px solid rgba(232, 216, 193, 0.44);
 }
 
 .status-ok { color: var(--ok); }
