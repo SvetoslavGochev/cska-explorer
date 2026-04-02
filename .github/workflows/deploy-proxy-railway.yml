@@ -30,23 +30,24 @@ jobs:
           RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID || vars.RAILWAY_PROJECT_ID }}
         run: |
           if [ -z "$RAILWAY_TOKEN" ]; then
-            echo "Missing RAILWAY_TOKEN secret"
+            echo "::error::Missing Railway token. Set one of: RAILWAY_TOKEN, RAILWAY_API_TOKEN, or RAILWAY_API_KEY in repository Secrets or Variables."
+            exit 1
+          fi
+
+          if [ -z "$RAILWAY_PROJECT_ID" ]; then
+            echo "::error::Missing RAILWAY_PROJECT_ID. Set it in repository Secrets or Variables so CI can link the target Railway project."
             exit 1
           fi
 
           railway whoami || {
-            echo "Railway authentication failed. Verify RAILWAY_TOKEN in GitHub Actions secrets/variables."
+            echo "::error::Railway authentication failed. Verify the token value and permissions."
             exit 1
           }
 
           cd proxy
 
-          if [ -n "$RAILWAY_PROJECT_ID" ]; then
-            echo "Linking Railway project: ${RAILWAY_PROJECT_ID}"
-            railway link --project "$RAILWAY_PROJECT_ID"
-          else
-            echo "RAILWAY_PROJECT_ID is not set; relying on token default project context"
-          fi
+          echo "Linking Railway project: ${RAILWAY_PROJECT_ID}"
+          railway link --project "$RAILWAY_PROJECT_ID"
 
           if [ -n "$RAILWAY_SERVICE" ]; then
             echo "Deploy target service: ${RAILWAY_SERVICE}"
