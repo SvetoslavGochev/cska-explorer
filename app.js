@@ -52,7 +52,7 @@ const FULL_EFBET_TEAMS = [
   "Септември София",
   "Монтана",
   "Ботев Враца"
-};
+];
 
 function isValidPayload(payload) {
   return Boolean(payload && Array.isArray(payload.standings) && payload.standings.length);
