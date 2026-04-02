@@ -227,43 +227,86 @@ body {
 .status-ok { color: var(--ok); }
 
 /* ── Standings zone colouring ───────────────────────── */
-.zone-champion td:first-child { border-left: 4px solid #f5c518; }
-.zone-champion { background: rgba(245, 197, 24, 0.12) !important; }
 
-.zone-ucl td:first-child { border-left: 4px solid #1a6fcf; }
-.zone-ucl { background: rgba(26, 111, 207, 0.09) !important; }
+/* Champion / UCL direct */
+.zone-champion {
+  background: linear-gradient(90deg, rgba(245, 197, 24, 0.22) 0%, rgba(255, 228, 100, 0.08) 100%) !important;
+}
+.zone-champion td:first-child {
+  border-left: 5px solid #f5c518;
+  padding-left: 10px;
+}
+.zone-champion td { font-weight: 600; }
 
-.zone-uel td:first-child { border-left: 4px solid #e07b20; }
-.zone-uel { background: rgba(224, 123, 32, 0.09) !important; }
+/* UCL qualifying */
+.zone-ucl {
+  background: linear-gradient(90deg, rgba(26, 111, 207, 0.18) 0%, rgba(80, 160, 255, 0.06) 100%) !important;
+}
+.zone-ucl td:first-child {
+  border-left: 5px solid #1a6fcf;
+  padding-left: 10px;
+}
 
-.zone-uecl td:first-child { border-left: 4px solid #1fa35a; }
-.zone-uecl { background: rgba(31, 163, 90, 0.09) !important; }
+/* UEL qualifying */
+.zone-uel {
+  background: linear-gradient(90deg, rgba(224, 123, 32, 0.16) 0%, rgba(255, 175, 80, 0.05) 100%) !important;
+}
+.zone-uel td:first-child {
+  border-left: 5px solid #e07b20;
+  padding-left: 10px;
+}
 
-.zone-playoff td:first-child { border-left: 4px solid #e0a020; }
-.zone-playoff { background: rgba(224, 160, 32, 0.10) !important; }
+/* UECL qualifying */
+.zone-uecl {
+  background: linear-gradient(90deg, rgba(31, 163, 90, 0.15) 0%, rgba(80, 210, 130, 0.05) 100%) !important;
+}
+.zone-uecl td:first-child {
+  border-left: 5px solid #1fa35a;
+  padding-left: 10px;
+}
 
-.zone-rel td:first-child { border-left: 4px solid #c0202a; }
-.zone-rel { background: rgba(192, 32, 42, 0.10) !important; }
+/* Relegation playoff */
+.zone-playoff {
+  background: linear-gradient(90deg, rgba(224, 160, 32, 0.18) 0%, rgba(255, 210, 80, 0.06) 100%) !important;
+}
+.zone-playoff td:first-child {
+  border-left: 5px solid #e0a020;
+  padding-left: 10px;
+}
+
+/* Direct relegation */
+.zone-rel {
+  background: linear-gradient(90deg, rgba(192, 32, 42, 0.18) 0%, rgba(255, 80, 90, 0.05) 100%) !important;
+}
+.zone-rel td:first-child {
+  border-left: 5px solid #c0202a;
+  padding-left: 10px;
+}
 
 .standings-legend {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 14px;
-  margin-top: 10px;
+  gap: 8px 16px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  background: rgba(255, 253, 248, 0.55);
+  border: 1px solid rgba(200, 178, 148, 0.50);
+  border-radius: 10px;
   font-size: 0.78rem;
   color: var(--muted);
 }
 .standings-legend span {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
 }
 .standings-legend i {
   display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
   flex: 0 0 auto;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.18);
 }
 
 @keyframes logoFadeIn {
