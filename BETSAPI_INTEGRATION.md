@@ -13,7 +13,19 @@ This repository now includes a starter backend proxy in `proxy/`.
 1. Deploy `proxy/` as a Node service.
 2. Set environment variables from `.env.example`.
 3. Verify with `GET /api/health`.
-4. Point frontend to the deployed proxy URL.
+4. Set `window.CSKA_PROXY_URL` in `runtime-config.js` to the deployed proxy URL.
+5. Push to `main`.
+
+## GitHub Actions auto-deploy (Railway)
+
+Workflow file: `.github/workflows/deploy-proxy-railway.yml`
+
+Required repository secrets:
+
+- `RAILWAY_TOKEN`
+- `RAILWAY_SERVICE`
+
+The workflow deploys automatically on push when `proxy/**` changes.
 
 ## Frontend wiring suggestion
 
