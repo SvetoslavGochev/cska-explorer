@@ -16,8 +16,26 @@ const FALLBACK_DATA = {
   }
 };
 
+const TEAM_LOGOS = {
+  "Левски София": "https://static.flashscore.com/res/image/data/hOa8FKR0-zeLrkjui.png",
+  "Лудогорец": "https://static.flashscore.com/res/image/data/KG84D6Rq-Kjkd1Ayp.png",
+  "ЦСКА 1948": "https://static.flashscore.com/res/image/data/CrPTEUT0-dIoxO1fK.png",
+  "Добруджа": "https://static.flashscore.com/res/image/data/Y1cNNK5k-bspvajO9.png",
+  "Спартак Варна": "https://static.flashscore.com/res/image/data/6TetCWBN-boO56d81.png",
+  "Берое": "https://static.flashscore.com/res/image/data/xpH48q86-fmfS2lRL.png",
+  "Септември София": "https://static.flashscore.com/res/image/data/G8c1lpgT-Oj0MPYxU.png",
+  "Монтана": "https://static.flashscore.com/res/image/data/QLieRNR0-COvJNbKS.png",
+  "ЦСКА София": "https://static.flashscore.com/res/image/data/MZmpVA7k-nTkb2fj6.png",
+  "Локомотив София": "https://static.flashscore.com/res/image/data/KbTwOMkC-0xN9676E.png",
+  "Ботев Враца": "https://static.flashscore.com/res/image/data/nku6ne8k-vTHHOmI9.png"
+};
+
 function isValidPayload(payload) {
   return Boolean(payload && Array.isArray(payload.standings) && payload.standings.length);
+}
+
+function getTeamLogo(team) {
+  return TEAM_LOGOS[team] || "";
 }
 
 function renderStandings(standings) {
@@ -25,10 +43,16 @@ function renderStandings(standings) {
   body.innerHTML = "";
 
   standings.forEach((row) => {
+    const logo = getTeamLogo(row.team);
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${row.rank ?? "-"}</td>
-      <td>${row.team ?? "-"}</td>
+      <td>
+        <div class="team-cell">
+          ${logo ? `<img class="team-logo" src="${logo}" alt="${row.team}" loading="lazy" />` : ""}
+          <span>${row.team ?? "-"}</span>
+        </div>
+      </td>
       <td>${row.mp ?? "-"}</td>
       <td>${row.w ?? "-"}</td>
       <td>${row.d ?? "-"}</td>
@@ -46,9 +70,25 @@ function renderMatches(id, rows, formatter) {
 
   rows.forEach((m) => {
     const li = document.createElement("li");
-    li.textContent = formatter(m);
+    li.innerHTML = formatter(m);
     list.appendChild(li);
   });
+}
+
+function matchMarkup(match, withScore) {
+  const homeLogo = getTeamLogo(match.home);
+  const awayLogo = getTeamLogo(match.away);
+
+  return `
+    <div class="match-item">
+      <div class="match-meta">${match.date} ${match.time || ""}</div>
+      <div class="match-lineup">
+        <span class="team-chip">${homeLogo ? `<img class="team-logo" src="${homeLogo}" alt="${match.home}" loading="lazy" />` : ""}${match.home}</span>
+        <span class="vs-chip">${withScore ? match.score : "-"}</span>
+        <span class="team-chip">${awayLogo ? `<img class="team-logo" src="${awayLogo}" alt="${match.away}" loading="lazy" />` : ""}${match.away}</span>
+      </div>
+    </div>
+  `;
 }
 
 function renderSquad(squad) {
@@ -89,13 +129,13 @@ function render(payload, fromCache) {
   renderMatches(
     "nextMatches",
     payload.cska?.nextMatches || [],
-    (m) => `${m.date} ${m.time} | ${m.home} - ${m.away}`
+    (m) => matchMarkup(m, false)
   );
 
   renderMatches(
     "lastResults",
     payload.cska?.lastResults || [],
-    (m) => `${m.date} | ${m.home} ${m.score} ${m.away}`
+    (m) => matchMarkup(m, true)
   );
 
   renderSquad(payload.cska?.squad || FALLBACK_DATA.cska.squad);
