@@ -1,4 +1,4 @@
-const LOCAL_CACHE_KEY = "cska_explorer_root_cache_v6";
+const LOCAL_CACHE_KEY = "cska_explorer_root_cache_v7";
 const LOCAL_CACHE_TTL_MS = 10 * 60 * 1000;
 
 const FALLBACK_DATA = {
@@ -195,7 +195,11 @@ function renderSquad(squad) {
     ul.className = "list";
     players.forEach((player) => {
       const li = document.createElement("li");
-      li.textContent = player;
+      const name = typeof player === "object" ? player.name : player;
+      const num  = typeof player === "object" ? player.number : null;
+      li.innerHTML = num != null
+        ? `<span class="jersey-num">${num}</span><span class="player-name">${name}</span>`
+        : `<span class="player-name">${name}</span>`;
       ul.appendChild(li);
     });
 
