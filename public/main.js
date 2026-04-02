@@ -178,6 +178,7 @@ function render(data, fromLocalCache) {
   const statRows = document.getElementById("statRows");
   const statNext = document.getElementById("statNext");
   const statPlayers = document.getElementById("statPlayers");
+  const statAutoUpdated = document.getElementById("statAutoUpdated");
 
   if (statRows) {
     statRows.textContent = String((data.standings || []).length);
@@ -189,6 +190,13 @@ function render(data, fromLocalCache) {
   }
   if (statPlayers) {
     statPlayers.textContent = String(allPlayersCount);
+  }
+  if (statAutoUpdated) {
+    const updatedAt = data?.updatedAt ? new Date(data.updatedAt) : null;
+    const source = data?.cache?.source ? ` (${data.cache.source})` : "";
+    statAutoUpdated.textContent = updatedAt && !Number.isNaN(updatedAt.getTime())
+      ? `${updatedAt.toLocaleString("bg-BG")}${source}`
+      : "Няма данни";
   }
 
   document.getElementById("sourceNote").textContent = data.source?.note || "";
