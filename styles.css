@@ -226,6 +226,46 @@ body {
 
 .status-ok { color: var(--ok); }
 
+/* ── Standings zone colouring ───────────────────────── */
+.zone-champion td:first-child { border-left: 4px solid #f5c518; }
+.zone-champion { background: rgba(245, 197, 24, 0.12) !important; }
+
+.zone-ucl td:first-child { border-left: 4px solid #1a6fcf; }
+.zone-ucl { background: rgba(26, 111, 207, 0.09) !important; }
+
+.zone-uel td:first-child { border-left: 4px solid #e07b20; }
+.zone-uel { background: rgba(224, 123, 32, 0.09) !important; }
+
+.zone-uecl td:first-child { border-left: 4px solid #1fa35a; }
+.zone-uecl { background: rgba(31, 163, 90, 0.09) !important; }
+
+.zone-playoff td:first-child { border-left: 4px solid #e0a020; }
+.zone-playoff { background: rgba(224, 160, 32, 0.10) !important; }
+
+.zone-rel td:first-child { border-left: 4px solid #c0202a; }
+.zone-rel { background: rgba(192, 32, 42, 0.10) !important; }
+
+.standings-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin-top: 10px;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.standings-legend span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.standings-legend i {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex: 0 0 auto;
+}
+
 @keyframes logoFadeIn {
   from {
     opacity: 0;

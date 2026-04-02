@@ -76,6 +76,13 @@ function render(data, fromLocalCache) {
     })
     .forEach((row) => {
     const tr = document.createElement("tr");
+    const rank = Number(row.rank);
+    if (rank === 1) tr.classList.add("zone-champion");
+    else if (rank === 2) tr.classList.add("zone-ucl");
+    else if (rank === 3) tr.classList.add("zone-uel");
+    else if (rank >= 4 && rank <= 5) tr.classList.add("zone-uecl");
+    else if (rank === 14) tr.classList.add("zone-playoff");
+    else if (rank >= 15) tr.classList.add("zone-rel");
     tr.innerHTML = `
       <td>${row.rank ?? "-"}</td>
       <td>${normalizeTeamName(row.team) ?? "-"}</td>
