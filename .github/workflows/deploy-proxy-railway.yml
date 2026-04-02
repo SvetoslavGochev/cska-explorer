@@ -25,17 +25,14 @@ jobs:
 
       - name: Deploy proxy service
         env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          RAILWAY_SERVICE: ${{ secrets.RAILWAY_SERVICE || 'cska-betsapi-proxy' }}
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN || secrets.RAILWAY_API_TOKEN || secrets.RAILWAY_API_KEY }}
+          RAILWAY_SERVICE: ${{ secrets.RAILWAY_SERVICE }}
           RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
         run: |
-          # Retry trigger: keep workflow deterministic while allowing manual retrigger via commit.
           if [ -z "$RAILWAY_TOKEN" ]; then
             echo "Missing RAILWAY_TOKEN secret"
             exit 1
           fi
-
-          echo "Deploy target service: ${RAILWAY_SERVICE}"
 
           if [ -n "$RAILWAY_PROJECT_ID" ]; then
             echo "Linking Railway project: ${RAILWAY_PROJECT_ID}"
@@ -44,6 +41,14 @@ jobs:
             echo "RAILWAY_PROJECT_ID is not set; relying on token default project context"
           fi
 
+          if [ -n "$RAILWAY_SERVICE" ]; then
+            echo "Deploy target service: ${RAILWAY_SERVICE}"
+            SERVICE_ARGS=(--service "$RAILWAY_SERVICE")
+          else
+            echo "RAILWAY_SERVICE is not set; deploying to linked/default service"
+            SERVICE_ARGS=()
+          fi
+
           cd proxy
-          railway up --service "$RAILWAY_SERVICE"
+          railway up --ci "${SERVICE_ARGS[@]}"
         shell: bash
