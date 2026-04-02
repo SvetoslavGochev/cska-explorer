@@ -35,3 +35,4 @@ Default URL: `http://localhost:8787`
 - Keep this proxy server-side only (Railway/Render/Fly/your VPS).
 - Do not expose `BETSAPI_KEY` in frontend code.
 - If your plan/rate limits differ, adjust endpoint paths in `server.js`.
+- Deployment is automated via GitHub Actions on each push that changes `proxy/**`.
