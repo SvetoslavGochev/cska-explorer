@@ -1,12 +1,12 @@
 :root {
   --bg: #efe8dc;
-  --surface: #fffdf8;
-  --surface-2: #ffffff;
+  --surface: rgba(255, 253, 248, 0.42);
+  --surface-2: rgba(255, 255, 255, 0.38);
   --ink: #201711;
   --muted: #77685a;
   --red: #b0121a;
   --red-dark: #6f0b10;
-  --line: #e8d8c1;
+  --line: rgba(232, 216, 193, 0.56);
   --ok: #0d7f48;
 }
 
@@ -74,7 +74,9 @@ body {
   border: 1px solid var(--line);
   border-radius: 16px;
   padding: 16px;
-  box-shadow: 0 12px 26px rgba(34, 25, 16, 0.08);
+  box-shadow: 0 14px 30px rgba(28, 19, 12, 0.22);
+  -webkit-backdrop-filter: blur(4px) saturate(112%);
+  backdrop-filter: blur(4px) saturate(112%);
 }
 
 .card h2 {
@@ -103,7 +105,7 @@ body {
 }
 
 .table tr:hover td {
-  background: #fff4e0;
+  background: rgba(255, 244, 224, 0.3);
 }
 
 .team-cell {
@@ -165,7 +167,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: #fff4df;
+  background: rgba(255, 244, 223, 0.44);
   border: 1px solid var(--line);
   border-radius: 999px;
   padding: 5px 9px;
@@ -173,7 +175,7 @@ body {
 }
 
 .vs-chip {
-  background: #f2e1c7;
+  background: rgba(242, 225, 199, 0.5);
   color: #67411f;
   border-radius: 999px;
   padding: 4px 9px;
