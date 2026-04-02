@@ -130,7 +130,22 @@ function render(data, fromLocalCache) {
     ul.className = "list";
     players.forEach((p) => {
       const li = document.createElement("li");
-      li.textContent = p;
+      const name = typeof p === "object" ? p.name : p;
+      const num = typeof p === "object" ? p.number : null;
+      const matches = Number(typeof p === "object" ? p.matches : NaN);
+      const goals = Number(typeof p === "object" ? p.goals : NaN);
+      const assists = Number(typeof p === "object" ? p.assists : NaN);
+      const goalPerMatch = Number.isFinite(matches) && matches > 0 && Number.isFinite(goals)
+        ? (goals / matches).toFixed(2)
+        : "-";
+
+      li.innerHTML = `
+        ${num != null ? `<span class="jersey-num">${num}</span>` : ""}
+        <div class="player-meta">
+          <span class="player-name">${name}</span>
+          <span class="player-stats">М: ${Number.isFinite(matches) ? matches : "-"} | Г: ${Number.isFinite(goals) ? goals : "-"} | А: ${Number.isFinite(assists) ? assists : "-"} | Г/М: ${goalPerMatch}</span>
+        </div>
+      `;
       ul.appendChild(li);
     });
     wrap.appendChild(ul);

@@ -42,32 +42,32 @@
     ],
     "squad": {
       "goalkeepers": [
-        { "name": "Лапоухов Фьодор", "number": 21 },
-        { "name": "Ефтимов Димитър", "number": 35 }
+        { "name": "Лапоухов Фьодор", "number": 21, "matches": 23, "goals": 0, "assists": 0 },
+        { "name": "Ефтимов Димитър", "number": 35, "matches": 0, "goals": 0, "assists": 0 }
       ],
       "defenders": [
-        { "name": "Пастор", "number": 2 },
-        { "name": "Йорданов Андрей", "number": 3 },
-        { "name": "Лапеня Адриан", "number": 4 },
-        { "name": "Делова Лумбард", "number": 5 },
-        { "name": "Иванов Теодор", "number": 14 },
-        { "name": "Мартино Анхело", "number": 17 }
+        { "name": "Пастор", "number": 2, "matches": 24, "goals": 0, "assists": 4 },
+        { "name": "Йорданов Андрей", "number": 3, "matches": 4, "goals": 0, "assists": 0 },
+        { "name": "Лапеня Адриан", "number": 4, "matches": 22, "goals": 0, "assists": 0 },
+        { "name": "Делова Лумбард", "number": 5, "matches": 25, "goals": 2, "assists": 0 },
+        { "name": "Иванов Теодор", "number": 14, "matches": 21, "goals": 0, "assists": 0 },
+        { "name": "Мартино Анхело", "number": 17, "matches": 22, "goals": 0, "assists": 0 }
       ],
       "midfielders": [
-        { "name": "Ето'о Джеймс", "number": 9 },
-        { "name": "Ебонг Макс", "number": 10 },
-        { "name": "Жордао Бруно", "number": 16 },
-        { "name": "Илиев Илиан", "number": 73 },
-        { "name": "Илиев Юлиан", "number": 8 },
-        { "name": "Панайотов Петко", "number": 30 }
+        { "name": "Ето'о Джеймс", "number": 9, "matches": 27, "goals": 4, "assists": 8 },
+        { "name": "Ебонг Макс", "number": 10, "matches": 9, "goals": 3, "assists": 0 },
+        { "name": "Жордао Бруно", "number": 16, "matches": 22, "goals": 3, "assists": 0 },
+        { "name": "Илиев Илиан", "number": 73, "matches": 22, "goals": 1, "assists": 2 },
+        { "name": "Илиев Юлиан", "number": 8, "matches": 1, "goals": 0, "assists": 0 },
+        { "name": "Панайотов Петко", "number": 30, "matches": 25, "goals": 2, "assists": 2 }
       ],
       "forwards": [
-        { "name": "Пиедраита Алехандро", "number": 7 },
-        { "name": "Брахими Мохамед", "number": 11 },
-        { "name": "Годой Леандро", "number": 20 },
-        { "name": "Лео Перейра", "number": 38 },
-        { "name": "Питас Йоанис", "number": 28 },
-        { "name": "Тасев Иван", "number": 72 }
+        { "name": "Пиедраита Алехандро", "number": 7, "matches": 7, "goals": 2, "assists": 0 },
+        { "name": "Брахими Мохамед", "number": 11, "matches": 21, "goals": 2, "assists": 2 },
+        { "name": "Годой Леандро", "number": 20, "matches": 24, "goals": 12, "assists": 1 },
+        { "name": "Лео Перейра", "number": 38, "matches": 9, "goals": 2, "assists": 1 },
+        { "name": "Питас Йоанис", "number": 28, "matches": 29, "goals": 8, "assists": 2 },
+        { "name": "Тасев Иван", "number": 72, "matches": 5, "goals": 0, "assists": 1 }
       ]
     }
   }

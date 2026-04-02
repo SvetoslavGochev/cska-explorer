@@ -1,4 +1,4 @@
-const LOCAL_CACHE_KEY = "cska_explorer_root_cache_v7";
+const LOCAL_CACHE_KEY = "cska_explorer_root_cache_v8";
 const LOCAL_CACHE_TTL_MS = 10 * 60 * 1000;
 
 const FALLBACK_DATA = {
@@ -197,9 +197,20 @@ function renderSquad(squad) {
       const li = document.createElement("li");
       const name = typeof player === "object" ? player.name : player;
       const num  = typeof player === "object" ? player.number : null;
-      li.innerHTML = num != null
-        ? `<span class="jersey-num">${num}</span><span class="player-name">${name}</span>`
-        : `<span class="player-name">${name}</span>`;
+      const matches = Number(typeof player === "object" ? player.matches : NaN);
+      const goals = Number(typeof player === "object" ? player.goals : NaN);
+      const assists = Number(typeof player === "object" ? player.assists : NaN);
+      const goalPerMatch = Number.isFinite(matches) && matches > 0 && Number.isFinite(goals)
+        ? (goals / matches).toFixed(2)
+        : "-";
+
+      li.innerHTML = `
+        ${num != null ? `<span class="jersey-num">${num}</span>` : ""}
+        <div class="player-meta">
+          <span class="player-name">${name}</span>
+          <span class="player-stats">М: ${Number.isFinite(matches) ? matches : "-"} | Г: ${Number.isFinite(goals) ? goals : "-"} | А: ${Number.isFinite(assists) ? assists : "-"} | Г/М: ${goalPerMatch}</span>
+        </div>
+      `;
       ul.appendChild(li);
     });
 
