@@ -34,6 +34,13 @@ jobs:
             exit 1
           fi
 
+          railway whoami || {
+            echo "Railway authentication failed. Verify RAILWAY_TOKEN in GitHub Actions secrets/variables."
+            exit 1
+          }
+
+          cd proxy
+
           if [ -n "$RAILWAY_PROJECT_ID" ]; then
             echo "Linking Railway project: ${RAILWAY_PROJECT_ID}"
             railway link --project "$RAILWAY_PROJECT_ID"
@@ -49,6 +56,5 @@ jobs:
             SERVICE_ARGS=()
           fi
 
-          cd proxy
           railway up --ci "${SERVICE_ARGS[@]}"
         shell: bash
