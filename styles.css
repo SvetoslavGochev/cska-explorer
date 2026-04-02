@@ -82,6 +82,12 @@ body {
 .card h2 {
   margin: 0 0 12px;
   font-size: 1.15rem;
+  color: #2e1f14;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(255, 251, 242, 0.62) 0%, rgba(247, 235, 212, 0.24) 100%);
+  border: 1px solid rgba(232, 216, 193, 0.62);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
 }
 
 .table-wrap { overflow: auto; }
@@ -102,6 +108,7 @@ body {
 .table th {
   color: var(--muted);
   font-weight: 600;
+  background: linear-gradient(180deg, rgba(255, 252, 246, 0.58) 0%, rgba(247, 235, 212, 0.2) 100%);
 }
 
 .table tr:hover td {
@@ -206,6 +213,10 @@ body {
   margin: 0 0 8px;
   font-size: 0.95rem;
   color: var(--red-dark);
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(255, 249, 239, 0.56) 0%, rgba(246, 229, 202, 0.18) 100%);
+  border: 1px solid rgba(232, 216, 193, 0.55);
 }
 
 .status-ok { color: var(--ok); }
