@@ -79,6 +79,11 @@ body {
   backdrop-filter: blur(8px) saturate(120%);
 }
 
+.grid > article.card,
+.grid > aside.flex-col > article.card {
+  background: rgb(255 255 255 / 25%);
+}
+
 .card h2 {
   margin: 0 0 12px;
   font-size: 1.15rem;
