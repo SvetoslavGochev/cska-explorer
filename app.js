@@ -29,7 +29,160 @@ const heroStats = document.getElementById("hero-stats");
 let currentTeamData = null;
 let playerNameIndex = [];
 
-const CURRENT_LANG = document.documentElement.lang?.toLowerCase().startsWith("en") ? "en" : "bg";
+function detectLanguage() {
+  const params = new URLSearchParams(window.location.search);
+  const lang = (params.get("lang") || "").toLowerCase();
+  if (lang === "en" || lang === "bg") {
+    return lang;
+  }
+  return document.documentElement.lang?.toLowerCase().startsWith("en") ? "en" : "bg";
+}
+
+const CURRENT_LANG = detectLanguage();
+document.documentElement.lang = CURRENT_LANG;
+
+const STATIC_TEXT = {
+  bg: {
+    controlsTitle: "Настройки",
+    teamLabel: "Име на отбор",
+    hint:
+      "Основен източник: Flashscore (team/squad), с локален 5-часов кеш и резервно превключване към TheSportsDB/fccska.",
+    sourceSquad: "Текущ състав",
+    sourceUpcoming: "Следващи мачове",
+    playerLabel: "Търси играч",
+    clubTitle: "Клубна информация",
+    squadTitle: "Текущ състав",
+    standingsTitle: "Класиране",
+    matchesTitle: "Последни мачове",
+    nextMatchesTitle: "Следващи мачове",
+    playerTitle: "Профил на играч",
+    summaryTitle: "Бързо резюме",
+    historyTitle: "История и успехи",
+    emptySquad: "Няма заредени играчи.",
+    emptyStandings: "Данните за класирането ще се покажат след зареждане на отбора.",
+    emptyMatches: "Няма заредени мачове.",
+    emptyNextMatches: "Няма заредени предстоящи мачове.",
+    emptyPlayer: "Избери играч чрез търсене, за да видиш профил, позиция и допълнителни данни.",
+    heroPosition: "Позиция",
+    heroPoints: "Точки",
+    heroPlayers: "Играчите",
+    heroForm: "Форма",
+    summaryPlayers: "Играчите",
+    summaryLastMatches: "Последни мачове",
+    summaryGoals: "Голове",
+    summaryForm: "Форма",
+    historyTitle1: "Кратка история",
+    historyText1:
+      "ЦСКА е един от най-разпознаваемите клубове в България с богата традиция, силна фенска култура и дългогодишно участие в топ футбола.",
+    historyTitle2: "Успехи",
+    historyText2:
+      "Клубът е многократен шампион и носител на национални купи. Европейските кампании също са важна част от идентичността му.",
+    historyTitle3: "Състав днес",
+    historyText3:
+      'Използвай секцията "Текущ състав" за да видиш играчите по данни от Flashscore squad източника.',
+    placeholderTeam: "Например: CSKA Sofia",
+    placeholderPlayer: "Например: Amos Youga",
+  },
+  en: {
+    controlsTitle: "Settings",
+    teamLabel: "Team Name",
+    hint:
+      "Primary source: Flashscore (team/squad), with 5-hour local cache and automatic fallback to TheSportsDB/fccska.",
+    sourceSquad: "Current Squad",
+    sourceUpcoming: "Upcoming Matches",
+    playerLabel: "Search Player",
+    clubTitle: "Club Information",
+    squadTitle: "Current Squad",
+    standingsTitle: "Standings",
+    matchesTitle: "Last Matches",
+    nextMatchesTitle: "Upcoming Matches",
+    playerTitle: "Player Profile",
+    summaryTitle: "Quick Summary",
+    historyTitle: "History & Achievements",
+    emptySquad: "No players loaded yet.",
+    emptyStandings: "Standings will appear after team data is loaded.",
+    emptyMatches: "No matches loaded yet.",
+    emptyNextMatches: "No upcoming matches loaded yet.",
+    emptyPlayer: "Search for a player to see profile, position, and additional details.",
+    heroPosition: "Position",
+    heroPoints: "Points",
+    heroPlayers: "Players",
+    heroForm: "Form",
+    summaryPlayers: "Players",
+    summaryLastMatches: "Last Matches",
+    summaryGoals: "Goals",
+    summaryForm: "Form",
+    historyTitle1: "Short History",
+    historyText1:
+      "CSKA is one of the most recognizable clubs in Bulgaria with a rich tradition, strong fan culture, and long-standing top-flight presence.",
+    historyTitle2: "Achievements",
+    historyText2:
+      "The club is a multiple-time national champion and cup winner. European campaigns are also a key part of its identity.",
+    historyTitle3: "Squad Today",
+    historyText3:
+      'Use the "Current Squad" section to see player data from the Flashscore squad source.',
+    placeholderTeam: "Example: CSKA Sofia",
+    placeholderPlayer: "Example: Amos Youga",
+  },
+};
+
+function setText(id, value) {
+  const el = document.getElementById(id);
+  if (el && value) {
+    el.textContent = value;
+  }
+}
+
+function applyStaticTranslations() {
+  const t = STATIC_TEXT[CURRENT_LANG];
+  if (!t) return;
+
+  setText("controls-title", t.controlsTitle);
+  setText("i18n-team-label", t.teamLabel);
+  setText("i18n-hint", t.hint);
+  setText("i18n-source-squad", t.sourceSquad);
+  setText("i18n-source-upcoming", t.sourceUpcoming);
+  setText("i18n-player-label", t.playerLabel);
+  setText("club-title", t.clubTitle);
+  setText("squad-title", t.squadTitle);
+  setText("standings-title", t.standingsTitle);
+  setText("matches-title", t.matchesTitle);
+  setText("next-matches-title", t.nextMatchesTitle);
+  setText("player-title", t.playerTitle);
+  setText("summary-title", t.summaryTitle);
+  setText("history-title", t.historyTitle);
+  setText("i18n-empty-squad", t.emptySquad);
+  setText("i18n-empty-standings", t.emptyStandings);
+  setText("i18n-empty-matches", t.emptyMatches);
+  setText("i18n-empty-next-matches", t.emptyNextMatches);
+  setText("i18n-empty-player", t.emptyPlayer);
+  setText("i18n-hero-position", t.heroPosition);
+  setText("i18n-hero-points", t.heroPoints);
+  setText("i18n-hero-players", t.heroPlayers);
+  setText("i18n-hero-form", t.heroForm);
+  setText("i18n-summary-players", t.summaryPlayers);
+  setText("i18n-summary-last-matches", t.summaryLastMatches);
+  setText("i18n-summary-goals", t.summaryGoals);
+  setText("i18n-summary-form", t.summaryForm);
+  setText("i18n-history-title-1", t.historyTitle1);
+  setText("i18n-history-text-1", t.historyText1);
+  setText("i18n-history-title-2", t.historyTitle2);
+  setText("i18n-history-text-2", t.historyText2);
+  setText("i18n-history-title-3", t.historyTitle3);
+  setText("i18n-history-text-3", t.historyText3);
+
+  if (teamNameInput) {
+    teamNameInput.placeholder = t.placeholderTeam;
+  }
+  if (playerSearchInput) {
+    playerSearchInput.placeholder = t.placeholderPlayer;
+  }
+
+  const langLinks = document.querySelectorAll(".lang-switch a[data-lang]");
+  langLinks.forEach((link) => {
+    link.classList.toggle("active", link.dataset.lang === CURRENT_LANG);
+  });
+}
 const UI_TEXT = {
   bg: {
     loadBtn: "Зареди данни",
@@ -176,6 +329,8 @@ const UI_TEXT = {
 };
 
 const UI = UI_TEXT[CURRENT_LANG];
+
+applyStaticTranslations();
 
 function teamDescriptionForLang(team) {
   if (CURRENT_LANG === "en") {

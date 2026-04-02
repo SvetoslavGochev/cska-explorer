@@ -25,24 +25,24 @@
         публичен източник без token.
       </p>
       <div class="lang-switch" aria-label="Language switch">
-        <a href="index.html" class="active">BG</a>
-        <a href="index-en.html">EN</a>
+        <a href="index.html?lang=bg" data-lang="bg" class="active">BG</a>
+        <a href="index.html?lang=en" data-lang="en">EN</a>
       </div>
       <div id="hero-stats" class="hero-stats" aria-label="Клубни акценти">
         <article>
-          <span>Позиция</span>
+          <span id="i18n-hero-position">Позиция</span>
           <strong>-</strong>
         </article>
         <article>
-          <span>Точки</span>
+          <span id="i18n-hero-points">Точки</span>
           <strong>-</strong>
         </article>
         <article>
-          <span>Играчите</span>
+          <span id="i18n-hero-players">Играчите</span>
           <strong>-</strong>
         </article>
         <article>
-          <span>Форма</span>
+          <span id="i18n-hero-form">Форма</span>
           <strong>-</strong>
         </article>
       </div>
@@ -52,12 +52,14 @@
       <section class="panel controls" aria-labelledby="controls-title">
         <h2 id="controls-title">Настройки</h2>
 
-        <label for="team-name">Име на отбор</label>
+        <label for="team-name" id="i18n-team-label">Име на отбор</label>
         <div class="row">
           <input
             type="text"
             id="team-name"
             value="CSKA Sofia"
+            data-placeholder-bg="Например: CSKA Sofia"
+            data-placeholder-en="Example: CSKA Sofia"
             placeholder="Например: CSKA Sofia"
             autocomplete="off"
           />
@@ -65,16 +67,16 @@
           <button id="refresh-btn" class="btn secondary">Обнови сега</button>
         </div>
 
-        <p class="hint">
+        <p class="hint" id="i18n-hint">
           Основен източник: Flashscore (team/squad), с локален 5-часов кеш и резервно превключване към TheSportsDB/fccska.
         </p>
         <div class="source-grid" aria-label="Източници на секциите">
           <article>
-            <span>Текущ състав</span>
+            <span id="i18n-source-squad">Текущ състав</span>
             <strong>Flashscore squad</strong>
           </article>
           <article>
-            <span>Следващи мачове</span>
+            <span id="i18n-source-upcoming">Следващи мачове</span>
             <strong>Flashscore team</strong>
           </article>
           <article>
@@ -83,12 +85,14 @@
           </article>
         </div>
 
-        <label for="player-search">Търси играч</label>
+        <label for="player-search" id="i18n-player-label">Търси играч</label>
         <div class="row">
           <input
             type="text"
             id="player-search"
             list="player-suggestions"
+            data-placeholder-bg="Например: Amos Youga"
+            data-placeholder-en="Example: Amos Youga"
             placeholder="Например: Amos Youga"
             autocomplete="off"
           />
@@ -112,21 +116,21 @@
       <section class="panel squad-panel" aria-labelledby="squad-title">
         <h2 id="squad-title">Текущ състав</h2>
         <ul id="squad-list" class="squad-list">
-          <li class="empty">Няма заредени играчи.</li>
+          <li class="empty" id="i18n-empty-squad">Няма заредени играчи.</li>
         </ul>
       </section>
 
       <section class="panel standings-panel" aria-labelledby="standings-title">
         <h2 id="standings-title">Класиране</h2>
         <div id="standings-card" class="standings-card empty">
-          Данните за класирането ще се покажат след зареждане на отбора.
+          <span id="i18n-empty-standings">Данните за класирането ще се покажат след зареждане на отбора.</span>
         </div>
       </section>
 
       <section class="panel matches-panel" aria-labelledby="matches-title">
         <h2 id="matches-title">Последни мачове</h2>
         <ul id="matches-list" class="matches-list">
-          <li class="empty">Няма заредени мачове.</li>
+          <li class="empty" id="i18n-empty-matches">Няма заредени мачове.</li>
         </ul>
       </section>
 
@@ -136,14 +140,14 @@
           API quality: изчаква данни...
         </p>
         <ul id="next-matches-list" class="matches-list">
-          <li class="empty">Няма заредени предстоящи мачове.</li>
+          <li class="empty" id="i18n-empty-next-matches">Няма заредени предстоящи мачове.</li>
         </ul>
       </section>
 
       <section class="panel player-panel" aria-labelledby="player-title">
         <h2 id="player-title">Профил на играч</h2>
         <div id="player-card" class="player-card empty">
-          Избери играч чрез търсене, за да видиш профил, позиция и допълнителни данни.
+          <span id="i18n-empty-player">Избери играч чрез търсене, за да видиш профил, позиция и допълнителни данни.</span>
         </div>
       </section>
 
@@ -151,19 +155,19 @@
         <h2 id="summary-title">Бързо резюме</h2>
         <div id="summary-grid" class="summary-grid">
           <article>
-            <span>Играчите</span>
+            <span id="i18n-summary-players">Играчите</span>
             <strong>-</strong>
           </article>
           <article>
-            <span>Последни мачове</span>
+            <span id="i18n-summary-last-matches">Последни мачове</span>
             <strong>-</strong>
           </article>
           <article>
-            <span>Голове</span>
+            <span id="i18n-summary-goals">Голове</span>
             <strong>-</strong>
           </article>
           <article>
-            <span>Форма</span>
+            <span id="i18n-summary-form">Форма</span>
             <strong>-</strong>
           </article>
         </div>
@@ -173,23 +177,23 @@
         <h2 id="history-title">История и успехи</h2>
         <div class="history-grid">
           <article>
-            <h3>Кратка история</h3>
-            <p>
+            <h3 id="i18n-history-title-1">Кратка история</h3>
+            <p id="i18n-history-text-1">
               ЦСКА е един от най-разпознаваемите клубове в България с богата
               традиция, силна фенска култура и дългогодишно участие в топ
               футбола.
             </p>
           </article>
           <article>
-            <h3>Успехи</h3>
-            <p>
+            <h3 id="i18n-history-title-2">Успехи</h3>
+            <p id="i18n-history-text-2">
               Клубът е многократен шампион и носител на национални купи.
               Европейските кампании също са важна част от идентичността му.
             </p>
           </article>
           <article>
-            <h3>Състав днес</h3>
-            <p>
+            <h3 id="i18n-history-title-3">Състав днес</h3>
+            <p id="i18n-history-text-3">
               Използвай секцията "Текущ състав" за да видиш играчите по данни от
               Flashscore squad източника.
             </p>
