@@ -86,12 +86,12 @@ function render(data, fromLocalCache) {
     tr.innerHTML = `
       <td>${row.rank ?? "-"}</td>
       <td><span class="standings-team-bubble">${row.team ?? "-"}</span></td>
-      <td>${row.mp ?? "-"}</td>
-      <td>${row.w ?? "-"}</td>
-      <td>${row.d ?? "-"}</td>
-      <td>${row.l ?? "-"}</td>
-      <td>${row.gf ?? "-"}:${row.ga ?? "-"}</td>
-      <td><strong>${row.pts ?? "-"}</strong></td>
+      <td><span class="standings-stat-bubble">${row.mp ?? "-"}</span></td>
+      <td><span class="standings-stat-bubble">${row.w ?? "-"}</span></td>
+      <td><span class="standings-stat-bubble">${row.d ?? "-"}</span></td>
+      <td><span class="standings-stat-bubble">${row.l ?? "-"}</span></td>
+      <td><span class="standings-stat-bubble">${row.gf ?? "-"}:${row.ga ?? "-"}</span></td>
+      <td><span class="standings-stat-bubble standings-stat-bubble-strong">${row.pts ?? "-"}</span></td>
     `;
     standingsBody.appendChild(tr);
     });

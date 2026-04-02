@@ -134,6 +134,26 @@ body {
   line-height: 1.2;
 }
 
+.standings-stat-bubble {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(255, 248, 232, 0.78);
+  border: 1px solid rgba(200, 178, 148, 0.56);
+  font-size: 0.81rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.standings-stat-bubble-strong {
+  background: rgba(245, 232, 205, 0.86);
+  font-weight: 800;
+  color: #3d2514;
+}
+
 .team-logo {
   width: 20px;
   height: 20px;
