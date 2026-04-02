@@ -50,6 +50,12 @@ async function loadData(force = false) {
   render(payload, false);
 }
 
+function normalizeTeamName(team) {
+  if (team === "Локо Пловдив") return "Локомотив Пловдив";
+  if (team === "Локо София") return "Локомотив София";
+  return team;
+}
+
 function render(data, fromLocalCache) {
   const updatedAtEl = document.getElementById("updatedAt");
   const cacheInfoEl = document.getElementById("cacheInfo");
@@ -72,7 +78,7 @@ function render(data, fromLocalCache) {
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${row.rank ?? "-"}</td>
-      <td>${row.team ?? "-"}</td>
+      <td>${normalizeTeamName(row.team) ?? "-"}</td>
       <td>${row.mp ?? "-"}</td>
       <td>${row.w ?? "-"}</td>
       <td>${row.d ?? "-"}</td>

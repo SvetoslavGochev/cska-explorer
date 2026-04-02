@@ -1,4 +1,4 @@
-const LOCAL_CACHE_KEY = "cska_explorer_root_cache_v5";
+const LOCAL_CACHE_KEY = "cska_explorer_root_cache_v6";
 const LOCAL_CACHE_TTL_MS = 10 * 60 * 1000;
 
 const FALLBACK_DATA = {
@@ -54,22 +54,38 @@ const FULL_EFBET_TEAMS = [
   "Ботев Враца"
 ];
 
+const TEAM_NAME_ALIASES = {
+  "Локо Пловдив": "Локомотив Пловдив",
+  "Локо София": "Локомотив София"
+};
+
 function isValidPayload(payload) {
   return Boolean(payload && Array.isArray(payload.standings) && payload.standings.length);
 }
 
+function normalizeTeamName(team) {
+  return TEAM_NAME_ALIASES[team] || team;
+}
+
 function getTeamLogo(team) {
-  return TEAM_LOGOS[team] || "";
+  return TEAM_LOGOS[normalizeTeamName(team)] || "";
 }
 
 function buildFullStandings(standings) {
-  const byTeam = new Map((standings || []).map((row) => [row.team, row]));
+  const byTeam = new Map(
+    (standings || []).map((row) => [normalizeTeamName(row.team), row])
+  );
   const maxKnownRank = Math.max(0, ...((standings || []).map((r) => Number(r.rank) || 0)));
   let nextRank = maxKnownRank + 1;
 
   return FULL_EFBET_TEAMS.map((team) => {
     const existing = byTeam.get(team);
-    if (existing) return existing;
+    if (existing) {
+      return {
+        ...existing,
+        team
+      };
+    }
 
     const row = {
       rank: nextRank,
