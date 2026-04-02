@@ -160,7 +160,7 @@ body {
 }
 
 .card {
-  background: rgba(255, 250, 240, 0.75);
+  background: rgb(255 253 248 / 0.40%);
   border: 1px solid rgba(226, 214, 191, 0.70);
   border-radius: 16px;
   padding: 16px;
