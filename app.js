@@ -50,7 +50,7 @@ function renderStandings(standings) {
       <td>
         <div class="team-cell">
           ${logo ? `<img class="team-logo" src="${logo}" alt="${row.team}" loading="lazy" />` : ""}
-          <span>${row.team ?? "-"}</span>
+          <span title="${row.team ?? "-"}">${row.team ?? "-"}</span>
         </div>
       </td>
       <td>${row.mp ?? "-"}</td>
@@ -83,9 +83,9 @@ function matchMarkup(match, withScore) {
     <div class="match-item">
       <div class="match-meta">${match.date} ${match.time || ""}</div>
       <div class="match-lineup">
-        <span class="team-chip">${homeLogo ? `<img class="team-logo" src="${homeLogo}" alt="${match.home}" loading="lazy" />` : ""}${match.home}</span>
+        <span class="team-chip" title="${match.home}">${homeLogo ? `<img class="team-logo" src="${homeLogo}" alt="${match.home}" loading="lazy" />` : ""}${match.home}</span>
         <span class="vs-chip">${withScore ? match.score : "-"}</span>
-        <span class="team-chip">${awayLogo ? `<img class="team-logo" src="${awayLogo}" alt="${match.away}" loading="lazy" />` : ""}${match.away}</span>
+        <span class="team-chip" title="${match.away}">${awayLogo ? `<img class="team-logo" src="${awayLogo}" alt="${match.away}" loading="lazy" />` : ""}${match.away}</span>
       </div>
     </div>
   `;
