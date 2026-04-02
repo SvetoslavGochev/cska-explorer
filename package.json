@@ -1,0 +1,9 @@
+{
+  "name": "cska-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CSKA and Bulgarian football info site with cached data",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

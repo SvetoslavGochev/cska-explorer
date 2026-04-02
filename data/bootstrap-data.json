@@ -1,0 +1,42 @@
+{
+  "source": {
+    "name": "Flashscore.bg",
+    "standingsUrl": "https://www.flashscore.bg/soccer/bulgaria/efbet/#/ID1TwQHr/standings/overall/",
+    "teamUrl": "https://www.flashscore.bg/team/cska-sofia/0xFNNECi/",
+    "squadUrl": "https://www.flashscore.bg/team/cska-sofia/0xFNNECi/squad/",
+    "note": "Automatic extraction from dynamic pages can be partial. Some standings entries are best-effort parsed."
+  },
+  "updatedAt": "2026-04-02T00:00:00.000Z",
+  "standings": [
+    { "rank": 1, "team": "Левски София", "mp": 27, "w": 21, "d": 2, "l": 4, "gf": 60, "ga": 19, "gd": 41, "pts": 65 },
+    { "rank": 2, "team": "Лудогорец", "mp": 27, "w": 16, "d": 8, "l": 3, "gf": 54, "ga": 19, "gd": 35, "pts": 56 },
+    { "rank": 3, "team": "ЦСКА 1948", "mp": 27, "w": 16, "d": 5, "l": 6, "gf": 45, "ga": 28, "gd": 17, "pts": 53 },
+    { "rank": 4, "team": "Добруджа", "mp": 27, "w": 7, "d": 4, "l": 16, "gf": 21, "ga": 37, "gd": -16, "pts": 25 },
+    { "rank": 5, "team": "Спартак Варна", "mp": 27, "w": 4, "d": 11, "l": 12, "gf": 24, "ga": 45, "gd": -21, "pts": 23 },
+    { "rank": 6, "team": "Берое", "mp": 27, "w": 4, "d": 10, "l": 13, "gf": 18, "ga": 39, "gd": -21, "pts": 22 },
+    { "rank": 7, "team": "Септември София", "mp": 27, "w": 6, "d": 3, "l": 18, "gf": 23, "ga": 57, "gd": -34, "pts": 21 },
+    { "rank": 8, "team": "Монтана", "mp": 27, "w": 3, "d": 7, "l": 17, "gf": 14, "ga": 42, "gd": -28, "pts": 16 }
+  ],
+  "cska": {
+    "team": "ЦСКА София",
+    "stadium": "Нац. стадион Васил Левски",
+    "nextMatches": [
+      { "date": "04.04", "time": "19:30", "home": "Берое", "away": "ЦСКА София" },
+      { "date": "08.04", "time": "18:00", "home": "Монтана", "away": "ЦСКА София" },
+      { "date": "13.04", "time": "16:00", "home": "ЦСКА София", "away": "Левски София" }
+    ],
+    "lastResults": [
+      { "date": "22.03", "home": "ЦСКА София", "away": "Добруджа", "score": "2:0" },
+      { "date": "14.03", "home": "Лудогорец", "away": "ЦСКА София", "score": "3:0" },
+      { "date": "08.03", "home": "ЦСКА София", "away": "Локомотив София", "score": "2:0" },
+      { "date": "04.03", "home": "ЦСКА София", "away": "Ботев Враца", "score": "1:0" },
+      { "date": "28.02", "home": "Септември София", "away": "ЦСКА София", "score": "2:0" }
+    ],
+    "squad": {
+      "goalkeepers": ["Лапоухов Фьодор"],
+      "defenders": ["Делова Лумбард", "Иванов Теодор", "Йорданов Андрей", "Лапеня Адриан", "Мартино Анхело", "Пастор"],
+      "midfielders": ["Ебонг Макс", "Ето'о Джеймс", "Жордао Бруно", "Илиев Илиан", "Илиев Юлиан", "Панайотов Петко"],
+      "forwards": ["Брахими Мохамед", "Годой Леандро", "Лео Перейра", "Пиедраита Алехандро", "Питас Йоанис", "Тасев Иван"]
+    }
+  }
+}

@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="bg">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CSKA EXPLORER</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container site-header-inner">
+      <div class="brand">CSKA EXPLORER</div>
+      <nav class="main-nav">
+        <a href="#standings">Класиране</a>
+        <a href="#matches">Мачове</a>
+        <a href="#squad">Състав</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+    <section class="hero">
+      <h1>CSKA EXPLORER</h1>
+      <p>Всичко важно за ЦСКА и Efbet Лига на едно място.</p>
+    </section>
+
+    <section class="highlights">
+      <article class="mini-card">
+        <h3>Редове в класиране</h3>
+        <p id="statRows">-</p>
+      </article>
+      <article class="mini-card">
+        <h3>Следващ мач</h3>
+        <p id="statNext">-</p>
+      </article>
+      <article class="mini-card">
+        <h3>Футболисти в списък</h3>
+        <p id="statPlayers">-</p>
+      </article>
+    </section>
+
+    <section class="grid" id="standings">
+      <article class="card">
+        <h2>Efbet Лига - Класиране (извлечени редове)</h2>
+        <div class="table-wrap">
+          <table class="table" id="standingsTable">
+            <thead>
+              <tr>
+                <th>#</th><th>Отбор</th><th>М</th><th>П</th><th>Р</th><th>З</th><th>ГР</th><th>Т</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="small">Източник: <a href="https://www.flashscore.bg/soccer/bulgaria/efbet/#/ID1TwQHr/standings/overall/" target="_blank" rel="noreferrer">Flashscore Efbet standings</a></p>
+      </article>
+
+      <aside class="flex-col" id="matches">
+        <article class="card">
+          <h2>Следващи мачове на ЦСКА</h2>
+          <ul class="list" id="nextMatches"></ul>
+        </article>
+        <article class="card">
+          <h2>Последни резултати</h2>
+          <ul class="list" id="lastResults"></ul>
+        </article>
+      </aside>
+    </section>
+
+    <section class="card" style="margin-top:16px;" id="squad">
+      <h2>Състав на ЦСКА София</h2>
+      <div class="squad-grid" id="squadGrid"></div>
+      <p class="small" id="sourceNote"></p>
+      <p class="small status-ok" id="statusLine"></p>
+    </section>
+
+    <footer class="footer">
+      <p>CSKA EXPLORER</p>
+    </footer>
+  </div>
+
+  <script src="/main.js"></script>
+</body>
+</html>
