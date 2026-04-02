@@ -131,7 +131,7 @@ function renderStandings(standings) {
       <td>
         <div class="team-cell">
           ${logo ? `<img class="team-logo" src="${logo}" alt="${row.team}" loading="lazy" />` : ""}
-          <span title="${row.team ?? "-"}">${row.team ?? "-"}</span>
+          <span class="standings-team-bubble" title="${row.team ?? "-"}">${row.team ?? "-"}</span>
         </div>
       </td>
       <td>${row.mp ?? "-"}</td>

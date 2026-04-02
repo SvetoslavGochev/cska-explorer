@@ -85,7 +85,7 @@ function render(data, fromLocalCache) {
     else if (rank >= 15) tr.classList.add("zone-rel");
     tr.innerHTML = `
       <td>${row.rank ?? "-"}</td>
-      <td>${row.team ?? "-"}</td>
+      <td><span class="standings-team-bubble">${row.team ?? "-"}</span></td>
       <td>${row.mp ?? "-"}</td>
       <td>${row.w ?? "-"}</td>
       <td>${row.d ?? "-"}</td>
