@@ -85,7 +85,7 @@ function render(data, fromLocalCache) {
     else if (rank >= 15) tr.classList.add("zone-rel");
     tr.innerHTML = `
       <td>${row.rank ?? "-"}</td>
-      <td>${normalizeTeamName(row.team) ?? "-"}</td>
+      <td>${row.team ?? "-"}</td>
       <td>${row.mp ?? "-"}</td>
       <td>${row.w ?? "-"}</td>
       <td>${row.d ?? "-"}</td>
