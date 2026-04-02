@@ -1,4 +1,4 @@
-const LOCAL_CACHE_KEY = "cska_explorer_root_cache_v9";
+const LOCAL_CACHE_KEY = "cska_explorer_root_cache_v10";
 const LOCAL_CACHE_TTL_MS = 10 * 60 * 1000;
 
 const FALLBACK_DATA = {
@@ -200,6 +200,7 @@ function renderSquad(squad) {
       const matches = Number(typeof player === "object" ? player.matches : NaN);
       const goals = Number(typeof player === "object" ? player.goals : NaN);
       const assists = Number(typeof player === "object" ? player.assists : NaN);
+      const hattricks = Number(typeof player === "object" ? player.hattricks : NaN);
       const savesPerMatch = Number(typeof player === "object" ? player.savesPerMatch : NaN);
       const penaltiesSaved = Number(typeof player === "object" ? player.penaltiesSaved : NaN);
       const goalPerMatch = Number.isFinite(matches) && matches > 0 && Number.isFinite(goals)
@@ -208,12 +209,19 @@ function renderSquad(squad) {
       const safeMatches = Number.isFinite(matches) ? matches : "-";
       const safeGoals = Number.isFinite(goals) ? goals : "-";
       const safeAssists = Number.isFinite(assists) ? assists : "-";
+      const safeHattricks = Number.isFinite(hattricks) ? hattricks : 0;
+      const impactScore =
+        (Number.isFinite(matches) ? matches * 0.25 : 0) +
+        (Number.isFinite(assists) ? assists * 0.5 : 0) +
+        (Number.isFinite(goals) ? goals * 1 : 0) +
+        (safeHattricks * 2);
 
       li.innerHTML = `
         ${num != null ? `<span class="jersey-num">${num}</span>` : ""}
         <div class="player-meta">
           <span class="player-name">${name}</span>
           <span class="player-stats">
+            <span class="stat-chip"><span class="stat-label">КПД</span><span class="stat-value">${impactScore > 0 ? impactScore.toFixed(2) : "-"}</span></span>
             <span class="stat-chip"><span class="stat-label">Мачове</span><span class="stat-value">${safeMatches}</span></span>
             <span class="stat-chip"><span class="stat-label">Голове</span><span class="stat-value">${safeGoals}</span></span>
             <span class="stat-chip"><span class="stat-label">Асист.</span><span class="stat-value">${safeAssists}</span></span>
