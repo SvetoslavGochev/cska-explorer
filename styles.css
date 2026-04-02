@@ -175,18 +175,45 @@ body {
 }
 
 .player-name {
-  font-size: 0.88rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--ink);
 }
 
 .player-meta {
   display: grid;
-  gap: 2px;
+  gap: 4px;
+  min-width: 0;
 }
 
 .player-stats {
-  font-size: 0.74rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.stat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(255, 248, 232, 0.9);
+  border: 1px solid rgba(200, 178, 148, 0.6);
+  line-height: 1.2;
+}
+
+.stat-label {
+  font-size: 0.67rem;
   color: var(--muted);
-  letter-spacing: 0.15px;
+  letter-spacing: 0.2px;
+  text-transform: uppercase;
+}
+
+.stat-value {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #2b1a10;
 }
 
 .match-item {

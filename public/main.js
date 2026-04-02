@@ -138,12 +138,20 @@ function render(data, fromLocalCache) {
       const goalPerMatch = Number.isFinite(matches) && matches > 0 && Number.isFinite(goals)
         ? (goals / matches).toFixed(2)
         : "-";
+      const safeMatches = Number.isFinite(matches) ? matches : "-";
+      const safeGoals = Number.isFinite(goals) ? goals : "-";
+      const safeAssists = Number.isFinite(assists) ? assists : "-";
 
       li.innerHTML = `
         ${num != null ? `<span class="jersey-num">${num}</span>` : ""}
         <div class="player-meta">
           <span class="player-name">${name}</span>
-          <span class="player-stats">М: ${Number.isFinite(matches) ? matches : "-"} | Г: ${Number.isFinite(goals) ? goals : "-"} | А: ${Number.isFinite(assists) ? assists : "-"} | Г/М: ${goalPerMatch}</span>
+          <span class="player-stats">
+            <span class="stat-chip"><span class="stat-label">Мачове</span><span class="stat-value">${safeMatches}</span></span>
+            <span class="stat-chip"><span class="stat-label">Голове</span><span class="stat-value">${safeGoals}</span></span>
+            <span class="stat-chip"><span class="stat-label">Асист.</span><span class="stat-value">${safeAssists}</span></span>
+            <span class="stat-chip"><span class="stat-label">Г/М</span><span class="stat-value">${goalPerMatch}</span></span>
+          </span>
         </div>
       `;
       ul.appendChild(li);
