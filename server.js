@@ -4,7 +4,7 @@ const path = require("path");
 
 const PORT = process.env.PORT || 3000;
 const CACHE_TTL_MS = 30 * 60 * 1000;
-const DAILY_REFRESH_LIMIT = Number(process.env.DAILY_REFRESH_LIMIT || 20);
+const DAILY_REFRESH_LIMIT = Number(process.env.DAILY_REFRESH_LIMIT || 30);
 
 const ROOT = __dirname;
 const PUBLIC_DIR = path.join(ROOT, "public");

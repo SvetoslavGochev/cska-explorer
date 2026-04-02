@@ -16,10 +16,25 @@ body {
   margin: 0;
   font-family: "Trebuchet MS", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   color: var(--ink);
-  background:
-    radial-gradient(1200px 700px at -10% -10%, #fff7e8 0%, transparent 60%),
-    radial-gradient(900px 500px at 110% 10%, #f2e2bf 0%, transparent 55%),
-    linear-gradient(180deg, var(--bg) 0%, #f7f1e6 100%);
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(180deg, rgba(245, 239, 229, 0.86) 0%, rgba(247, 241, 230, 0.92) 100%),
+    radial-gradient(1200px 700px at -10% -10%, rgba(255, 247, 232, 0.88) 0%, transparent 60%),
+    radial-gradient(900px 500px at 110% 10%, rgba(242, 226, 191, 0.72) 0%, transparent 55%),
+    none;
+  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
+  background-size: auto, auto, auto, cover;
+  background-position: center, left top, right top, center;
+}
+
+@media (min-width: 901px) {
+  body {
+    background-image:
+      linear-gradient(180deg, rgba(245, 239, 229, 0.86) 0%, rgba(247, 241, 230, 0.92) 100%),
+      radial-gradient(1200px 700px at -10% -10%, rgba(255, 247, 232, 0.88) 0%, transparent 60%),
+      radial-gradient(900px 500px at 110% 10%, rgba(242, 226, 191, 0.72) 0%, transparent 55%),
+      url("assets/22142-CAM-002-scaled.jpg");
+  }
 }
 
 .container {
