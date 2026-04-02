@@ -109,10 +109,11 @@ body {
 }
 
 .mini-card {
-  background: #fffdf7;
-  border: 1px solid var(--line);
+  background: rgba(255, 253, 247, 0.82);
+  border: 1px solid rgba(226, 214, 191, 0.78);
   border-radius: 12px;
   padding: 14px;
+  backdrop-filter: blur(2px);
 }
 
 .mini-card h3 {
@@ -159,11 +160,12 @@ body {
 }
 
 .card {
-  background: var(--surface);
-  border: 1px solid var(--line);
+  background: rgba(255, 250, 240, 0.80);
+  border: 1px solid rgba(226, 214, 191, 0.76);
   border-radius: 16px;
   padding: 16px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+  backdrop-filter: blur(4px) saturate(110%);
 }
 
 .card h2 {
@@ -225,8 +227,8 @@ body {
 }
 
 .squad-group {
-  background: var(--surface-2);
-  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(226, 214, 191, 0.74);
   border-radius: 12px;
   padding: 10px;
 }
