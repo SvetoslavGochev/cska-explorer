@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: cska-betsapi-proxy
+    env: node
+    rootDir: proxy
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: BETSAPI_KEY
+        sync: false
+      - key: BETSAPI_BASE_URL
+        value: https://api.b365api.com/v1
+      - key: CSKA_TEAM_ID
+        value: 44156

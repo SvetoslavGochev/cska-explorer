@@ -4,6 +4,7 @@ const FLASHSCORE_SQUAD_MIRROR_URL = "https://r.jina.ai/http://www.flashscore.bg/
 const FLASHSCORE_STANDINGS_MIRROR_URL =
   "https://r.jina.ai/http://www.flashscore.bg/team/cska-sofia/0xFNNECi/standings/ID1TwQHr/standings/overall/";
 const FCCSKA_MIRROR_URL = "https://r.jina.ai/http://www.fccska.com/";
+const PROXY_BASE_URL = resolveProxyBaseUrl();
 const CACHE_TTL_MS = 5 * 60 * 60 * 1000;
 const CACHE_VERSION = "v2";
 
@@ -94,6 +95,7 @@ const UI_TEXT = {
     sourceFccskaUsed: "API е недостъпен. Показан е резервен профил от fccska.com.",
     sourceFlashscoreUsed: "API е недостъпен. Показани са резервни мачове от flashscore.bg.",
     sourceLabelApi: "източник: TheSportsDB",
+    sourceLabelBetsapi: "източник: BetsAPI proxy",
     sourceLabelCache: "източник: local cache",
     sourceLabelFlashscore: "източник: flashscore mirror",
     sourceLabelFccska: "източник: fccska mirror",
@@ -164,6 +166,7 @@ const UI_TEXT = {
     sourceFccskaUsed: "API is unavailable. Showing backup club profile from fccska.com.",
     sourceFlashscoreUsed: "API is unavailable. Showing backup fixtures from flashscore.bg.",
     sourceLabelApi: "source: TheSportsDB",
+    sourceLabelBetsapi: "source: BetsAPI proxy",
     sourceLabelCache: "source: local cache",
     sourceLabelFlashscore: "source: flashscore mirror",
     sourceLabelFccska: "source: fccska mirror",
@@ -238,6 +241,153 @@ function safeMediaUrl(value) {
 
 function normalizeName(value) {
   return String(value ?? "").trim().toLowerCase();
+}
+
+function resolveProxyBaseUrl() {
+  const globalValue =
+    typeof window !== "undefined" && typeof window.CSKA_PROXY_URL === "string"
+      ? window.CSKA_PROXY_URL
+      : "";
+  const metaValue =
+    typeof document !== "undefined"
+      ? document.querySelector('meta[name="cska-proxy-url"]')?.getAttribute("content") || ""
+      : "";
+
+  const raw = (globalValue || metaValue || "").trim();
+  if (!raw) {
+    return "";
+  }
+
+  try {
+    const parsed = new URL(raw);
+    if (!/^https?:$/.test(parsed.protocol)) {
+      return "";
+    }
+    return parsed.toString().replace(/\/$/, "");
+  } catch {
+    return "";
+  }
+}
+
+function hasProxyConfigured() {
+  return Boolean(PROXY_BASE_URL);
+}
+
+function toNumber(value) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : null;
+}
+
+function normalizeBetsApiEvent(event = {}) {
+  const home =
+    event.home?.name || event.home_name || event.strHomeTeam || event.team1 || event.home || "";
+  const away =
+    event.away?.name || event.away_name || event.strAwayTeam || event.team2 || event.away || "";
+  const date = event.time ? new Date(Number(event.time) * 1000) : null;
+  const dateEvent =
+    date && !Number.isNaN(date.getTime()) ? date.toISOString().slice(0, 10) : event.date || event.dateEvent || "";
+  const timeText =
+    date && !Number.isNaN(date.getTime())
+      ? date.toLocaleTimeString(CURRENT_LANG === "en" ? "en-GB" : "bg-BG", {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      : event.time_str || event.strTime || "";
+
+  let homeScore = null;
+  let awayScore = null;
+  if (typeof event.ss === "string" && event.ss.includes("-")) {
+    const [left, right] = event.ss.split("-").map((part) => part.trim());
+    homeScore = toNumber(left);
+    awayScore = toNumber(right);
+  } else {
+    homeScore = toNumber(event.home_score ?? event.intHomeScore);
+    awayScore = toNumber(event.away_score ?? event.intAwayScore);
+  }
+
+  return {
+    idEvent: event.id || event.event_id || event.match_id || "",
+    strHomeTeam: String(home || "").trim(),
+    strAwayTeam: String(away || "").trim(),
+    dateEvent,
+    strTime: timeText,
+    strTimeLocal: timeText,
+    intHomeScore: homeScore,
+    intAwayScore: awayScore,
+  };
+}
+
+async function proxyGet(path) {
+  if (!hasProxyConfigured()) {
+    return null;
+  }
+
+  const response = await fetch(`${PROXY_BASE_URL}${path}`);
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status} while loading BetsAPI proxy`);
+  }
+
+  return response.json();
+}
+
+async function fetchProxyUpcomingMatches() {
+  const payload = await proxyGet("/api/cska/upcoming");
+  const rows = payload?.data?.results || payload?.results || [];
+  return rows.map((row) => normalizeBetsApiEvent(row)).filter((match) => match.strHomeTeam && match.strAwayTeam);
+}
+
+async function fetchProxyResultMatches() {
+  const payload = await proxyGet("/api/cska/results");
+  const rows = payload?.data?.results || payload?.results || [];
+  return rows.map((row) => normalizeBetsApiEvent(row)).filter((match) => match.strHomeTeam && match.strAwayTeam);
+}
+
+async function augmentTeamDataWithProxy(teamData = {}) {
+  if (!hasProxyConfigured()) {
+    return { teamData, proxyUsed: false };
+  }
+
+  const merged = {
+    ...teamData,
+    matches: [...(teamData.matches || [])],
+    nextMatches: [...(teamData.nextMatches || [])],
+    fallbackMatches: [...(teamData.fallbackMatches || [])],
+  };
+  let proxyUsed = false;
+
+  const shouldFillUpcoming = !merged.nextMatches.length;
+  const shouldFillResults = !merged.matches.length;
+
+  if (shouldFillUpcoming) {
+    try {
+      const upcoming = await fetchProxyUpcomingMatches();
+      if (upcoming.length) {
+        merged.nextMatches = upcoming.slice(0, 5);
+        proxyUsed = true;
+      }
+    } catch {
+      // Keep existing feed if proxy is unavailable.
+    }
+  }
+
+  if (shouldFillResults) {
+    try {
+      const results = await fetchProxyResultMatches();
+      if (results.length) {
+        merged.matches = results.slice(0, 8);
+        merged.fallbackMatches = results.slice(0, 3);
+        proxyUsed = true;
+      }
+    } catch {
+      // Keep existing feed if proxy is unavailable.
+    }
+  }
+
+  if (proxyUsed) {
+    merged.dataQuality = buildDataQuality(merged.nextMatches || [], merged.fallbackMatches || []);
+  }
+
+  return { teamData: merged, proxyUsed };
 }
 
 function getCacheKey(teamName) {
@@ -1401,41 +1551,43 @@ async function loadData(options = {}) {
 
   try {
     const teamData = await fetchPrimaryTeamData(teamName);
+    const augmented = await augmentTeamDataWithProxy(teamData);
+    const activeTeamData = augmented.teamData;
     let standingsData = { table: [], standing: null };
     let featuredPlayer = null;
 
     try {
-      standingsData = await fetchStandings(teamData.team);
+      standingsData = await fetchStandings(activeTeamData.team);
     } catch {
       standingsData = { table: [], standing: null };
     }
 
     try {
-      featuredPlayer = await fetchPlayerProfile(playerSearchInput.value.trim(), teamData);
+      featuredPlayer = await fetchPlayerProfile(playerSearchInput.value.trim(), activeTeamData);
     } catch {
       featuredPlayer = null;
     }
 
-    renderAll(teamData, standingsData, featuredPlayer);
+    renderAll(activeTeamData, standingsData, featuredPlayer);
 
-    const resolvedSource = teamData.source || "sportsdb";
+    const resolvedSource = activeTeamData.source || "sportsdb";
     const now = Date.now();
 
     saveTeamSnapshot(teamName, {
       savedAt: now,
       source: resolvedSource,
-      teamData,
+      teamData: activeTeamData,
       standingsData,
       featuredPlayer,
     });
-    setSourceMeta(now, resolveSourceLabel(resolvedSource));
+    const sourceLabel = `${resolveSourceLabel(resolvedSource)}${augmented.proxyUsed ? ` + ${UI.sourceLabelBetsapi}` : ""}`;
+    setSourceMeta(now, sourceLabel);
 
-    const name = teamData.team.strTeam || "Клуб";
-    const sourceLabel = resolveSourceLabel(resolvedSource);
+    const name = activeTeamData.team.strTeam || "Клуб";
     setStatus(
       CURRENT_LANG === "en"
-        ? `Data for ${name} loaded: ${teamData.players.length} players, ${teamData.matches.length} last matches and ${teamData.nextMatches.length} confirmed upcoming fixtures (${getDataQualityLabel(teamData.dataQuality).replace(`${UI.apiQualityPrefix}: `, "")}; ${sourceLabel}).`
-        : `Данните за ${name} са заредени: ${teamData.players.length} играчи, ${teamData.matches.length} последни мача и ${teamData.nextMatches.length} потвърдени предстоящи (${getDataQualityLabel(teamData.dataQuality).replace(`${UI.apiQualityPrefix}: `, "")}; ${sourceLabel}).`,
+        ? `Data for ${name} loaded: ${activeTeamData.players.length} players, ${activeTeamData.matches.length} last matches and ${activeTeamData.nextMatches.length} confirmed upcoming fixtures (${getDataQualityLabel(activeTeamData.dataQuality).replace(`${UI.apiQualityPrefix}: `, "")}; ${sourceLabel}).`
+        : `Данните за ${name} са заредени: ${activeTeamData.players.length} играчи, ${activeTeamData.matches.length} последни мача и ${activeTeamData.nextMatches.length} потвърдени предстоящи (${getDataQualityLabel(activeTeamData.dataQuality).replace(`${UI.apiQualityPrefix}: `, "")}; ${sourceLabel}).`,
       "ok"
     );
   } catch (error) {
