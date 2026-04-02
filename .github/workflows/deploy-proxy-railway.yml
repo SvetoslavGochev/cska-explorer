@@ -13,12 +13,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Install Railway CLI
         run: npm install -g @railway/cli
@@ -33,11 +33,10 @@ jobs:
             exit 1
           fi
 
-          if [ -z "$RAILWAY_SERVICE" ]; then
-            echo "Missing RAILWAY_SERVICE secret"
-            exit 1
-          fi
-
           cd proxy
-          railway up --service "$RAILWAY_SERVICE"
+          if [ -n "$RAILWAY_SERVICE" ]; then
+            railway up --service "$RAILWAY_SERVICE"
+          else
+            railway up
+          fi
         shell: bash
