@@ -39,6 +39,11 @@ jobs:
             exit 1
           fi
 
+          if [ -z "$RAILWAY_SERVICE" ]; then
+            echo "::error::Missing RAILWAY_SERVICE. Set it to the Railway service name for the Node proxy (for example: proxy)."
+            exit 1
+          fi
+
           railway whoami || {
             echo "::error::Railway authentication failed. Verify the token value and permissions."
             exit 1
@@ -49,13 +54,8 @@ jobs:
           echo "Linking Railway project: ${RAILWAY_PROJECT_ID}"
           railway link --project "$RAILWAY_PROJECT_ID"
 
-          if [ -n "$RAILWAY_SERVICE" ]; then
-            echo "Deploy target service: ${RAILWAY_SERVICE}"
-            SERVICE_ARGS=(--service "$RAILWAY_SERVICE")
-          else
-            echo "RAILWAY_SERVICE is not set; deploying to linked/default service"
-            SERVICE_ARGS=()
-          fi
+          echo "Deploy target service: ${RAILWAY_SERVICE}"
+          SERVICE_ARGS=(--service "$RAILWAY_SERVICE")
 
           railway up --ci "${SERVICE_ARGS[@]}"
         shell: bash
