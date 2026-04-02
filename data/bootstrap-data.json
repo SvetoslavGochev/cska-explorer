@@ -42,8 +42,8 @@
     ],
     "squad": {
       "goalkeepers": [
-        { "name": "Лапоухов Фьодор", "number": 21, "matches": 23, "goals": 0, "assists": 0 },
-        { "name": "Ефтимов Димитър", "number": 35, "matches": 0, "goals": 0, "assists": 0 }
+        { "name": "Лапоухов Фьодор", "number": 21, "matches": 23, "goals": 0, "assists": 0, "savesPerMatch": null, "penaltiesSaved": null },
+        { "name": "Ефтимов Димитър", "number": 35, "matches": 0, "goals": 0, "assists": 0, "savesPerMatch": null, "penaltiesSaved": null }
       ],
       "defenders": [
         { "name": "Пастор", "number": 2, "matches": 24, "goals": 0, "assists": 4 },

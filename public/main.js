@@ -1,4 +1,4 @@
-const LOCAL_CACHE_KEY = "cska_site_cache_v1";
+const LOCAL_CACHE_KEY = "cska_site_cache_v2";
 const LOCAL_CACHE_TTL_MS = 10 * 60 * 1000;
 
 function isValidPayload(payload) {
@@ -135,6 +135,8 @@ function render(data, fromLocalCache) {
       const matches = Number(typeof p === "object" ? p.matches : NaN);
       const goals = Number(typeof p === "object" ? p.goals : NaN);
       const assists = Number(typeof p === "object" ? p.assists : NaN);
+      const savesPerMatch = Number(typeof p === "object" ? p.savesPerMatch : NaN);
+      const penaltiesSaved = Number(typeof p === "object" ? p.penaltiesSaved : NaN);
       const goalPerMatch = Number.isFinite(matches) && matches > 0 && Number.isFinite(goals)
         ? (goals / matches).toFixed(2)
         : "-";
@@ -151,6 +153,8 @@ function render(data, fromLocalCache) {
             <span class="stat-chip"><span class="stat-label">Голове</span><span class="stat-value">${safeGoals}</span></span>
             <span class="stat-chip"><span class="stat-label">Асист.</span><span class="stat-value">${safeAssists}</span></span>
             <span class="stat-chip"><span class="stat-label">Г/М</span><span class="stat-value">${goalPerMatch}</span></span>
+            ${title === "Вратари" ? `<span class="stat-chip"><span class="stat-label">Спасяв./М</span><span class="stat-value">${Number.isFinite(savesPerMatch) ? savesPerMatch.toFixed(2) : "-"}</span></span>` : ""}
+            ${title === "Вратари" ? `<span class="stat-chip"><span class="stat-label">Спас. дузпи</span><span class="stat-value">${Number.isFinite(penaltiesSaved) ? penaltiesSaved : "-"}</span></span>` : ""}
           </span>
         </div>
       `;
