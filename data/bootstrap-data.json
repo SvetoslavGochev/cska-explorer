@@ -13,7 +13,7 @@
       "usedFallback": true
     }
   },
-  "updatedAt": "2026-04-03T17:39:01.134997Z",
+  "updatedAt": "2026-04-03T18:16:37.802501Z",
   "standings": [
     {
       "rank": 1,
@@ -270,7 +270,7 @@
           "number": 21,
           "countryName": "Беларус",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/126-Belarus-flag.png",
-          "matches": 23,
+          "matches": 21,
           "goals": 0,
           "assists": 0,
           "savesPerMatch": null,
@@ -305,16 +305,16 @@
           "number": 2,
           "countryName": "Бразилия",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/16-Brazil-flag.png",
-          "matches": 24,
+          "matches": 0,
           "goals": 0,
-          "assists": 4
+          "assists": 0
         },
         {
           "name": "Андрей Йорданов",
           "number": 3,
           "countryName": "България",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
-          "matches": 4,
+          "matches": 3,
           "goals": 0,
           "assists": 0
         },
@@ -323,7 +323,7 @@
           "number": 4,
           "countryName": "Испания",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/17-Spain-flag.png",
-          "matches": 22,
+          "matches": 20,
           "goals": 0,
           "assists": 0
         },
@@ -332,7 +332,7 @@
           "number": 5,
           "countryName": "Косово",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/48-Kosovo-flag.png",
-          "matches": 25,
+          "matches": 23,
           "goals": 2,
           "assists": 0
         },
@@ -341,7 +341,16 @@
           "number": 14,
           "countryName": "България",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
-          "matches": 21,
+          "matches": 19,
+          "goals": 0,
+          "assists": 0
+        },
+        {
+          "name": "Алекс Тунчев",
+          "number": 15,
+          "countryName": "България",
+          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
+          "matches": 1,
           "goals": 0,
           "assists": 0
         },
@@ -359,25 +368,16 @@
           "number": 19,
           "countryName": "България",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
-          "matches": 0,
+          "matches": 16,
           "goals": 0,
-          "assists": 0
+          "assists": 1
         },
         {
           "name": "Факундо Родригес",
           "number": 32,
           "countryName": "Аржентина",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/55-Argentina-flag.png",
-          "matches": 0,
-          "goals": 0,
-          "assists": 0
-        },
-        {
-          "name": "Алекс Тунчев",
-          "number": 91,
-          "countryName": "България",
-          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
-          "matches": 0,
+          "matches": 3,
           "goals": 0,
           "assists": 0
         }
@@ -388,8 +388,8 @@
           "number": 6,
           "countryName": "Португалия",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/31-Portugal-flag.png",
-          "matches": 22,
-          "goals": 3,
+          "matches": 21,
+          "goals": 2,
           "assists": 0
         },
         {
@@ -397,7 +397,16 @@
           "number": 7,
           "countryName": "Норвегия",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/103-Norway-flag.png",
-          "matches": 0,
+          "matches": 13,
+          "goals": 1,
+          "assists": 0
+        },
+        {
+          "name": "Юлиан Илиев",
+          "number": 8,
+          "countryName": "България",
+          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
+          "matches": 1,
           "goals": 0,
           "assists": 0
         },
@@ -406,8 +415,8 @@
           "number": 10,
           "countryName": "Беларус",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/126-Belarus-flag.png",
-          "matches": 9,
-          "goals": 3,
+          "matches": 8,
+          "goals": 2,
           "assists": 0
         },
         {
@@ -415,25 +424,16 @@
           "number": 11,
           "countryName": "Франция",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/28-France-flag.png",
-          "matches": 21,
-          "goals": 2,
+          "matches": 18,
+          "goals": 1,
           "assists": 2
-        },
-        {
-          "name": "Юлиан Илиев",
-          "number": 24,
-          "countryName": "България",
-          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
-          "matches": 1,
-          "goals": 0,
-          "assists": 0
         },
         {
           "name": "Петко Панайотов",
           "number": 30,
           "countryName": "България",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
-          "matches": 25,
+          "matches": 23,
           "goals": 2,
           "assists": 2
         },
@@ -442,7 +442,7 @@
           "number": 73,
           "countryName": "България",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
-          "matches": 22,
+          "matches": 20,
           "goals": 1,
           "assists": 2
         },
@@ -451,7 +451,7 @@
           "number": 94,
           "countryName": "ЦАР",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/64-Central-African-Rep-flag.png",
-          "matches": 0,
+          "matches": 7,
           "goals": 0,
           "assists": 0
         },
@@ -460,7 +460,7 @@
           "number": 99,
           "countryName": "Камерун",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/52-Cameroon-flag.png",
-          "matches": 27,
+          "matches": 25,
           "goals": 4,
           "assists": 8
         }
@@ -471,7 +471,7 @@
           "number": 9,
           "countryName": "Аржентина",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/55-Argentina-flag.png",
-          "matches": 24,
+          "matches": 22,
           "goals": 12,
           "assists": 1
         },
@@ -480,26 +480,26 @@
           "number": 28,
           "countryName": "Кипър",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/140-Cyprus-flag.png",
-          "matches": 29,
-          "goals": 8,
+          "matches": 27,
+          "goals": 7,
           "assists": 2
-        },
-        {
-          "name": "Иван Тасев",
-          "number": 29,
-          "countryName": "България",
-          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
-          "matches": 5,
-          "goals": 0,
-          "assists": 1
         },
         {
           "name": "Лео Перейра",
           "number": 38,
           "countryName": "Бразилия",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/16-Brazil-flag.png",
-          "matches": 9,
+          "matches": 8,
           "goals": 2,
+          "assists": 1
+        },
+        {
+          "name": "Иван Тасев",
+          "number": 72,
+          "countryName": "България",
+          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
+          "matches": 5,
+          "goals": 0,
           "assists": 1
         },
         {
