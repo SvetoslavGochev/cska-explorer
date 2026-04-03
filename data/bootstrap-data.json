@@ -13,7 +13,7 @@
       "usedFallback": true
     }
   },
-  "updatedAt": "2026-04-03T14:53:17.252Z",
+  "updatedAt": "2026-04-03T17:34:13.623559Z",
   "standings": [
     {
       "rank": 1,
@@ -266,7 +266,7 @@
     "squad": {
       "goalkeepers": [
         {
-          "name": "Лапоухов Фьодор",
+          "name": "Фьодор Лапоухов",
           "number": 21,
           "matches": 23,
           "goals": 0,
@@ -275,8 +275,17 @@
           "penaltiesSaved": null
         },
         {
-          "name": "Ефтимов Димитър",
-          "number": 35,
+          "name": "Димитър Евтимов",
+          "number": 25,
+          "matches": 0,
+          "goals": 0,
+          "assists": 0,
+          "savesPerMatch": null,
+          "penaltiesSaved": null
+        },
+        {
+          "name": "Даниел Николов",
+          "number": 31,
           "matches": 0,
           "goals": 0,
           "assists": 0,
@@ -286,112 +295,154 @@
       ],
       "defenders": [
         {
-          "name": "Пастор",
+          "name": "Дейвид Пастор",
           "number": 2,
           "matches": 24,
           "goals": 0,
           "assists": 4
         },
         {
-          "name": "Йорданов Андрей",
+          "name": "Андрей Йорданов",
           "number": 3,
           "matches": 4,
           "goals": 0,
           "assists": 0
         },
         {
-          "name": "Лапеня Адриан",
+          "name": "Адриан Лапеня",
           "number": 4,
           "matches": 22,
           "goals": 0,
           "assists": 0
         },
         {
-          "name": "Делова Лумбард",
+          "name": "Лумбард Делова",
           "number": 5,
           "matches": 25,
           "goals": 2,
           "assists": 0
         },
         {
-          "name": "Иванов Теодор",
+          "name": "Теодор Иванов",
           "number": 14,
           "matches": 21,
           "goals": 0,
           "assists": 0
         },
         {
-          "name": "Мартино Анхело",
+          "name": "Анжело Мартино",
           "number": 17,
-          "matches": 22,
+          "matches": 0,
+          "goals": 0,
+          "assists": 0
+        },
+        {
+          "name": "Иван Турицов",
+          "number": 19,
+          "matches": 0,
+          "goals": 0,
+          "assists": 0
+        },
+        {
+          "name": "Факундо Родригес",
+          "number": 32,
+          "matches": 0,
+          "goals": 0,
+          "assists": 0
+        },
+        {
+          "name": "Алекс Тунчев",
+          "number": 91,
+          "matches": 0,
           "goals": 0,
           "assists": 0
         }
       ],
       "midfielders": [
         {
-          "name": "Ето'о Джеймс",
-          "number": 99,
-          "matches": 27,
-          "goals": 4,
-          "assists": 8
-        },
-        {
-          "name": "Ебонг Макс",
-          "number": 10,
-          "matches": 9,
-          "goals": 3,
-          "assists": 0
-        },
-        {
-          "name": "Жордао Бруно",
+          "name": "Бруно Жордао",
           "number": 6,
           "matches": 22,
           "goals": 3,
           "assists": 0
         },
         {
-          "name": "Илиев Илиан",
-          "number": 73,
-          "matches": 22,
-          "goals": 1,
-          "assists": 2
-        },
-        {
-          "name": "Илиев Юлиан",
-          "number": 8,
-          "matches": 1,
+          "name": "Улаус Скаршем",
+          "number": 7,
+          "matches": 0,
           "goals": 0,
           "assists": 0
         },
         {
-          "name": "Панайотов Петко",
-          "number": 30,
-          "matches": 25,
-          "goals": 2,
-          "assists": 2
-        }
-      ],
-      "forwards": [
-        {
-          "name": "Пиедраита Алехандро",
-          "number": 77,
-          "matches": 7,
-          "goals": 2,
+          "name": "Макс Ебонг",
+          "number": 10,
+          "matches": 9,
+          "goals": 3,
           "assists": 0
         },
         {
-          "name": "Брахими Мохамед",
+          "name": "Мохамед Брахими",
           "number": 11,
           "matches": 21,
           "goals": 2,
           "assists": 2
         },
         {
-          "name": "Годой Леандро",
+          "name": "Юлиан Илиев",
+          "number": 24,
+          "matches": 1,
+          "goals": 0,
+          "assists": 0
+        },
+        {
+          "name": "Петко Панайотов",
+          "number": 30,
+          "matches": 25,
+          "goals": 2,
+          "assists": 2
+        },
+        {
+          "name": "Илиан Илиев",
+          "number": 73,
+          "matches": 22,
+          "goals": 1,
+          "assists": 2
+        },
+        {
+          "name": "Исак Соле",
+          "number": 94,
+          "matches": 0,
+          "goals": 0,
+          "assists": 0
+        },
+        {
+          "name": "Джеймс Ето'о",
+          "number": 99,
+          "matches": 27,
+          "goals": 4,
+          "assists": 8
+        }
+      ],
+      "forwards": [
+        {
+          "name": "Леандро Годой",
           "number": 9,
           "matches": 24,
           "goals": 12,
+          "assists": 1
+        },
+        {
+          "name": "Йоанис Питас",
+          "number": 28,
+          "matches": 29,
+          "goals": 8,
+          "assists": 2
+        },
+        {
+          "name": "Иван Тасев",
+          "number": 29,
+          "matches": 5,
+          "goals": 0,
           "assists": 1
         },
         {
@@ -402,18 +453,11 @@
           "assists": 1
         },
         {
-          "name": "Питас Йоанис",
-          "number": 28,
-          "matches": 29,
-          "goals": 8,
-          "assists": 2
-        },
-        {
-          "name": "Тасев Иван",
-          "number": 72,
-          "matches": 5,
-          "goals": 0,
-          "assists": 1
+          "name": "Алехандро Пиедраита",
+          "number": 77,
+          "matches": 7,
+          "goals": 2,
+          "assists": 0
         }
       ]
     },
