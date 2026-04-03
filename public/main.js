@@ -41,6 +41,7 @@ const I18N = {
     statSavesPerMatch: "Спасяв./М",
     statPenaltiesSaved: "Спас. дузпи",
     statImpact: "КПД",
+    impactFormula: "КПД = (Мачове x 0.25) + (Асист. x 0.5) + (Голове x 1) + (Хеттрици x 2).",
     noData: "Няма данни",
     statusFromCache: "Показани са данни от локалния кеш (без нова заявка).",
     statusFromServer: "Показани са последните данни от сървъра.",
@@ -86,6 +87,7 @@ const I18N = {
     statSavesPerMatch: "Saves/Match",
     statPenaltiesSaved: "Pens Saved",
     statImpact: "Impact",
+    impactFormula: "Impact = (Matches x 0.25) + (Assists x 0.5) + (Goals x 1) + (Hattricks x 2).",
     noData: "No data",
     statusFromCache: "Showing data from local cache (without a new request).",
     statusFromServer: "Showing the latest data from the server.",
@@ -343,7 +345,8 @@ function render(data, fromLocalCache) {
       : t("noData");
   }
 
-  document.getElementById("sourceNote").textContent = data.source?.note || "";
+  const baseSourceNote = data.source?.note || "";
+  document.getElementById("sourceNote").textContent = `${baseSourceNote} ${t("impactFormula")}`.trim();
   document.getElementById("statusLine").textContent = fromLocalCache
     ? t("statusFromCache")
     : t("statusFromServer");

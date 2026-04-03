@@ -33,6 +33,7 @@ const I18N = {
     statSavesPerMatch: "Спасяв./М",
     statPenaltiesSaved: "Спас. дузпи",
     statImpact: "КПД",
+    impactFormula: "КПД = (Мачове x 0.25) + (Асист. x 0.5) + (Голове x 1) + (Хеттрици x 2).",
     sourceMissingStats: "В таблицата липсващите статистики се допълват с \"-\".",
     statusFromCache: "Показани са данни от локалния кеш (без нова заявка).",
     statusLatest: "Показани са последните данни."
@@ -67,6 +68,7 @@ const I18N = {
     statSavesPerMatch: "Saves/Match",
     statPenaltiesSaved: "Pens Saved",
     statImpact: "Impact",
+    impactFormula: "Impact = (Matches x 0.25) + (Assists x 0.5) + (Goals x 1) + (Hattricks x 2).",
     sourceMissingStats: "Missing statistics are shown as \"-\" in the table.",
     statusFromCache: "Showing data from local cache (without a new request).",
     statusLatest: "Showing the latest data."
@@ -382,7 +384,7 @@ function render(payload, fromCache) {
   const statusLine = document.getElementById("statusLine");
 
   const baseNote = payload.source?.note || "";
-  sourceNote.textContent = `${baseNote} ${t("sourceMissingStats")}`.trim();
+  sourceNote.textContent = `${baseNote} ${t("sourceMissingStats")} ${t("impactFormula")}`.trim();
   statusLine.textContent = fromCache
     ? t("statusFromCache")
     : t("statusLatest");
