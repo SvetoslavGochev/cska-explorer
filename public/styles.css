@@ -439,6 +439,18 @@ button {
 }
 
 @media (max-width: 900px) {
+  body {
+    background:
+      linear-gradient(180deg, rgba(40, 23, 18, 0.30) 0%, rgba(30, 18, 14, 0.48) 100%),
+      radial-gradient(900px 520px at -10% -10%, rgba(176, 24, 34, 0.15) 0%, transparent 62%),
+      radial-gradient(700px 420px at 115% 8%, rgba(120, 68, 22, 0.12) 0%, transparent 56%),
+      url("assets/cska-stadium-render.jpg");
+    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
+    background-size: auto, auto, auto, cover;
+    background-position: center, left top, right top, center top;
+    background-attachment: scroll, scroll, scroll, scroll;
+  }
+
   .site-header-inner {
     align-items: flex-start;
     min-height: 56px;
