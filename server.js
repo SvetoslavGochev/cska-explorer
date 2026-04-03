@@ -4,7 +4,7 @@ const path = require("path");
 
 const PORT = process.env.PORT || 3000;
 const CACHE_TTL_MS = 30 * 60 * 1000;
-const DAILY_REFRESH_LIMIT = Number(process.env.DAILY_REFRESH_LIMIT || 30);
+const DAILY_REFRESH_LIMIT = Number(process.env.DAILY_REFRESH_LIMIT || 15);
 const AUTO_REFRESH_MINUTES = Number(process.env.AUTO_REFRESH_MINUTES || 45);
 const REQUEST_TIMEOUT_MS = Number(process.env.REQUEST_TIMEOUT_MS || 12000);
 const SPORTSDB_BASE = "https://www.thesportsdb.com/api/v1/json/3";
@@ -704,14 +704,14 @@ async function getCachedData(forceRefresh) {
   const budgetDecision = tryConsumeRefreshBudget();
   if (!budgetDecision.allowed) {
     if (hasCache) {
+      console.log(`[budget] exhausted - returning stale cache`);
       return withCacheMeta(cache.payload, "stale-cache-budget-exhausted", budgetDecision.budget);
     }
 
-    // Absolute fallback if there is no cache yet.
-    const payload = await buildFreshPayloadFromSource();
-    writeCache(payload, now);
-    markRefreshSuccess("api-refresh-budget-exhausted-no-cache", payload);
-    return withCacheMeta(payload, "bootstrap-no-cache-budget-exhausted", budgetDecision.budget);
+    // No cache yet and budget exhausted - use bootstrap data instead of fresh API call
+    const fallback = readJson(BOOTSTRAP_FILE);
+    console.log(`[budget] exhausted and no cache - using bootstrap data`);
+    return withCacheMeta(fallback, "bootstrap-budget-exhausted", budgetDecision.budget);
   }
 
   try {
@@ -746,7 +746,7 @@ async function runAutoRefresh(reason) {
     markRefreshAttempt(`auto-${reason}`);
     const budgetDecision = tryConsumeRefreshBudget();
     if (!budgetDecision.allowed) {
-      console.log(`[auto-refresh] skipped (${reason}) - budget exhausted`);
+      console.log(`[auto-refresh] skipped (${reason}) - budget exhausted. Using cache if available.`);
       return;
     }
 
