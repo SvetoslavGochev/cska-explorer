@@ -101,6 +101,7 @@ body {
   background: linear-gradient(135deg, var(--red-dark), var(--red));
   color: #fff;
   border-color: rgba(128, 15, 21, 0.85);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14) inset, 0 2px 8px rgba(57, 18, 3, 0.32);
 }
 
 .lang-btn.is-active::before {
@@ -138,6 +139,29 @@ body {
     linear-gradient(90deg, transparent 45%, #c8102e 45%, #c8102e 55%, transparent 55%),
     linear-gradient(0deg, transparent 45%, #c8102e 45%, #c8102e 55%, transparent 55%),
     #012169;
+}
+
+.lang-btn.is-active::before {
+  background-size: 100% 100%, 180% 180%, 180% 180%, 180% 180%, 180% 180%, 180% 180%, 180% 180%, 180% 180%, 180% 180%;
+  animation: langFlagShimmer 3.8s ease-in-out infinite;
+}
+
+@keyframes langFlagShimmer {
+  0% {
+    filter: saturate(1) brightness(1);
+  }
+  50% {
+    filter: saturate(1.1) brightness(1.08);
+  }
+  100% {
+    filter: saturate(1) brightness(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lang-btn.is-active::before {
+    animation: none;
+  }
 }
 
 .lang-btn span,
