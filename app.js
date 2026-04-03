@@ -1,5 +1,114 @@
 const LOCAL_CACHE_KEY = "cska_explorer_root_cache_v10";
 const LOCAL_CACHE_TTL_MS = 10 * 60 * 1000;
+const LANGUAGE_KEY = "cska_site_language";
+
+const I18N = {
+  bg: {
+    standingsTitle: "Efbet Лига - Класиране",
+    thTeam: "Отбор",
+    thMP: "М",
+    thW: "П",
+    thD: "Р",
+    thL: "З",
+    thGD: "ГР",
+    thPTS: "Т",
+    legendChampion: "Шампион / КЛ",
+    legendUcl: "КЛ квалификации",
+    legendUel: "ЛЕ квалификации",
+    legendUecl: "КЛЕ квалификации",
+    legendPlayoff: "Бараж",
+    legendRel: "Изпадане",
+    sourcePrefix: "Източник:",
+    nextMatchesTitle: "Следващи мачове на ЦСКА",
+    lastResultsTitle: "Последни резултати",
+    squadTitle: "Състав на ЦСКА София",
+    groupGoalkeepers: "Вратари",
+    groupDefenders: "Защитници",
+    groupMidfielders: "Халфове",
+    groupForwards: "Нападатели",
+    statMatches: "Мачове",
+    statGoals: "Голове",
+    statAssists: "Асист.",
+    statGoalsPerMatch: "Г/М",
+    statSavesPerMatch: "Спасяв./М",
+    statPenaltiesSaved: "Спас. дузпи",
+    statImpact: "КПД",
+    sourceMissingStats: "В таблицата липсващите статистики се допълват с \"-\".",
+    statusFromCache: "Показани са данни от локалния кеш (без нова заявка).",
+    statusLatest: "Показани са последните данни."
+  },
+  en: {
+    standingsTitle: "Efbet League - Standings",
+    thTeam: "Team",
+    thMP: "MP",
+    thW: "W",
+    thD: "D",
+    thL: "L",
+    thGD: "GD",
+    thPTS: "PTS",
+    legendChampion: "Champion / UCL",
+    legendUcl: "UCL qualification",
+    legendUel: "UEL qualification",
+    legendUecl: "UECL qualification",
+    legendPlayoff: "Playoff",
+    legendRel: "Relegation",
+    sourcePrefix: "Source:",
+    nextMatchesTitle: "Upcoming CSKA Matches",
+    lastResultsTitle: "Recent Results",
+    squadTitle: "CSKA Sofia Squad",
+    groupGoalkeepers: "Goalkeepers",
+    groupDefenders: "Defenders",
+    groupMidfielders: "Midfielders",
+    groupForwards: "Forwards",
+    statMatches: "Matches",
+    statGoals: "Goals",
+    statAssists: "Assists",
+    statGoalsPerMatch: "G/Match",
+    statSavesPerMatch: "Saves/Match",
+    statPenaltiesSaved: "Pens Saved",
+    statImpact: "Impact",
+    sourceMissingStats: "Missing statistics are shown as \"-\" in the table.",
+    statusFromCache: "Showing data from local cache (without a new request).",
+    statusLatest: "Showing the latest data."
+  }
+};
+
+let currentLanguage = localStorage.getItem(LANGUAGE_KEY) === "en" ? "en" : "bg";
+let lastPayload = null;
+let lastFromCache = false;
+
+function t(key) {
+  return I18N[currentLanguage]?.[key] || I18N.bg[key] || key;
+}
+
+function applyLanguageUI() {
+  document.documentElement.lang = currentLanguage;
+  document.querySelectorAll("[data-i18n]").forEach((el) => {
+    const key = el.getAttribute("data-i18n");
+    el.textContent = t(key);
+  });
+
+  document.querySelectorAll(".lang-btn").forEach((btn) => {
+    const selected = btn.dataset.lang === currentLanguage;
+    btn.classList.toggle("is-active", selected);
+    btn.setAttribute("aria-pressed", selected ? "true" : "false");
+  });
+}
+
+function setupLanguageSwitch() {
+  document.querySelectorAll(".lang-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const chosen = btn.dataset.lang === "en" ? "en" : "bg";
+      if (chosen === currentLanguage) return;
+      currentLanguage = chosen;
+      localStorage.setItem(LANGUAGE_KEY, chosen);
+      applyLanguageUI();
+      if (lastPayload) {
+        render(lastPayload, lastFromCache);
+      }
+    });
+  });
+}
 
 const FALLBACK_DATA = {
   source: { note: "Fallback data loaded." },
@@ -183,26 +292,26 @@ function matchMarkup(match, withScore) {
 
 function renderSquad(squad) {
   const groups = [
-    ["Вратари", squad.goalkeepers || []],
-    ["Защитници", squad.defenders || []],
-    ["Халфове", squad.midfielders || []],
-    ["Нападатели", squad.forwards || []]
+    { key: "groupGoalkeepers", players: squad.goalkeepers || [], isGoalkeeper: true },
+    { key: "groupDefenders", players: squad.defenders || [], isGoalkeeper: false },
+    { key: "groupMidfielders", players: squad.midfielders || [], isGoalkeeper: false },
+    { key: "groupForwards", players: squad.forwards || [], isGoalkeeper: false }
   ];
 
   const root = document.getElementById("squadGrid");
   root.innerHTML = "";
 
-  groups.forEach(([title, players]) => {
+  groups.forEach((group) => {
     const wrap = document.createElement("div");
     wrap.className = "squad-group";
 
     const heading = document.createElement("h3");
-    heading.textContent = title;
+    heading.textContent = t(group.key);
     wrap.appendChild(heading);
 
     const ul = document.createElement("ul");
     ul.className = "list";
-    players.forEach((player) => {
+    group.players.forEach((player) => {
       const li = document.createElement("li");
       const name = typeof player === "object" ? player.name : player;
       const num  = typeof player === "object" ? player.number : null;
@@ -230,13 +339,13 @@ function renderSquad(squad) {
         <div class="player-meta">
           <span class="player-name">${name}</span>
           <span class="player-stats">
-            <span class="stat-chip"><span class="stat-label">Мачове</span><span class="stat-value">${safeMatches}</span></span>
-            <span class="stat-chip"><span class="stat-label">Голове</span><span class="stat-value">${safeGoals}</span></span>
-            <span class="stat-chip"><span class="stat-label">Асист.</span><span class="stat-value">${safeAssists}</span></span>
-            <span class="stat-chip"><span class="stat-label">Г/М</span><span class="stat-value">${goalPerMatch}</span></span>
-            ${title === "Вратари" ? `<span class="stat-chip"><span class="stat-label">Спасяв./М</span><span class="stat-value">${Number.isFinite(savesPerMatch) ? savesPerMatch.toFixed(2) : "-"}</span></span>` : ""}
-            ${title === "Вратари" ? `<span class="stat-chip"><span class="stat-label">Спас. дузпи</span><span class="stat-value">${Number.isFinite(penaltiesSaved) ? penaltiesSaved : "-"}</span></span>` : ""}
-            <span class="stat-chip"><span class="stat-label">КПД</span><span class="stat-value">${impactScore > 0 ? impactScore.toFixed(2) : "-"}</span></span>
+            <span class="stat-chip"><span class="stat-label">${t("statMatches")}</span><span class="stat-value">${safeMatches}</span></span>
+            <span class="stat-chip"><span class="stat-label">${t("statGoals")}</span><span class="stat-value">${safeGoals}</span></span>
+            <span class="stat-chip"><span class="stat-label">${t("statAssists")}</span><span class="stat-value">${safeAssists}</span></span>
+            <span class="stat-chip"><span class="stat-label">${t("statGoalsPerMatch")}</span><span class="stat-value">${goalPerMatch}</span></span>
+            ${group.isGoalkeeper ? `<span class="stat-chip"><span class="stat-label">${t("statSavesPerMatch")}</span><span class="stat-value">${Number.isFinite(savesPerMatch) ? savesPerMatch.toFixed(2) : "-"}</span></span>` : ""}
+            ${group.isGoalkeeper ? `<span class="stat-chip"><span class="stat-label">${t("statPenaltiesSaved")}</span><span class="stat-value">${Number.isFinite(penaltiesSaved) ? penaltiesSaved : "-"}</span></span>` : ""}
+            <span class="stat-chip"><span class="stat-label">${t("statImpact")}</span><span class="stat-value">${impactScore > 0 ? impactScore.toFixed(2) : "-"}</span></span>
           </span>
         </div>
       `;
@@ -249,6 +358,9 @@ function renderSquad(squad) {
 }
 
 function render(payload, fromCache) {
+  lastPayload = payload;
+  lastFromCache = fromCache;
+
   const fullStandings = buildFullStandings(payload.standings || []);
   renderStandings(fullStandings);
 
@@ -270,10 +382,10 @@ function render(payload, fromCache) {
   const statusLine = document.getElementById("statusLine");
 
   const baseNote = payload.source?.note || "";
-  sourceNote.textContent = `${baseNote} В таблицата липсващите статистики се допълват с "-".`.trim();
+  sourceNote.textContent = `${baseNote} ${t("sourceMissingStats")}`.trim();
   statusLine.textContent = fromCache
-    ? "Показани са данни от локалния кеш (без нова заявка)."
-    : "Показани са последните данни.";
+    ? t("statusFromCache")
+    : t("statusLatest");
 }
 
 async function fetchFreshData() {
@@ -289,6 +401,9 @@ async function fetchFreshData() {
 }
 
 async function init() {
+  applyLanguageUI();
+  setupLanguageSwitch();
+
   const now = Date.now();
   const cachedRaw = localStorage.getItem(LOCAL_CACHE_KEY);
 

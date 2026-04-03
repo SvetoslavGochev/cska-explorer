@@ -10,77 +10,83 @@
   <header class="site-header">
     <div class="container site-header-inner">
       <div class="brand">CSKA EXPLORER</div>
-      <nav class="main-nav">
-        <a href="#standings">Класиране</a>
-        <a href="#matches">Мачове</a>
-        <a href="#squad">Състав</a>
-      </nav>
+      <div class="header-actions">
+        <nav class="main-nav">
+          <a href="#standings" data-i18n="navStandings">Класиране</a>
+          <a href="#matches" data-i18n="navMatches">Мачове</a>
+          <a href="#squad" data-i18n="navSquad">Състав</a>
+        </nav>
+        <div class="lang-switch" role="group" aria-label="Language switcher">
+          <button type="button" class="lang-btn" data-lang="bg">BG</button>
+          <button type="button" class="lang-btn" data-lang="en">ENG</button>
+        </div>
+      </div>
     </div>
   </header>
 
   <div class="container">
     <section class="hero">
       <h1>CSKA EXPLORER</h1>
-      <p>Всичко важно за ЦСКА и Efbet Лига на едно място.</p>
+      <p data-i18n="heroSubtitle">Всичко важно за ЦСКА и Efbet Лига на едно място.</p>
     </section>
 
     <section class="highlights">
       <article class="mini-card">
-        <h3>Редове в класиране</h3>
+        <h3 data-i18n="miniRows">Редове в класиране</h3>
         <p id="statRows">-</p>
       </article>
       <article class="mini-card">
-        <h3>Следващ мач</h3>
+        <h3 data-i18n="miniNextMatch">Следващ мач</h3>
         <p id="statNext">-</p>
       </article>
       <article class="mini-card">
-        <h3>Футболисти в списък</h3>
+        <h3 data-i18n="miniPlayers">Футболисти в списък</h3>
         <p id="statPlayers">-</p>
       </article>
       <article class="mini-card">
-        <h3>Последно авто-обновяване</h3>
+        <h3 data-i18n="miniUpdated">Последно авто-обновяване</h3>
         <p id="statAutoUpdated" class="small-stat">-</p>
       </article>
     </section>
 
     <section class="grid" id="standings">
       <article class="card">
-        <h2>Efbet Лига - Класиране</h2>
+        <h2 data-i18n="standingsTitle">Efbet Лига - Класиране</h2>
         <div class="table-wrap">
           <table class="table" id="standingsTable">
             <thead>
               <tr>
-                <th>#</th><th>Отбор</th><th>М</th><th>П</th><th>Р</th><th>З</th><th>ГР</th><th>Т</th>
+                <th>#</th><th data-i18n="thTeam">Отбор</th><th data-i18n="thMP">М</th><th data-i18n="thW">П</th><th data-i18n="thD">Р</th><th data-i18n="thL">З</th><th data-i18n="thGD">ГР</th><th data-i18n="thPTS">Т</th>
               </tr>
             </thead>
             <tbody></tbody>
           </table>
         </div>
         <div class="standings-legend">
-          <span><i style="background:#f5c518"></i> Шампион / КЛ</span>
-          <span><i style="background:#1a6fcf"></i> КЛ квалификации</span>
-          <span><i style="background:#e07b20"></i> ЛЕ квалификации</span>
-          <span><i style="background:#1fa35a"></i> КЛЕ квалификации</span>
-          <span><i style="background:#e0a020"></i> Бараж</span>
-          <span><i style="background:#c0202a"></i> Изпадане</span>
+          <span><i style="background:#f5c518"></i><b data-i18n="legendChampion">Шампион / КЛ</b></span>
+          <span><i style="background:#1a6fcf"></i><b data-i18n="legendUcl">КЛ квалификации</b></span>
+          <span><i style="background:#e07b20"></i><b data-i18n="legendUel">ЛЕ квалификации</b></span>
+          <span><i style="background:#1fa35a"></i><b data-i18n="legendUecl">КЛЕ квалификации</b></span>
+          <span><i style="background:#e0a020"></i><b data-i18n="legendPlayoff">Бараж</b></span>
+          <span><i style="background:#c0202a"></i><b data-i18n="legendRel">Изпадане</b></span>
         </div>
-        <p class="small">Източник: <a href="https://www.flashscore.bg/soccer/bulgaria/efbet/#/ID1TwQHr/standings/overall/" target="_blank" rel="noreferrer">Flashscore Efbet standings</a></p>
+        <p class="small"><span data-i18n="sourcePrefix">Източник:</span> <a href="https://www.flashscore.bg/soccer/bulgaria/efbet/#/ID1TwQHr/standings/overall/" target="_blank" rel="noreferrer">Flashscore Efbet standings</a></p>
       </article>
 
       <aside class="flex-col" id="matches">
         <article class="card">
-          <h2>Следващи мачове на ЦСКА</h2>
+          <h2 data-i18n="nextMatchesTitle">Следващи мачове на ЦСКА</h2>
           <ul class="list" id="nextMatches"></ul>
         </article>
         <article class="card">
-          <h2>Последни резултати</h2>
+          <h2 data-i18n="lastResultsTitle">Последни резултати</h2>
           <ul class="list" id="lastResults"></ul>
         </article>
       </aside>
     </section>
 
     <section class="card" style="margin-top:16px;" id="squad">
-      <h2>Състав на ЦСКА София</h2>
+      <h2 data-i18n="squadTitle">Състав на ЦСКА София</h2>
       <div class="squad-grid" id="squadGrid"></div>
       <p class="small" id="sourceNote"></p>
       <p class="small status-ok" id="statusLine"></p>

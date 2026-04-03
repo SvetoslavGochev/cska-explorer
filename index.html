@@ -11,47 +11,53 @@
 <body>
   <div class="container">
     <section class="hero">
+      <div class="hero-topline">
+        <div class="lang-switch" role="group" aria-label="Language switcher">
+          <button type="button" class="lang-btn" data-lang="bg">BG</button>
+          <button type="button" class="lang-btn" data-lang="en">ENG</button>
+        </div>
+      </div>
       <h1>CSKA EXPLORER</h1>
     </section>
 
     <section class="grid">
       <article class="card">
-        <h2>Efbet Лига - Класиране</h2>
+        <h2 data-i18n="standingsTitle">Efbet Лига - Класиране</h2>
         <div class="table-wrap">
           <table class="table" id="standingsTable">
             <thead>
               <tr>
-                <th>#</th><th>Отбор</th><th>М</th><th>П</th><th>Р</th><th>З</th><th>ГР</th><th>Т</th>
+                <th>#</th><th data-i18n="thTeam">Отбор</th><th data-i18n="thMP">М</th><th data-i18n="thW">П</th><th data-i18n="thD">Р</th><th data-i18n="thL">З</th><th data-i18n="thGD">ГР</th><th data-i18n="thPTS">Т</th>
               </tr>
             </thead>
             <tbody></tbody>
           </table>
         </div>
         <div class="standings-legend">
-          <span><i style="background:#f5c518"></i> Шампион / КЛ</span>
-          <span><i style="background:#1a6fcf"></i> КЛ квалификации</span>
-          <span><i style="background:#e07b20"></i> ЛЕ квалификации</span>
-          <span><i style="background:#1fa35a"></i> КЛЕ квалификации</span>
-          <span><i style="background:#e0a020"></i> Бараж</span>
-          <span><i style="background:#c0202a"></i> Изпадане</span>
+          <span><i style="background:#f5c518"></i><b data-i18n="legendChampion">Шампион / КЛ</b></span>
+          <span><i style="background:#1a6fcf"></i><b data-i18n="legendUcl">КЛ квалификации</b></span>
+          <span><i style="background:#e07b20"></i><b data-i18n="legendUel">ЛЕ квалификации</b></span>
+          <span><i style="background:#1fa35a"></i><b data-i18n="legendUecl">КЛЕ квалификации</b></span>
+          <span><i style="background:#e0a020"></i><b data-i18n="legendPlayoff">Бараж</b></span>
+          <span><i style="background:#c0202a"></i><b data-i18n="legendRel">Изпадане</b></span>
         </div>
-        <p class="small">Източник: <a href="https://www.flashscore.bg/soccer/bulgaria/efbet/#/ID1TwQHr/standings/overall/" target="_blank" rel="noreferrer">Flashscore Efbet standings</a></p>
+        <p class="small"><span data-i18n="sourcePrefix">Източник:</span> <a href="https://www.flashscore.bg/soccer/bulgaria/efbet/#/ID1TwQHr/standings/overall/" target="_blank" rel="noreferrer">Flashscore Efbet standings</a></p>
       </article>
 
       <aside class="flex-col">
         <article class="card">
-          <h2>Следващи мачове на ЦСКА</h2>
+          <h2 data-i18n="nextMatchesTitle">Следващи мачове на ЦСКА</h2>
           <ul class="list" id="nextMatches"></ul>
         </article>
         <article class="card">
-          <h2>Последни резултати</h2>
+          <h2 data-i18n="lastResultsTitle">Последни резултати</h2>
           <ul class="list" id="lastResults"></ul>
         </article>
       </aside>
     </section>
 
     <section class="card" style="margin-top:16px;">
-      <h2>Състав на ЦСКА София</h2>
+      <h2 data-i18n="squadTitle">Състав на ЦСКА София</h2>
       <div class="squad-grid" id="squadGrid"></div>
       <p class="small" id="sourceNote"></p>
       <p class="small status-ok" id="statusLine"></p>
