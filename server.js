@@ -57,6 +57,13 @@ const KNOWN_EFBET_TEAMS = new Set([
   "Монтана"
 ]);
 
+const KNOWN_BULGARIAN_MATCH_TEAMS = new Set([
+  ...KNOWN_EFBET_TEAMS,
+  "Локомотив Пловдив",
+  "Локомотив София",
+  "България"
+]);
+
 const refreshState = {
   lastAttemptAt: null,
   lastSuccessAt: null,
@@ -246,6 +253,56 @@ function extractEfbetTodayMatches(html) {
   }));
 }
 
+function extractBulgariaTodayMatches(html) {
+  const todayKey = (() => {
+    const now = new Date();
+    const day = String(now.getDate()).padStart(2, "0");
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    return `${day}.${month}`;
+  })();
+
+  const raw = String(html || "");
+  const itemRegex = /(?:(\d{2}\.\d{2})\.\s*)?<a href="\/match\/soccer\/[^"]+"[^>]*>([^<]+?)\s-\s([^<]+?)<\/a>/gi;
+  const parsed = [];
+  let currentDate = "";
+  let match = itemRegex.exec(raw);
+
+  while (match) {
+    if (match[1]) {
+      currentDate = match[1];
+    }
+
+    const home = translateTeamName(String(match[2] || "").trim());
+    const away = translateTeamName(String(match[3] || "").trim());
+    const likelyBulgarianMatch =
+      KNOWN_BULGARIAN_MATCH_TEAMS.has(home) ||
+      KNOWN_BULGARIAN_MATCH_TEAMS.has(away);
+
+    if (currentDate && likelyBulgarianMatch) {
+      parsed.push({
+        date: currentDate,
+        time: "",
+        home,
+        away
+      });
+    }
+
+    match = itemRegex.exec(raw);
+  }
+
+  const seen = new Set();
+  return parsed
+    .filter((event) => event.date === todayKey)
+    .filter((event) => {
+      const key = `${event.date}|${event.home}|${event.away}`;
+      if (seen.has(key)) {
+        return false;
+      }
+      seen.add(key);
+      return true;
+    });
+}
+
 function mergeSquadStats(existingSquad, statsByName) {
   const groups = ["goalkeepers", "defenders", "midfielders", "forwards"];
   const merged = {};
@@ -419,12 +476,13 @@ async function buildFreshPayloadFromSource() {
   const season = getSeasonKey();
   const warnings = [];
 
-  const [standingsResult, resultsResult, upcomingResult, squadPageResult, standingsPageResult] = await Promise.allSettled([
+  const [standingsResult, resultsResult, upcomingResult, squadPageResult, standingsPageResult, bulgariaPageResult] = await Promise.allSettled([
     fetchJson(`${SPORTSDB_BASE}/lookuptable.php?l=${BULGARIAN_LEAGUE_ID}&s=${season}`),
     fetchJson(`${SPORTSDB_BASE}/eventslast.php?id=${CSKA_TEAM_ID}`),
     fetchJson(`${SPORTSDB_BASE}/eventsnext.php?id=${CSKA_TEAM_ID}`),
     fetchText(fallback?.source?.squadUrl || "https://www.flashscore.bg/team/cska-sofia/0xFNNECi/squad/"),
-    fetchText(fallback?.source?.standingsUrl || "https://www.flashscore.bg/soccer/bulgaria/efbet/#/ID1TwQHr/standings/overall/")
+    fetchText(fallback?.source?.standingsUrl || "https://www.flashscore.bg/soccer/bulgaria/efbet/#/ID1TwQHr/standings/overall/"),
+    fetchText("https://www.flashscore.bg/soccer/bulgaria/")
   ]);
 
   const nextPayload = {
@@ -526,6 +584,22 @@ async function buildFreshPayloadFromSource() {
   if (standingsPageResult.status === "fulfilled") {
     const todayMatches = extractEfbetTodayMatches(standingsPageResult.value);
     nextPayload.cska.todayMatches = todayMatches;
+  }
+
+  if (bulgariaPageResult.status === "fulfilled") {
+    const broaderTodayMatches = extractBulgariaTodayMatches(bulgariaPageResult.value);
+    const merged = [...(nextPayload.cska.todayMatches || []), ...broaderTodayMatches];
+    const unique = [];
+    const seen = new Set();
+    merged.forEach((event) => {
+      const key = `${event.date}|${event.home}|${event.away}`;
+      if (seen.has(key)) {
+        return;
+      }
+      seen.add(key);
+      unique.push(event);
+    });
+    nextPayload.cska.todayMatches = unique;
   }
 
   if (warnings.length > 0) {
