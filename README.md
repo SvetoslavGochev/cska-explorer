@@ -66,6 +66,7 @@ https://svetoslavgochev.github.io/cska-explorer/
 - `npm run ops:refresh` — обновява статистиките на играчите в `data/bootstrap-data.json` от Sportal + Flashscore и добавя ред в `data/refresh-log.ndjson`.
 - `npm run ops:verify:local` — проверява локалните `api/health` и `api/data` метрики.
 - `npm run ops:verify:live` — проверява live данните от GitHub Pages (`updatedAt`, играчи, флагове, мачове).
+- `npm run ops:refresh-and-push` — изпълнява refresh + live verify + commit + push на `data/bootstrap-data.json` и `data/refresh-log.ndjson`.
 
 Лог файл:
 

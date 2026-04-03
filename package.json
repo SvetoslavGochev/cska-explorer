@@ -9,7 +9,8 @@
     "test:live": "node tests/today-matches.test.js --live",
     "ops:refresh": "node scripts/refresh-player-stats.js",
     "ops:verify:local": "node scripts/verify-local.js",
-    "ops:verify:live": "node scripts/verify-live.js"
+    "ops:verify:live": "node scripts/verify-live.js",
+    "ops:refresh-and-push": "node scripts/refresh-and-push.js"
   },
   "dependencies": {}
 }
