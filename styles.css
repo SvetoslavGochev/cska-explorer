@@ -465,17 +465,20 @@ body {
 
 @media (max-width: 900px) {
   .hero-topline {
+    justify-content: center;
     margin-bottom: 10px;
   }
 
   .lang-switch {
     gap: 4px;
-    padding: 3px;
+    padding: 4px;
   }
 
   .lang-btn {
     font-size: 0.7rem;
-    padding: 4px 7px;
+    padding: 5px 9px;
+    min-width: 52px;
+    min-height: 30px;
   }
 
   .grid { grid-template-columns: 1fr; }

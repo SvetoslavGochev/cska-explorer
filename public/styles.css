@@ -351,15 +351,22 @@ button {
 
 @media (max-width: 900px) {
   .site-header-inner {
+    align-items: flex-start;
     min-height: 56px;
+    padding-top: 8px;
+    padding-bottom: 8px;
   }
 
   .header-actions {
+    display: grid;
+    justify-items: end;
     gap: 6px;
   }
 
   .main-nav {
     gap: 6px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
   }
 
   .main-nav a {
@@ -383,4 +390,29 @@ button {
 
   .grid { grid-template-columns: 1fr; }
   .squad-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .site-header-inner {
+    align-items: center;
+    gap: 8px;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-items: stretch;
+  }
+
+  .main-nav {
+    justify-content: center;
+  }
+
+  .lang-switch {
+    align-self: center;
+  }
+
+  .lang-btn {
+    min-width: 52px;
+    min-height: 30px;
+  }
 }
