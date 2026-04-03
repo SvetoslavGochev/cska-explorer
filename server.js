@@ -10,6 +10,8 @@ const REQUEST_TIMEOUT_MS = Number(process.env.REQUEST_TIMEOUT_MS || 12000);
 const SPORTSDB_BASE = "https://www.thesportsdb.com/api/v1/json/3";
 const BULGARIAN_LEAGUE_ID = "4626";
 const CSKA_TEAM_ID = "134088";
+const SPORTAL_FOOTBALL_BASE = "https://football.cache.proxy.sportal365.com";
+const SPORTAL_AUTH = "Basic ZWZiZXQuY29tOktYVWM5dWZ6WEFNQWZBQXVqOTROWlphRXlWYUxpZmt0";
 
 const ROOT = __dirname;
 const PUBLIC_DIR = path.join(ROOT, "public");
@@ -142,6 +144,149 @@ function formatEventTime(timeValue) {
   if (!timeValue) return "";
   const time = String(timeValue).split("+")[0].slice(0, 5);
   return /^\d{2}:\d{2}$/.test(time) ? time : "";
+}
+
+function normalizeEfbetLeagueTeamName(name) {
+  const raw = String(name || "").trim();
+  const map = {
+    "ПФК Левски": "Левски София",
+    "ПФК Левски": "Левски София",
+    "ПФК Лудогорец 1945": "Лудогорец",
+    "ФК Централен Спортен Клуб на Армията 1948": "ЦСКА 1948",
+    "ПРОФЕСИОНАЛЕН ФУТБОЛЕН КЛУБ ЦСКА ЕАД": "ЦСКА София",
+    "ПФК ЧЕРНО МОРЕ АД": "Черно море",
+    "ПФК ЛОКОМОТИВ ПЛОВДИВ 1926 АД": "Локомотив Пловдив",
+    "ПФК Арда Кърджали 1924": "Арда",
+    "ПФК Славия 1913": "Славия София",
+    "ПФК Ботев Враца": "Ботев Враца",
+    "ФУТБОЛЕН КЛУБ ЛОКОМОТИВ СОФИЯ 1929 ЕАД": "Локомотив София",
+    "ПФК Ботев АД": "Ботев Пловдив",
+    "ФУТБОЛЕН КЛУБ ДОБРУДЖА 1919": "Добруджа",
+    "ФУТБОЛЕН КЛУБ СПАРТАК 1918": "Спартак Варна",
+    "ПФК Берое - Стара Загора": "Берое",
+    "ПФК Септември Сф": "Септември София",
+    "ПФК Монтана 1921": "Монтана",
+    "Левски София": "Левски София",
+    "Лудогорец": "Лудогорец",
+    "ЦСКА 1948": "ЦСКА 1948",
+    "ЦСКА": "ЦСКА София",
+    "ЦСКА София": "ЦСКА София",
+    "Черно море": "Черно море",
+    "Локомотив Пловдив": "Локомотив Пловдив",
+    "Арда": "Арда",
+    "Славия": "Славия София",
+    "Славия София": "Славия София",
+    "Ботев Враца": "Ботев Враца",
+    "Локомотив София": "Локомотив София",
+    "Ботев Пловдив": "Ботев Пловдив",
+    "Добруджа": "Добруджа",
+    "Спартак Варна": "Спартак Варна",
+    "Берое": "Берое",
+    "Септември София": "Септември София",
+    "Монтана": "Монтана"
+  };
+  if (map[raw]) return map[raw];
+  return translateTeamName(raw);
+}
+
+async function fetchSportalJson(url) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  try {
+    const response = await fetch(url, {
+      signal: controller.signal,
+      headers: {
+        "User-Agent": "CSKA-Explorer/1.0",
+        "Accept": "application/json, text/plain, */*",
+        "Accept-Language": "bg",
+        "Referer": "https://efbetleague.com/",
+        "X-Project": "sportal.bg",
+        "Authorization": SPORTAL_AUTH
+      }
+    });
+    if (!response.ok) {
+      throw new Error(`Sportal upstream ${response.status}`);
+    }
+    return await response.json();
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function fetchEfbetLeagueStandingsFull() {
+  const latestSeason = await fetchSportalJson(`${SPORTAL_FOOTBALL_BASE}/tournaments/1/seasons/latest`);
+  const stages = Array.isArray(latestSeason?.stages) ? latestSeason.stages : [];
+  const mainStage = stages.find((stage) => stage?.live) || stages[0] || null;
+
+  if (!mainStage?.id) {
+    throw new Error("Sportal stage id not found");
+  }
+
+  const stageId = String(mainStage.id);
+  const readStandingPage = async (offset) => {
+    const stageData = await fetchSportalJson(
+      `${SPORTAL_FOOTBALL_BASE}/tournaments/seasons/stages/${stageId}?expand=standing.rules,standing.form.events&language_code=bg&row_offset=${offset}`
+    );
+
+    if (Array.isArray(stageData?.standing)) {
+      return stageData.standing;
+    }
+    return [];
+  };
+
+  const allRows = [];
+  const seenKeys = new Set();
+  const pageSize = 5;
+  for (let offset = 0; offset <= 30; offset += pageSize) {
+    const pageRows = await readStandingPage(offset);
+    if (!Array.isArray(pageRows) || pageRows.length === 0) {
+      break;
+    }
+
+    let newRows = 0;
+    pageRows.forEach((row) => {
+      const key = `${toNumber(row?.rank, 0)}|${String(row?.team?.name || row?.team || "").trim()}`;
+      if (seenKeys.has(key)) {
+        return;
+      }
+      seenKeys.add(key);
+      allRows.push(row);
+      newRows += 1;
+    });
+
+    // Stop if endpoint keeps returning duplicate rows for higher offsets.
+    if (newRows === 0) {
+      break;
+    }
+
+    if (allRows.length >= 16) {
+      break;
+    }
+
+    if (pageRows.length < pageSize) {
+      break;
+    }
+  }
+
+  const standingRows = allRows.length > 0
+    ? allRows
+    : (Array.isArray(mainStage?.standing) ? mainStage.standing : []);
+
+  return standingRows
+    .map((row) => ({
+      rank: toNumber(row?.rank, 0),
+      team: normalizeEfbetLeagueTeamName(row?.team?.name || row?.team),
+      mp: toNumber(row?.played, 0),
+      w: toNumber(row?.wins, 0),
+      d: toNumber(row?.draws, 0),
+      l: toNumber(row?.defeits ?? row?.defeats, 0),
+      gf: toNumber(row?.goals_for, 0),
+      ga: toNumber(row?.goals_against, 0),
+      gd: toNumber(row?.goals_for, 0) - toNumber(row?.goals_against, 0),
+      pts: toNumber(row?.points, 0)
+    }))
+    .filter((row) => row.rank > 0 && row.team)
+    .sort((a, b) => a.rank - b.rank);
 }
 
 async function fetchJson(url) {
@@ -495,7 +640,16 @@ async function buildFreshPayloadFromSource() {
     }
   };
 
-  if (standingsResult.status === "fulfilled" && Array.isArray(standingsResult.value?.table)) {
+  let fullEfbetStandings = [];
+  try {
+    fullEfbetStandings = await fetchEfbetLeagueStandingsFull();
+  } catch (_) {
+    fullEfbetStandings = [];
+  }
+
+  if (Array.isArray(fullEfbetStandings) && fullEfbetStandings.length >= 12) {
+    nextPayload.standings = fullEfbetStandings;
+  } else if (standingsResult.status === "fulfilled" && Array.isArray(standingsResult.value?.table)) {
     const parseStandingsTable = (table) => table
       .map((row) => ({
         rank: toNumber(row.intRank, 0),

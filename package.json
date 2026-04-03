@@ -7,5 +7,6 @@
     "start": "node server.js",
     "test": "node tests/today-matches.test.js",
     "test:live": "node tests/today-matches.test.js --live"
-  }
+  },
+  "dependencies": {}
 }

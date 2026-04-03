@@ -219,33 +219,9 @@ const TEAM_LOGOS = {
   "Монтана": "https://static.flashscore.com/res/image/data/QLieRNR0-COvJNbKS.png",
 };
 
-const FULL_EFBET_TEAMS = [
-  "Левски София",
-  "Лудогорец",
-  "ЦСКА 1948",
-  "ЦСКА София",
-  "Черно море",
-  "Арда",
-  "Ботев Пловдив",
-  "Локомотив Пловдив",
-  "Локомотив София",
-  "Славия София",
-  "Добруджа",
-  "Спартак Варна",
-  "Берое",
-  "Септември София",
-  "Монтана",
-  "Ботев Враца"
-];
-
 const TEAM_NAME_ALIASES = {
   "Локо Пловдив": "Локомотив Пловдив",
   "Локо София": "Локомотив София"
-};
-
-const TEAM_DISPLAY_ALIASES = {
-  "Локомотив Пловдив": "Локо Пловдив",
-  "Локомотив София": "Локо София"
 };
 
 function isValidPayload(payload) {
@@ -257,44 +233,11 @@ function normalizeTeamName(team) {
 }
 
 function formatTeamDisplayName(team) {
-  return TEAM_DISPLAY_ALIASES[team] || team;
+  return team;
 }
 
 function getTeamLogo(team) {
   return TEAM_LOGOS[normalizeTeamName(team)] || "";
-}
-
-function buildFullStandings(standings) {
-  const byTeam = new Map(
-    (standings || []).map((row) => [normalizeTeamName(row.team), row])
-  );
-  const maxKnownRank = Math.max(0, ...((standings || []).map((r) => Number(r.rank) || 0)));
-  let nextRank = maxKnownRank + 1;
-
-  return FULL_EFBET_TEAMS.map((team) => {
-    const existing = byTeam.get(team);
-    if (existing) {
-      return {
-        ...existing,
-        team
-      };
-    }
-
-    const row = {
-      rank: nextRank,
-      team,
-      mp: "-",
-      w: "-",
-      d: "-",
-      l: "-",
-      gf: "-",
-      ga: "-",
-      gd: "-",
-      pts: "-"
-    };
-    nextRank += 1;
-    return row;
-  });
 }
 
 function sortStandingsByRank(standings) {
@@ -461,8 +404,7 @@ function render(payload, fromCache) {
   lastPayload = payload;
   lastFromCache = fromCache;
 
-  const fullStandings = buildFullStandings(payload.standings || []);
-  renderStandings(fullStandings);
+  renderStandings(payload.standings || []);
 
   renderMatches(
     "nextMatches",
