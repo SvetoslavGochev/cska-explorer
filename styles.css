@@ -558,6 +558,21 @@ body {
   box-shadow: 0 1px 3px rgba(0,0,0,0.18);
 }
 
+.footer {
+  margin-top: 16px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.footer-note {
+  margin: 6px auto 0;
+  max-width: 760px;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: #5f4c3b;
+}
+
 @keyframes logoFadeIn {
   from {
     opacity: 0;

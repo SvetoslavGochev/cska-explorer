@@ -455,6 +455,14 @@ button {
   font-size: 0.85rem;
 }
 
+.footer-note {
+  margin: 6px auto 0;
+  max-width: 760px;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: #5f4c3b;
+}
+
 @media (max-width: 900px) {
   body {
     background:
