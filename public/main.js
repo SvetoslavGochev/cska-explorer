@@ -175,6 +175,36 @@ function getLocale() {
   return currentLanguage === "en" ? "en-GB" : "bg-BG";
 }
 
+function getCountryInitials(countryName) {
+  const value = String(countryName || "").trim();
+  if (!value) return "";
+
+  const normalized = value.toLowerCase();
+  if (normalized.includes("централноафрикан")) return "ЦАР";
+
+  const parts = value
+    .replace(/[^\p{L}\s]/gu, " ")
+    .split(/\s+/)
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  if (parts.length >= 2) {
+    return parts.slice(0, 3).map((part) => part[0]).join("").toUpperCase();
+  }
+
+  const single = parts[0] || value;
+  return single.slice(0, 2).toUpperCase();
+}
+
+function getPlayerCountryCodeHtml(player) {
+  if (!player || typeof player !== "object") return "";
+  const code = getCountryInitials(player.countryName);
+  if (!code) return "";
+  const countryName = String(player.countryName || "").trim();
+  const title = countryName || code;
+  return `<span class="player-country-code" title="${title}">(${code})</span>`;
+}
+
 function getPlayerFlagHtml(player) {
   if (!player || typeof player !== "object") return "";
   const flagUrl = String(player.countryFlagUrl || "").trim();
@@ -454,6 +484,7 @@ function render(data, fromLocalCache) {
       const li = document.createElement("li");
       const name = typeof p === "object" ? p.name : p;
       const flagHtml = getPlayerFlagHtml(p);
+      const countryCodeHtml = getPlayerCountryCodeHtml(p);
       const num = typeof p === "object" ? p.number : null;
       const matches = Number(typeof p === "object" ? p.matches : NaN);
       const goals = Number(typeof p === "object" ? p.goals : NaN);
@@ -477,7 +508,7 @@ function render(data, fromLocalCache) {
       li.innerHTML = `
         ${num != null ? `<span class="jersey-num">${num}</span>` : ""}
         <div class="player-meta">
-          <span class="player-name"><span class="player-name-wrap">${flagHtml}<span>${name}</span></span></span>
+          <span class="player-name"><span class="player-name-wrap">${flagHtml}<span>${name}</span>${countryCodeHtml}</span></span>
           <span class="player-stats">
             <span class="stat-chip"><span class="stat-label">${t("statMatches")}</span><span class="stat-value">${safeMatches}</span></span>
             <span class="stat-chip"><span class="stat-label">${t("statGoals")}</span><span class="stat-value">${safeGoals}</span></span>

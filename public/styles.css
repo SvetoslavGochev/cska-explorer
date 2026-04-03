@@ -450,6 +450,13 @@ body {
   flex-shrink: 0;
 }
 
+.player-country-code {
+  font-size: 0.73rem;
+  color: #5a4b3f;
+  letter-spacing: 0.02em;
+  font-weight: 700;
+}
+
 .controls {
   margin-top: 12px;
   display: flex;
