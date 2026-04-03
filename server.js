@@ -57,6 +57,15 @@ const KNOWN_EFBET_TEAMS = new Set([
   "Монтана"
 ]);
 
+const refreshState = {
+  lastAttemptAt: null,
+  lastSuccessAt: null,
+  lastReason: null,
+  lastError: null,
+  lastUsedFallback: false,
+  lastWarnings: []
+};
+
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, "utf8"));
 }
@@ -249,6 +258,68 @@ function writeBudget(budget) {
   writeJson(BUDGET_FILE, budget);
 }
 
+function markRefreshAttempt(reason) {
+  refreshState.lastAttemptAt = new Date().toISOString();
+  refreshState.lastReason = reason;
+}
+
+function markRefreshSuccess(reason, payload) {
+  const warnings = Array.isArray(payload?.source?.validation?.warnings)
+    ? payload.source.validation.warnings
+    : [];
+
+  refreshState.lastSuccessAt = new Date().toISOString();
+  refreshState.lastReason = reason;
+  refreshState.lastError = null;
+  refreshState.lastWarnings = warnings;
+  refreshState.lastUsedFallback = warnings.length > 0;
+}
+
+function markRefreshFailure(reason, error) {
+  refreshState.lastReason = reason;
+  refreshState.lastError = String(error?.message || error || "unknown error");
+}
+
+function getHealthSnapshot() {
+  const now = Date.now();
+  const cache = readCache();
+  const budget = getBudgetSnapshot();
+  const isFresh = Boolean(cache?.expiresAt && cache.expiresAt > now);
+  const payload = cache?.payload || null;
+  const validation = payload?.source?.validation || { warnings: [], usedFallback: false };
+
+  return {
+    status: "ok",
+    now: new Date(now).toISOString(),
+    autoRefresh: {
+      enabled: Number.isFinite(AUTO_REFRESH_MINUTES) && AUTO_REFRESH_MINUTES > 0,
+      intervalMinutes: Math.max(5, AUTO_REFRESH_MINUTES)
+    },
+    cache: {
+      exists: Boolean(payload),
+      isFresh,
+      createdAt: cache?.createdAt ? new Date(cache.createdAt).toISOString() : null,
+      expiresAt: cache?.expiresAt ? new Date(cache.expiresAt).toISOString() : null,
+      updatedAt: payload?.updatedAt || null,
+      sourceNote: payload?.source?.note || null,
+      standingsCount: Array.isArray(payload?.standings) ? payload.standings.length : 0,
+      nextMatchesCount: Array.isArray(payload?.cska?.nextMatches) ? payload.cska.nextMatches.length : 0,
+      lastResultsCount: Array.isArray(payload?.cska?.lastResults) ? payload.cska.lastResults.length : 0
+    },
+    validation: {
+      warnings: Array.isArray(validation.warnings) ? validation.warnings : [],
+      usedFallback: Boolean(validation.usedFallback)
+    },
+    budget: {
+      date: budget.date,
+      used: budget.used,
+      limit: budget.limit,
+      remaining: Math.max(budget.limit - budget.used, 0)
+    },
+    refresh: { ...refreshState }
+  };
+}
+
 function tryConsumeRefreshBudget() {
   const budget = readBudget();
   if (budget.used >= budget.limit) {
@@ -403,7 +474,14 @@ async function buildFreshPayloadFromSource() {
 
   if (warnings.length > 0) {
     nextPayload.source.note = `Automatic server refresh with validation (${warnings.join(", ")}).`;
+  } else {
+    nextPayload.source.note = "Automatic server refresh: standings + CSKA matches + squad stats.";
   }
+
+  nextPayload.source.validation = {
+    warnings,
+    usedFallback: warnings.length > 0
+  };
 
   return nextPayload;
 }
@@ -441,6 +519,8 @@ async function getCachedData(forceRefresh) {
     return withCacheMeta(cache.payload, "server-cache", budgetSnapshot);
   }
 
+  markRefreshAttempt(forceRefresh ? "api-force" : "api-refresh");
+
   const budgetDecision = tryConsumeRefreshBudget();
   if (!budgetDecision.allowed) {
     if (hasCache) {
@@ -450,6 +530,7 @@ async function getCachedData(forceRefresh) {
     // Absolute fallback if there is no cache yet.
     const payload = await buildFreshPayloadFromSource();
     writeCache(payload, now);
+    markRefreshSuccess("api-refresh-budget-exhausted-no-cache", payload);
     return withCacheMeta(payload, "bootstrap-no-cache-budget-exhausted", budgetDecision.budget);
   }
 
@@ -457,15 +538,18 @@ async function getCachedData(forceRefresh) {
     const payload = await buildFreshPayloadFromSource();
     writeCache(payload, now);
     writeJson(BOOTSTRAP_FILE, payload);
+    markRefreshSuccess(forceRefresh ? "api-force" : "api-refresh", payload);
     const source = forceRefresh ? "forced-refresh" : "refresh-within-budget";
     return withCacheMeta(payload, source, budgetDecision.budget);
-  } catch (_) {
+  } catch (error) {
+    markRefreshFailure(forceRefresh ? "api-force" : "api-refresh", error);
     if (hasCache) {
       return withCacheMeta(cache.payload, "stale-cache-refresh-failed", budgetDecision.budget);
     }
 
     const payload = await buildFreshPayloadFromSource();
     writeCache(payload, now);
+    markRefreshSuccess("api-refresh-fallback-build", payload);
     return withCacheMeta(payload, "bootstrap-refresh-failed", budgetDecision.budget);
   }
 }
@@ -479,6 +563,7 @@ async function runAutoRefresh(reason) {
 
   autoRefreshRunning = true;
   try {
+    markRefreshAttempt(`auto-${reason}`);
     const budgetDecision = tryConsumeRefreshBudget();
     if (!budgetDecision.allowed) {
       console.log(`[auto-refresh] skipped (${reason}) - budget exhausted`);
@@ -489,8 +574,10 @@ async function runAutoRefresh(reason) {
     const now = Date.now();
     writeCache(payload, now);
     writeJson(BOOTSTRAP_FILE, payload);
+    markRefreshSuccess(`auto-${reason}`, payload);
     console.log(`[auto-refresh] completed (${reason}) at ${new Date().toISOString()}`);
   } catch (error) {
+    markRefreshFailure(`auto-${reason}`, error);
     console.error(`[auto-refresh] failed (${reason}):`, error.message);
   } finally {
     autoRefreshRunning = false;
@@ -567,6 +654,15 @@ const server = http.createServer((req, res) => {
       });
     } catch (err) {
       sendJson(res, 500, { error: "Cannot load budget", details: err.message });
+    }
+    return;
+  }
+
+  if (url.pathname === "/api/health") {
+    try {
+      sendJson(res, 200, getHealthSnapshot());
+    } catch (err) {
+      sendJson(res, 500, { error: "Cannot load health", details: err.message });
     }
     return;
   }
