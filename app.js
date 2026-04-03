@@ -34,6 +34,16 @@ const I18N = {
     statPenaltiesSaved: "Спас. дузпи",
     statImpact: "КПД",
     impactFormula: "КПД = (Мачове x 0.25) + (Асист. x 0.5) + (Голове x 1) + (Хеттрици x 2).",
+    sourceRefreshLabel: "Обновяване:",
+    sourceValidationLabel: "Валидиране:",
+    sourceMissingStatsLabel: "Липсващи данни:",
+    sourceImpactLabel: "Формула КПД:",
+    warnStandingsFallback: "Класиране (fallback)",
+    warnLastResultsFallback: "Последни резултати (fallback)",
+    warnNextMatchesFallback: "Следващи мачове (fallback)",
+    warnStandingsFetchFailed: "Класиране (грешка при заявка)",
+    warnLastResultsFetchFailed: "Последни резултати (грешка при заявка)",
+    warnNextMatchesFetchFailed: "Следващи мачове (грешка при заявка)",
     sourceMissingStats: "В таблицата липсващите статистики се допълват с \"-\".",
     statusFromCache: "Показани са данни от локалния кеш (без нова заявка).",
     statusLatest: "Показани са последните данни."
@@ -69,6 +79,16 @@ const I18N = {
     statPenaltiesSaved: "Pens Saved",
     statImpact: "Impact",
     impactFormula: "Impact = (Matches x 0.25) + (Assists x 0.5) + (Goals x 1) + (Hattricks x 2).",
+    sourceRefreshLabel: "Refresh:",
+    sourceValidationLabel: "Validation:",
+    sourceMissingStatsLabel: "Missing data:",
+    sourceImpactLabel: "Impact formula:",
+    warnStandingsFallback: "Standings (fallback)",
+    warnLastResultsFallback: "Last results (fallback)",
+    warnNextMatchesFallback: "Next matches (fallback)",
+    warnStandingsFetchFailed: "Standings (fetch failed)",
+    warnLastResultsFetchFailed: "Last results (fetch failed)",
+    warnNextMatchesFetchFailed: "Next matches (fetch failed)",
     sourceMissingStats: "Missing statistics are shown as \"-\" in the table.",
     statusFromCache: "Showing data from local cache (without a new request).",
     statusLatest: "Showing the latest data."
@@ -109,6 +129,55 @@ function setupLanguageSwitch() {
         render(lastPayload, lastFromCache);
       }
     });
+  });
+}
+
+function localizeValidationWarning(rawWarning) {
+  const warning = String(rawWarning || "").trim().toLowerCase();
+  const warningMap = {
+    "standings fallback kept": t("warnStandingsFallback"),
+    "lastresults fallback kept": t("warnLastResultsFallback"),
+    "nextmatches fallback kept": t("warnNextMatchesFallback"),
+    "standings fetch failed": t("warnStandingsFetchFailed"),
+    "lastresults fetch failed": t("warnLastResultsFetchFailed"),
+    "nextmatches fetch failed": t("warnNextMatchesFetchFailed")
+  };
+
+  return warningMap[warning] || rawWarning;
+}
+
+function parseValidationWarnings(note) {
+  const match = String(note || "").match(/validation \(([^)]+)\)/i);
+  if (!match || !match[1]) {
+    return [];
+  }
+  return match[1].split(",").map((item) => item.trim()).filter(Boolean);
+}
+
+function renderSourceNote(baseNote) {
+  const sourceNote = document.getElementById("sourceNote");
+  if (!sourceNote) return;
+
+  sourceNote.innerHTML = "";
+
+  const warnings = parseValidationWarnings(baseNote);
+  const lines = [];
+
+  if (warnings.length > 0) {
+    lines.push(`${t("sourceRefreshLabel")} ${baseNote.split("(")[0].trim()}`);
+    lines.push(`${t("sourceValidationLabel")} ${warnings.map(localizeValidationWarning).join(", ")}`);
+  } else if (baseNote) {
+    lines.push(`${t("sourceRefreshLabel")} ${baseNote}`);
+  }
+
+  lines.push(`${t("sourceMissingStatsLabel")} ${t("sourceMissingStats")}`);
+  lines.push(`${t("sourceImpactLabel")} ${t("impactFormula")}`);
+
+  lines.forEach((line) => {
+    const row = document.createElement("span");
+    row.className = "source-note-line";
+    row.textContent = line;
+    sourceNote.appendChild(row);
   });
 }
 
@@ -384,7 +453,7 @@ function render(payload, fromCache) {
   const statusLine = document.getElementById("statusLine");
 
   const baseNote = payload.source?.note || "";
-  sourceNote.textContent = `${baseNote} ${t("sourceMissingStats")} ${t("impactFormula")}`.trim();
+  renderSourceNote(baseNote);
   statusLine.textContent = fromCache
     ? t("statusFromCache")
     : t("statusLatest");

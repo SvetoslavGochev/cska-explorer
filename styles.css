@@ -425,6 +425,23 @@ body {
   font-size: 0.9rem;
 }
 
+#sourceNote {
+  display: grid;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.source-note-line {
+  display: block;
+  padding: 6px 9px;
+  border-radius: 8px;
+  background: rgba(255, 250, 238, 0.62);
+  border: 1px solid rgba(205, 180, 142, 0.58);
+  color: #4a3423;
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
 .squad-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
