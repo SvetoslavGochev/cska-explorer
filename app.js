@@ -190,6 +190,7 @@ const FALLBACK_DATA = {
   cska: {
     nextMatches: [],
     lastResults: [],
+    todayMatches: [],
     squad: {
       goalkeepers: [],
       defenders: [],
@@ -533,7 +534,7 @@ async function fetchFreshData() {
     const res = await fetch("data/bootstrap-data.json", { cache: "no-store" });
     if (!res.ok) throw new Error("No bootstrap data");
     const payload = await res.json();
-    if (!isValidPayload(payload)) throw new Error("Invalid payload");
+    if (!payload || typeof payload !== "object") throw new Error("Invalid payload");
     return payload;
   } catch {
     return FALLBACK_DATA;
