@@ -188,16 +188,7 @@ function renderSourceNote(baseNote) {
 
   sourceNote.innerHTML = "";
 
-  const warnings = parseValidationWarnings(baseNote);
   const lines = [];
-
-  if (warnings.length > 0) {
-    lines.push(`${t("sourceRefreshLabel")} ${baseNote.split("(")[0].trim()}`);
-    lines.push(`${t("sourceValidationLabel")} ${warnings.map(localizeValidationWarning).join(", ")}`);
-  } else if (baseNote) {
-    lines.push(`${t("sourceRefreshLabel")} ${baseNote}`);
-  }
-
   lines.push(`${t("sourceMissingStatsLabel")} ${t("sourceMissingStats")}`);
   lines.push(`${t("sourceImpactLabel")} ${t("impactFormula")}`);
 
