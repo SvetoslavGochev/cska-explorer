@@ -202,7 +202,7 @@ function getPlayerCountryCodeHtml(player) {
   if (!code) return "";
   const countryName = String(player.countryName || "").trim();
   const title = countryName || code;
-  return `<span class="player-country-code" title="${title}">(${code})</span>`;
+  return `<span class="player-country-code" title="${title}">${code}</span>`;
 }
 
 function getPlayerFlagHtml(player) {
