@@ -56,6 +56,12 @@ function normalizeTeamName(team) {
   return team;
 }
 
+function formatTeamDisplayName(team) {
+  if (team === "Локомотив Пловдив") return "Локо Пловдив";
+  if (team === "Локомотив София") return "Локо София";
+  return team;
+}
+
 function render(data, fromLocalCache) {
   const updatedAtEl = document.getElementById("updatedAt");
   const cacheInfoEl = document.getElementById("cacheInfo");
@@ -85,7 +91,7 @@ function render(data, fromLocalCache) {
     else if (rank >= 15) tr.classList.add("zone-rel");
     tr.innerHTML = `
       <td>${row.rank ?? "-"}</td>
-      <td><span class="standings-team-bubble">${row.team ?? "-"}</span></td>
+      <td><span class="standings-team-bubble">${formatTeamDisplayName(row.team ?? "-")}</span></td>
       <td><span class="standings-stat-bubble">${row.mp ?? "-"}</span></td>
       <td><span class="standings-stat-bubble">${row.w ?? "-"}</span></td>
       <td><span class="standings-stat-bubble">${row.d ?? "-"}</span></td>

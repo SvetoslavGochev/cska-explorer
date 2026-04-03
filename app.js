@@ -43,8 +43,8 @@ const FULL_EFBET_TEAMS = [
   "Черно море",
   "Арда",
   "Ботев Пловдив",
-  "Локо Пловдив",
-  "Локо София",
+  "Локомотив Пловдив",
+  "Локомотив София",
   "Славия София",
   "Добруджа",
   "Спартак Варна",
@@ -59,12 +59,21 @@ const TEAM_NAME_ALIASES = {
   "Локо София": "Локомотив София"
 };
 
+const TEAM_DISPLAY_ALIASES = {
+  "Локомотив Пловдив": "Локо Пловдив",
+  "Локомотив София": "Локо София"
+};
+
 function isValidPayload(payload) {
   return Boolean(payload && Array.isArray(payload.standings) && payload.standings.length);
 }
 
 function normalizeTeamName(team) {
   return TEAM_NAME_ALIASES[team] || team;
+}
+
+function formatTeamDisplayName(team) {
+  return TEAM_DISPLAY_ALIASES[team] || team;
 }
 
 function getTeamLogo(team) {
@@ -131,7 +140,7 @@ function renderStandings(standings) {
       <td>
         <div class="team-cell">
           ${logo ? `<img class="team-logo" src="${logo}" alt="${row.team}" loading="lazy" />` : ""}
-          <span class="standings-team-bubble" title="${row.team ?? "-"}">${row.team ?? "-"}</span>
+          <span class="standings-team-bubble" title="${row.team ?? "-"}">${formatTeamDisplayName(row.team ?? "-")}</span>
         </div>
       </td>
       <td><span class="standings-stat-bubble">${row.mp ?? "-"}</span></td>
