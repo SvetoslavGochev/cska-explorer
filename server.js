@@ -478,13 +478,14 @@ async function buildFreshPayloadFromSource() {
   const season = getSeasonKey();
   const warnings = [];
 
-  const [standingsResult, resultsResult, upcomingResult, squadPageResult, standingsPageResult, bulgariaPageResult] = await Promise.allSettled([
+  const [standingsResult, resultsResult, upcomingResult, squadPageResult, standingsPageResult, bulgariaPageResult, teamInfoResult] = await Promise.allSettled([
     fetchJson(`${SPORTSDB_BASE}/lookuptable.php?l=${BULGARIAN_LEAGUE_ID}&s=${season}`),
     fetchJson(`${SPORTSDB_BASE}/eventslast.php?id=${CSKA_TEAM_ID}`),
     fetchJson(`${SPORTSDB_BASE}/eventsnext.php?id=${CSKA_TEAM_ID}`),
     fetchText(fallback?.source?.squadUrl || "https://www.flashscore.bg/team/cska-sofia/0xFNNECi/squad/"),
     fetchText(fallback?.source?.standingsUrl || "https://www.flashscore.bg/soccer/bulgaria/efbet/#/ID1TwQHr/standings/overall/"),
-    fetchText("https://www.flashscore.bg/soccer/bulgaria/")
+    fetchText("https://www.flashscore.bg/soccer/bulgaria/"),
+    fetchJson(`${SPORTSDB_BASE}/searchteams.php?t=CSKA+Sofia`)
   ]);
 
   const nextPayload = {
@@ -554,15 +555,21 @@ async function buildFreshPayloadFromSource() {
   }
 
   if (resultsResult.status === "fulfilled" && Array.isArray(resultsResult.value?.results)) {
-    const parsedLastResults = resultsResult.value.results.slice(0, 5).map((event) => ({
-      date: formatEventDate(event.dateEvent),
-      home: translateTeamName(event.strHomeTeam),
-      away: translateTeamName(event.strAwayTeam),
-      score: `${event.intHomeScore ?? "-"}:${event.intAwayScore ?? "-"}`
-    }));
+    const rawResults = resultsResult.value.results
+      .filter((e) => String(e.idLeague) === BULGARIAN_LEAGUE_ID)
+      .slice(0, 5)
+      .map((event) => ({
+        date: formatEventDate(event.dateEvent),
+        home: translateTeamName(event.strHomeTeam),
+        away: translateTeamName(event.strAwayTeam),
+        score: `${event.intHomeScore ?? "-"}:${event.intAwayScore ?? "-"}`,
+        round: event.intRound ? `Кр. ${event.intRound}` : "",
+        venue: event.strVenue || "",
+        competition: event.strLeague || ""
+      }));
 
-    if (isLikelyCskaMatches(parsedLastResults)) {
-      nextPayload.cska.lastResults = parsedLastResults;
+    if (isLikelyCskaMatches(rawResults)) {
+      nextPayload.cska.lastResults = rawResults;
     } else {
       warnings.push("lastResults fallback kept");
       nextPayload.cska.lastResults = Array.isArray(fallback?.cska?.lastResults)
@@ -577,15 +584,21 @@ async function buildFreshPayloadFromSource() {
   }
 
   if (upcomingResult.status === "fulfilled" && Array.isArray(upcomingResult.value?.events)) {
-    const parsedNextMatches = upcomingResult.value.events.slice(0, 5).map((event) => ({
-      date: formatEventDate(event.dateEvent),
-      time: formatEventTime(event.strTime),
-      home: translateTeamName(event.strHomeTeam),
-      away: translateTeamName(event.strAwayTeam)
-    }));
+    const rawNext = upcomingResult.value.events
+      .filter((e) => String(e.idLeague) === BULGARIAN_LEAGUE_ID)
+      .slice(0, 5)
+      .map((event) => ({
+        date: formatEventDate(event.dateEvent),
+        time: formatEventTime(event.strTime),
+        home: translateTeamName(event.strHomeTeam),
+        away: translateTeamName(event.strAwayTeam),
+        round: event.intRound ? `Кр. ${event.intRound}` : "",
+        venue: event.strVenue || "",
+        competition: event.strLeague || ""
+      }));
 
-    if (isLikelyCskaMatches(parsedNextMatches)) {
-      nextPayload.cska.nextMatches = parsedNextMatches;
+    if (isLikelyCskaMatches(rawNext)) {
+      nextPayload.cska.nextMatches = rawNext;
     } else {
       warnings.push("nextMatches fallback kept");
       nextPayload.cska.nextMatches = Array.isArray(fallback?.cska?.nextMatches)
@@ -623,6 +636,20 @@ async function buildFreshPayloadFromSource() {
       unique.push(event);
     });
     nextPayload.cska.todayMatches = unique;
+  }
+
+  if (teamInfoResult.status === "fulfilled" && Array.isArray(teamInfoResult.value?.teams)) {
+    const teamData = teamInfoResult.value.teams.find(
+      (t) => String(t.idTeam) === CSKA_TEAM_ID
+    );
+    if (teamData) {
+      nextPayload.cska.teamInfo = {
+        stadium: teamData.strStadium || "",
+        foundedYear: teamData.intFormedYear || "",
+        country: teamData.strCountry || "Bulgaria",
+        badge: teamData.strTeamBadge || ""
+      };
+    }
   }
 
   if (warnings.length > 0) {

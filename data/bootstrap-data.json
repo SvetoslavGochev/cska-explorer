@@ -13,7 +13,7 @@
       "usedFallback": true
     }
   },
-  "updatedAt": "2026-04-03T11:27:59.952Z",
+  "updatedAt": "2026-04-03T11:47:49.093Z",
   "standings": [
     {
       "rank": 1,
@@ -292,6 +292,12 @@
         "home": "Локомотив Пловдив",
         "away": "Локомотив София"
       }
-    ]
+    ],
+    "teamInfo": {
+      "stadium": "Vasil Levski National Stadium",
+      "foundedYear": "1948",
+      "country": "Bulgaria",
+      "badge": ""
+    }
   }
 }

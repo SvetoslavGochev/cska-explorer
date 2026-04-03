@@ -61,7 +61,10 @@ const I18N = {
     errLoadData: "Неуспешно зареждане на данни",
     errInvalidData: "Получени са невалидни/повредени данни. Пробвай форсирано опресняване.",
     errPrefix: "Грешка:",
-    noMatchesToday: "Няма мачове за днес"
+    noMatchesToday: "Няма мачове за днес",
+    stadiumLabel: "Стадион:",
+    foundedLabel: "Основан:",
+    cskaNotes: "Форма:"
   },
   en: {
     navStandings: "Standings",
@@ -121,7 +124,10 @@ const I18N = {
     errLoadData: "Failed to load data",
     errInvalidData: "Received invalid/corrupted data. Try forced refresh.",
     errPrefix: "Error:",
-    noMatchesToday: "No matches today"
+    noMatchesToday: "No matches today",
+    stadiumLabel: "Stadium:",
+    foundedLabel: "Founded:",
+    cskaNotes: "Form:"
   }
 };
 
@@ -314,7 +320,8 @@ function render(data, fromLocalCache) {
   nextMatches.innerHTML = "";
   (data.cska?.nextMatches || []).forEach((m) => {
     const li = document.createElement("li");
-    li.textContent = `${m.date} ${m.time} | ${m.home} - ${m.away}`;
+    const extra = [m.round, m.venue].filter(Boolean).join(" · ");
+    li.innerHTML = `<span class="match-line-date">${m.date}${m.time ? ` ${m.time}` : ""}</span>${extra ? `<span class="match-sub">${extra}</span>` : ""}<span class="match-line-teams">${m.home} – ${m.away}</span>`;
     nextMatches.appendChild(li);
   });
 
@@ -344,9 +351,12 @@ function render(data, fromLocalCache) {
     mergedTodayMatches.forEach((m) => {
       const li = document.createElement("li");
       const isResult = Boolean(m?.score) || m?.kind === "last";
-      li.textContent = isResult
-        ? `${m.date} | ${m.home} ${m.score ?? "-"} ${m.away}`
-        : `${m.date} ${m.time || ""} | ${m.home} - ${m.away}`;
+      const extra = [m.round, m.venue].filter(Boolean).join(" · ");
+      if (isResult) {
+        li.innerHTML = `<span class="match-line-date">${m.date}</span>${extra ? `<span class="match-sub">${extra}</span>` : ""}<span class="match-line-teams">${m.home} <strong>${m.score ?? "-"}</strong> ${m.away}</span>`;
+      } else {
+        li.innerHTML = `<span class="match-line-date">${m.date} ${m.time || ""}</span>${extra ? `<span class="match-sub">${extra}</span>` : ""}<span class="match-line-teams">${m.home} – ${m.away}</span>`;
+      }
       todayMatches.appendChild(li);
     });
   }
@@ -355,9 +365,27 @@ function render(data, fromLocalCache) {
   lastResults.innerHTML = "";
   (data.cska?.lastResults || []).forEach((m) => {
     const li = document.createElement("li");
-    li.textContent = `${m.date} | ${m.home} ${m.score} ${m.away}`;
+    const extra = [m.round, m.venue].filter(Boolean).join(" · ");
+    li.innerHTML = `<span class="match-line-date">${m.date}</span>${extra ? `<span class="match-sub">${extra}</span>` : ""}<span class="match-line-teams">${m.home} <strong>${m.score}</strong> ${m.away}</span>`;
     lastResults.appendChild(li);
   });
+
+  const formStripEl = document.getElementById("formStrip");
+  if (formStripEl) {
+    const lastR = (data.cska?.lastResults || []).slice(0, 5);
+    const dots = lastR.map((m) => {
+      const parts = String(m.score || "").split(":");
+      const hs = parseInt(parts[0]);
+      const as = parseInt(parts[1]);
+      if (isNaN(hs) || isNaN(as)) return "?";
+      const isHome = /ЦСКА|CSKA/i.test(String(m.home || ""));
+      const diff = isHome ? hs - as : as - hs;
+      return diff > 0 ? "W" : diff === 0 ? "D" : "L";
+    });
+    formStripEl.innerHTML = dots.length
+      ? `<span class="form-label">${t("cskaNotes")}</span>` + dots.map((r) => `<span class="form-dot form-${r}">${r}</span>`).join("")
+      : "";
+  }
 
   const squadGrid = document.getElementById("squadGrid");
   squadGrid.innerHTML = "";
@@ -451,6 +479,18 @@ function render(data, fromLocalCache) {
   document.getElementById("statusLine").textContent = fromLocalCache
     ? t("statusFromCache")
     : t("statusFromServer");
+
+  const teamInfoBarEl = document.getElementById("teamInfoBar");
+  if (teamInfoBarEl) {
+    const ti = data.cska?.teamInfo;
+    if (ti?.stadium) {
+      const parts = [`${t("stadiumLabel")} ${ti.stadium}`];
+      if (ti.foundedYear) parts.push(`${t("foundedLabel")} ${ti.foundedYear}`);
+      teamInfoBarEl.textContent = parts.join("  ·  ");
+    } else {
+      teamInfoBarEl.textContent = "";
+    }
+  }
 }
 
 async function init() {

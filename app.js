@@ -49,7 +49,10 @@ const I18N = {
     sourceMissingStats: "В таблицата липсващите статистики се допълват с \"-\".",
     statusFromCache: "Показани са данни от локалния кеш (без нова заявка).",
     statusLatest: "Показани са последните данни.",
-    noMatchesToday: "Няма мачове за днес"
+    noMatchesToday: "Няма мачове за днес",
+    stadiumLabel: "Стадион:",
+    foundedLabel: "Основан:",
+    cskaNotes: "Форма:"
   },
   en: {
     standingsTitle: "Efbet League - Standings",
@@ -97,7 +100,10 @@ const I18N = {
     sourceMissingStats: "Missing statistics are shown as \"-\" in the table.",
     statusFromCache: "Showing data from local cache (without a new request).",
     statusLatest: "Showing the latest data.",
-    noMatchesToday: "No matches today"
+    noMatchesToday: "No matches today",
+    stadiumLabel: "Stadium:",
+    foundedLabel: "Founded:",
+    cskaNotes: "Form:"
   }
 };
 
@@ -345,10 +351,11 @@ function renderMatches(id, rows, formatter) {
 function matchMarkup(match, withScore) {
   const homeLogo = getTeamLogo(match.home);
   const awayLogo = getTeamLogo(match.away);
+  const extra = [match.round, match.venue].filter(Boolean).join(" · ");
 
   return `
     <div class="match-item">
-      <div class="match-meta">${match.date} ${match.time || ""}</div>
+      <div class="match-meta">${match.date}${match.time ? ` ${match.time}` : ""}${extra ? `<span class="match-sub">${extra}</span>` : ""}</div>
       <div class="match-lineup">
         <span class="team-chip" title="${match.home}">${homeLogo ? `<img class="team-logo" src="${homeLogo}" alt="${match.home}" loading="lazy" />` : ""}${match.home}</span>
         <span class="vs-chip">${withScore ? match.score : "-"}</span>
@@ -480,7 +487,36 @@ function render(payload, fromCache) {
     (m) => matchMarkup(m, true)
   );
 
+  const formStripEl = document.getElementById("formStrip");
+  if (formStripEl) {
+    const lastR = (payload.cska?.lastResults || []).slice(0, 5);
+    const dots = lastR.map((m) => {
+      const parts = String(m.score || "").split(":");
+      const hs = parseInt(parts[0]);
+      const as = parseInt(parts[1]);
+      if (isNaN(hs) || isNaN(as)) return "?";
+      const isHome = /ЦСКА|CSKA/i.test(String(m.home || ""));
+      const diff = isHome ? hs - as : as - hs;
+      return diff > 0 ? "W" : diff === 0 ? "D" : "L";
+    });
+    formStripEl.innerHTML = dots.length
+      ? `<span class="form-label">${t("cskaNotes")}</span>` + dots.map((r) => `<span class="form-dot form-${r}">${r}</span>`).join("")
+      : "";
+  }
+
   renderSquad(payload.cska?.squad || FALLBACK_DATA.cska.squad);
+
+  const teamInfoBarEl = document.getElementById("teamInfoBar");
+  if (teamInfoBarEl) {
+    const ti = payload.cska?.teamInfo;
+    if (ti?.stadium) {
+      const parts = [`${t("stadiumLabel")} ${ti.stadium}`];
+      if (ti.foundedYear) parts.push(`${t("foundedLabel")} ${ti.foundedYear}`);
+      teamInfoBarEl.textContent = parts.join("  ·  ");
+    } else {
+      teamInfoBarEl.textContent = "";
+    }
+  }
 
   const sourceNote = document.getElementById("sourceNote");
   const statusLine = document.getElementById("statusLine");
