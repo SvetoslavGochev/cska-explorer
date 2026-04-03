@@ -12,6 +12,7 @@ const BULGARIAN_LEAGUE_ID = "4626";
 const CSKA_TEAM_ID = "134088";
 const SPORTAL_FOOTBALL_BASE = "https://football.cache.proxy.sportal365.com";
 const SPORTAL_AUTH = "Basic ZWZiZXQuY29tOktYVWM5dWZ6WEFNQWZBQXVqOTROWlphRXlWYUxpZmt0";
+const SPORTAL_CSKA_SOFIA_TEAM_ID = "17";
 
 const ROOT = __dirname;
 const PUBLIC_DIR = path.join(ROOT, "public");
@@ -97,6 +98,27 @@ function getSeasonKey(date = new Date()) {
 function toNumber(value, fallback = 0) {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function normalizePersonName(name) {
+  return String(name || "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\p{L}\p{N}\s]/gu, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function getPersonNameTokens(name) {
+  const normalized = normalizePersonName(name);
+  if (!normalized) return [];
+  return normalized.split(" ").filter(Boolean);
+}
+
+function getPersonTokenKey(name) {
+  return getPersonNameTokens(name).sort().join("|");
 }
 
 function translateTeamName(name) {
@@ -289,6 +311,76 @@ async function fetchEfbetLeagueStandingsFull() {
     .sort((a, b) => a.rank - b.rank);
 }
 
+function mapSportalPositionToSquadGroup(position) {
+  const value = String(position || "").toLowerCase();
+  if (value === "goalkeeper") return "goalkeepers";
+  if (value === "defender") return "defenders";
+  if (value === "forward") return "forwards";
+  if (value === "midfielder") return "midfielders";
+  return "midfielders";
+}
+
+function sortSquadGroup(players) {
+  return [...players].sort((a, b) => {
+    const na = Number.isFinite(Number(a?.number)) ? Number(a.number) : Number.POSITIVE_INFINITY;
+    const nb = Number.isFinite(Number(b?.number)) ? Number(b.number) : Number.POSITIVE_INFINITY;
+    if (na !== nb) return na - nb;
+    return String(a?.name || "").localeCompare(String(b?.name || ""), "bg");
+  });
+}
+
+async function fetchSportalTeamSquad(teamId) {
+  const rows = await fetchSportalJson(
+    `${SPORTAL_FOOTBALL_BASE}/teams/${encodeURIComponent(String(teamId || ""))}/players?language_code=bg`
+  );
+
+  if (!Array.isArray(rows) || rows.length === 0) {
+    return null;
+  }
+
+  const activeRows = rows.filter((row) => row?.active === true);
+  const sourceRows = activeRows.length > 0 ? activeRows : rows;
+  const grouped = {
+    goalkeepers: [],
+    defenders: [],
+    midfielders: [],
+    forwards: []
+  };
+
+  sourceRows.forEach((row) => {
+    const player = row?.player;
+    const name = String(player?.name || player?.full_name || player?.short_name || "").trim();
+    if (!name) {
+      return;
+    }
+
+    const numberValue = toNumber(row?.shirt_number, NaN);
+    const playerEntry = {
+      name,
+      number: Number.isFinite(numberValue) ? numberValue : null,
+      matches: 0,
+      goals: 0,
+      assists: 0
+    };
+
+    const group = mapSportalPositionToSquadGroup(player?.position);
+
+    if (group === "goalkeepers") {
+      playerEntry.savesPerMatch = null;
+      playerEntry.penaltiesSaved = null;
+    }
+
+    grouped[group].push(playerEntry);
+  });
+
+  return {
+    goalkeepers: sortSquadGroup(grouped.goalkeepers),
+    defenders: sortSquadGroup(grouped.defenders),
+    midfielders: sortSquadGroup(grouped.midfielders),
+    forwards: sortSquadGroup(grouped.forwards)
+  };
+}
+
 async function fetchJson(url) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
@@ -452,6 +544,59 @@ function mergeSquadStats(existingSquad, statsByName) {
   const groups = ["goalkeepers", "defenders", "midfielders", "forwards"];
   const merged = {};
 
+  const statsEntries = Array.from(statsByName.entries()).map(([name, value]) => {
+    return {
+      rawName: String(name || "").trim(),
+      normalized: normalizePersonName(name),
+      tokenKey: getPersonTokenKey(name),
+      tokens: getPersonNameTokens(name),
+      value
+    };
+  });
+
+  const byNormalized = new Map();
+  const byTokenKey = new Map();
+  const singleTokenToEntries = new Map();
+
+  statsEntries.forEach((entry) => {
+    if (entry.normalized && !byNormalized.has(entry.normalized)) {
+      byNormalized.set(entry.normalized, entry.value);
+    }
+    if (entry.tokenKey && !byTokenKey.has(entry.tokenKey)) {
+      byTokenKey.set(entry.tokenKey, entry.value);
+    }
+
+    if (entry.tokens.length === 1) {
+      const token = entry.tokens[0];
+      const list = singleTokenToEntries.get(token) || [];
+      list.push(entry.value);
+      singleTokenToEntries.set(token, list);
+    }
+  });
+
+  const findStatsForPlayerName = (name) => {
+    const normalized = normalizePersonName(name);
+    if (!normalized) return null;
+
+    const direct = byNormalized.get(normalized);
+    if (direct) return direct;
+
+    const tokenKey = getPersonTokenKey(name);
+    if (tokenKey && byTokenKey.has(tokenKey)) {
+      return byTokenKey.get(tokenKey);
+    }
+
+    const tokens = getPersonNameTokens(name);
+    for (const token of tokens) {
+      const candidates = singleTokenToEntries.get(token) || [];
+      if (candidates.length === 1) {
+        return candidates[0];
+      }
+    }
+
+    return null;
+  };
+
   groups.forEach((group) => {
     const players = Array.isArray(existingSquad?.[group]) ? existingSquad[group] : [];
     merged[group] = players.map((player) => {
@@ -459,7 +604,7 @@ function mergeSquadStats(existingSquad, statsByName) {
         return player;
       }
       const name = String(player.name || "").trim();
-      const scraped = name ? statsByName.get(name) : null;
+      const scraped = name ? findStatsForPlayerName(name) : null;
       if (!scraped) {
         return player;
       }
@@ -700,6 +845,24 @@ async function buildFreshPayloadFromSource() {
 
   if (!nextPayload.cska) {
     nextPayload.cska = { team: "ЦСКА София", nextMatches: [], lastResults: [], squad: {} };
+  }
+
+  try {
+    const sportalSquad = await fetchSportalTeamSquad(SPORTAL_CSKA_SOFIA_TEAM_ID);
+    if (
+      sportalSquad &&
+      ["goalkeepers", "defenders", "midfielders", "forwards"].some(
+        (group) => Array.isArray(sportalSquad[group]) && sportalSquad[group].length > 0
+      )
+    ) {
+      nextPayload.cska.squad = sportalSquad;
+    } else {
+      warnings.push("sportal squad fallback kept");
+      nextPayload.cska.squad = nextPayload.cska.squad || fallback?.cska?.squad || {};
+    }
+  } catch (_) {
+    warnings.push("sportal squad fetch failed");
+    nextPayload.cska.squad = nextPayload.cska.squad || fallback?.cska?.squad || {};
   }
 
   if (!Array.isArray(nextPayload.cska.todayMatches)) {
