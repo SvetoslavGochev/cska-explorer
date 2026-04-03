@@ -435,6 +435,21 @@ body {
   color: var(--red-dark);
 }
 
+.player-name-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.player-flag {
+  width: 14px;
+  height: 10px;
+  object-fit: cover;
+  border-radius: 2px;
+  border: 1px solid rgba(70, 50, 20, 0.18);
+  flex-shrink: 0;
+}
+
 .controls {
   margin-top: 12px;
   display: flex;

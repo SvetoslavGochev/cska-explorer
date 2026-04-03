@@ -175,6 +175,15 @@ function getLocale() {
   return currentLanguage === "en" ? "en-GB" : "bg-BG";
 }
 
+function getPlayerFlagHtml(player) {
+  if (!player || typeof player !== "object") return "";
+  const flagUrl = String(player.countryFlagUrl || "").trim();
+  if (!flagUrl) return "";
+  const countryName = String(player.countryName || "").trim();
+  const alt = countryName || "flag";
+  return `<img class="player-flag" src="${flagUrl}" alt="${alt}" loading="lazy" decoding="async" />`;
+}
+
 function applyLanguageUI() {
   document.documentElement.lang = currentLanguage;
   document.querySelectorAll("[data-i18n]").forEach((el) => {
@@ -444,6 +453,7 @@ function render(data, fromLocalCache) {
     group.players.forEach((p) => {
       const li = document.createElement("li");
       const name = typeof p === "object" ? p.name : p;
+      const flagHtml = getPlayerFlagHtml(p);
       const num = typeof p === "object" ? p.number : null;
       const matches = Number(typeof p === "object" ? p.matches : NaN);
       const goals = Number(typeof p === "object" ? p.goals : NaN);
@@ -467,7 +477,7 @@ function render(data, fromLocalCache) {
       li.innerHTML = `
         ${num != null ? `<span class="jersey-num">${num}</span>` : ""}
         <div class="player-meta">
-          <span class="player-name">${name}</span>
+          <span class="player-name"><span class="player-name-wrap">${flagHtml}<span>${name}</span></span></span>
           <span class="player-stats">
             <span class="stat-chip"><span class="stat-label">${t("statMatches")}</span><span class="stat-value">${safeMatches}</span></span>
             <span class="stat-chip"><span class="stat-label">${t("statGoals")}</span><span class="stat-value">${safeGoals}</span></span>

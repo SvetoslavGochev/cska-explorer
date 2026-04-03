@@ -313,7 +313,7 @@ async function fetchEfbetLeagueStandingsFull() {
 
 function mapSportalPositionToSquadGroup(position) {
   const value = String(position || "").toLowerCase();
-  if (value === "goalkeeper") return "goalkeepers";
+  if (value === "goalkeeper" || value === "keeper") return "goalkeepers";
   if (value === "defender") return "defenders";
   if (value === "forward") return "forwards";
   if (value === "midfielder") return "midfielders";
@@ -349,6 +349,7 @@ async function fetchSportalTeamSquad(teamId) {
 
   sourceRows.forEach((row) => {
     const player = row?.player;
+    const country = player?.country;
     const name = String(player?.name || player?.full_name || player?.short_name || "").trim();
     if (!name) {
       return;
@@ -358,6 +359,8 @@ async function fetchSportalTeamSquad(teamId) {
     const playerEntry = {
       name,
       number: Number.isFinite(numberValue) ? numberValue : null,
+      countryName: String(country?.name || "").trim() || null,
+      countryFlagUrl: String(country?.url_flag || "").trim() || null,
       matches: 0,
       goals: 0,
       assists: 0
