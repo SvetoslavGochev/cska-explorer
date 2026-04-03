@@ -28,8 +28,8 @@ const TEAM_NAME_MAP = {
   "Cherno More": "Черно море",
   "Dobrudzha Dobrich": "Добруджа",
   "Levski Sofia": "Левски София",
-  "Lokomotiv Plovdiv": "Локо Пловдив",
-  "Lokomotiv Sofia": "Локо София",
+  "Lokomotiv Plovdiv": "Локомотив Пловдив",
+  "Lokomotiv Sofia": "Локомотив София",
   "Ludogorets Razgrad": "Лудогорец",
   "Montana": "Монтана",
   "Septemvri Sofia": "Септември София",
@@ -46,8 +46,8 @@ const KNOWN_EFBET_TEAMS = new Set([
   "Черно море",
   "Арда",
   "Ботев Пловдив",
-  "Локо Пловдив",
-  "Локо София",
+  "Локомотив Пловдив",
+  "Локомотив София",
   "Славия София",
   "Ботев Враца",
   "Добруджа",
@@ -59,8 +59,6 @@ const KNOWN_EFBET_TEAMS = new Set([
 
 const KNOWN_BULGARIAN_MATCH_TEAMS = new Set([
   ...KNOWN_EFBET_TEAMS,
-  "Локомотив Пловдив",
-  "Локомотив София",
   "България"
 ]);
 
@@ -636,6 +634,52 @@ async function buildFreshPayloadFromSource() {
       unique.push(event);
     });
     nextPayload.cska.todayMatches = unique;
+  }
+
+  // Inject kick-off times from SportsDB eventsround into todayMatches
+  // Determine current round from standings (max games played = completed rounds)
+  const nextRound = (() => {
+    if (standingsResult.status === "fulfilled" && Array.isArray(standingsResult.value?.table)) {
+      const maxPlayed = standingsResult.value.table.reduce((max, row) => Math.max(max, toNumber(row.intPlayed, 0)), 0);
+      if (maxPlayed > 0) return maxPlayed + 1;
+    }
+    // Fallback: try CSKA-specific event round numbers
+    const fromNext = upcomingResult.status === "fulfilled"
+      ? (upcomingResult.value?.events || []).find((e) => String(e.idLeague) === BULGARIAN_LEAGUE_ID)?.intRound
+      : null;
+    if (fromNext) return Number(fromNext);
+    const fromLast = resultsResult.status === "fulfilled"
+      ? (resultsResult.value?.results || []).find((e) => String(e.idLeague) === BULGARIAN_LEAGUE_ID)?.intRound
+      : null;
+    return fromLast ? Number(fromLast) + 1 : null;
+  })();
+
+  if (nextRound) {
+    try {
+      const roundData = await fetchJson(`${SPORTSDB_BASE}/eventsround.php?id=${BULGARIAN_LEAGUE_ID}&r=${nextRound}&s=${season}`);
+      const todayKey = (() => {
+        const now = new Date();
+        return `${String(now.getDate()).padStart(2, "0")}.${String(now.getMonth() + 1).padStart(2, "0")}`;
+      })();
+      // Normalize team name for matching: lowercase, strip spaces/punctuation
+      const norm = (s) => String(s || "").toLowerCase().replace(/\s+/g, "").replace(/[^a-zа-я0-9]/g, "");
+      const roundTimeMap = new Map();
+      (roundData?.events || []).forEach((e) => {
+        if (formatEventDate(e.dateEvent) !== todayKey) return;
+        const h = norm(translateTeamName(e.strHomeTeam));
+        const a = norm(translateTeamName(e.strAwayTeam));
+        const t = formatEventTime(e.strTime);
+        if (h && a && t) roundTimeMap.set(`${h}|${a}`, t);
+      });
+      if (roundTimeMap.size > 0) {
+        nextPayload.cska.todayMatches = (nextPayload.cska.todayMatches || []).map((m) => ({
+          ...m,
+          time: roundTimeMap.get(`${norm(m.home)}|${norm(m.away)}`) || m.time
+        }));
+      }
+    } catch (_) {
+      // Time enrichment is best-effort; skip silently
+    }
   }
 
   if (teamInfoResult.status === "fulfilled" && Array.isArray(teamInfoResult.value?.teams)) {
