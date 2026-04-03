@@ -1,4 +1,4 @@
-const LOCAL_CACHE_KEY = "cska_site_cache_v3";
+const LOCAL_CACHE_KEY = "cska_site_cache_v4";
 const LOCAL_CACHE_TTL_MS = 10 * 60 * 1000;
 const LANGUAGE_KEY = "cska_site_language";
 
