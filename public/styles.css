@@ -79,6 +79,8 @@ body {
 }
 
 .lang-btn {
+  position: relative;
+  overflow: hidden;
   border: 1px solid rgba(186, 151, 100, 0.65);
   background: rgba(255, 255, 255, 0.68);
   color: #4f301a;
@@ -99,6 +101,48 @@ body {
   background: linear-gradient(135deg, var(--red-dark), var(--red));
   color: #fff;
   border-color: rgba(128, 15, 21, 0.85);
+}
+
+.lang-btn.is-active::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 1;
+  z-index: 0;
+}
+
+.lang-btn.is-active[data-lang="bg"]::before {
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.20), rgba(0, 0, 0, 0.30)),
+    linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #ffffff 33.33%,
+      #00966e 33.33%,
+      #00966e 66.66%,
+      #d62612 66.66%,
+      #d62612 100%
+    );
+}
+
+.lang-btn.is-active[data-lang="en"]::before {
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.20), rgba(0, 0, 0, 0.30)),
+    linear-gradient(26deg, transparent 44%, #ffffff 44%, #ffffff 56%, transparent 56%),
+    linear-gradient(-26deg, transparent 44%, #ffffff 44%, #ffffff 56%, transparent 56%),
+    linear-gradient(26deg, transparent 47%, #c8102e 47%, #c8102e 53%, transparent 53%),
+    linear-gradient(-26deg, transparent 47%, #c8102e 47%, #c8102e 53%, transparent 53%),
+    linear-gradient(90deg, transparent 39%, #ffffff 39%, #ffffff 61%, transparent 61%),
+    linear-gradient(0deg, transparent 39%, #ffffff 39%, #ffffff 61%, transparent 61%),
+    linear-gradient(90deg, transparent 45%, #c8102e 45%, #c8102e 55%, transparent 55%),
+    linear-gradient(0deg, transparent 45%, #c8102e 45%, #c8102e 55%, transparent 55%),
+    #012169;
+}
+
+.lang-btn span,
+.lang-btn {
+  z-index: 1;
 }
 
 .container {
