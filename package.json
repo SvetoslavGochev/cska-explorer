@@ -4,6 +4,8 @@
   "private": true,
   "description": "CSKA and Bulgarian football info site with cached data",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "node tests/today-matches.test.js",
+    "test:live": "node tests/today-matches.test.js --live"
   }
 }
