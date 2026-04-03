@@ -4,9 +4,16 @@
     "standingsUrl": "https://www.flashscore.bg/soccer/bulgaria/efbet/#/ID1TwQHr/standings/overall/",
     "teamUrl": "https://www.flashscore.bg/team/cska-sofia/0xFNNECi/",
     "squadUrl": "https://www.flashscore.bg/team/cska-sofia/0xFNNECi/squad/",
-    "note": "Automatic server refresh with validation (standings fallback kept, lastResults fallback kept, nextMatches fallback kept)."
+    "note": "Automatic server refresh with validation (lastResults fallback kept, nextMatches fallback kept).",
+    "validation": {
+      "warnings": [
+        "lastResults fallback kept",
+        "nextMatches fallback kept"
+      ],
+      "usedFallback": true
+    }
   },
-  "updatedAt": "2026-04-03T08:29:38.814Z",
+  "updatedAt": "2026-04-03T11:27:59.952Z",
   "standings": [
     {
       "rank": 1,
@@ -67,138 +74,6 @@
       "ga": 19,
       "gd": 13,
       "pts": 43
-    },
-    {
-      "rank": 6,
-      "team": "Локо Пловдив",
-      "mp": 27,
-      "w": 10,
-      "d": 11,
-      "l": 6,
-      "gf": 28,
-      "ga": 32,
-      "gd": -4,
-      "pts": 41
-    },
-    {
-      "rank": 7,
-      "team": "Арда",
-      "mp": 27,
-      "w": 10,
-      "d": 8,
-      "l": 9,
-      "gf": 30,
-      "ga": 25,
-      "gd": 5,
-      "pts": 38
-    },
-    {
-      "rank": 8,
-      "team": "Славия София",
-      "mp": 27,
-      "w": 9,
-      "d": 8,
-      "l": 10,
-      "gf": 32,
-      "ga": 30,
-      "gd": 2,
-      "pts": 35
-    },
-    {
-      "rank": 9,
-      "team": "Ботев Враца",
-      "mp": 27,
-      "w": 8,
-      "d": 10,
-      "l": 9,
-      "gf": 21,
-      "ga": 23,
-      "gd": -2,
-      "pts": 34
-    },
-    {
-      "rank": 10,
-      "team": "Локо София",
-      "mp": 27,
-      "w": 8,
-      "d": 10,
-      "l": 9,
-      "gf": 36,
-      "ga": 34,
-      "gd": 2,
-      "pts": 34
-    },
-    {
-      "rank": 11,
-      "team": "Ботев Пловдив",
-      "mp": 27,
-      "w": 9,
-      "d": 6,
-      "l": 12,
-      "gf": 31,
-      "ga": 36,
-      "gd": -5,
-      "pts": 33
-    },
-    {
-      "rank": 12,
-      "team": "Добруджа",
-      "mp": 27,
-      "w": 7,
-      "d": 4,
-      "l": 16,
-      "gf": 21,
-      "ga": 37,
-      "gd": -16,
-      "pts": 25
-    },
-    {
-      "rank": 13,
-      "team": "Спартак Варна",
-      "mp": 27,
-      "w": 4,
-      "d": 11,
-      "l": 12,
-      "gf": 24,
-      "ga": 45,
-      "gd": -21,
-      "pts": 23
-    },
-    {
-      "rank": 14,
-      "team": "Берое",
-      "mp": 27,
-      "w": 4,
-      "d": 10,
-      "l": 13,
-      "gf": 18,
-      "ga": 39,
-      "gd": -21,
-      "pts": 22
-    },
-    {
-      "rank": 15,
-      "team": "Септември София",
-      "mp": 27,
-      "w": 6,
-      "d": 3,
-      "l": 18,
-      "gf": 23,
-      "ga": 57,
-      "gd": -34,
-      "pts": 21
-    },
-    {
-      "rank": 16,
-      "team": "Монтана",
-      "mp": 27,
-      "w": 3,
-      "d": 7,
-      "l": 17,
-      "gf": 14,
-      "ga": 42,
-      "gd": -28,
-      "pts": 16
     }
   ],
   "cska": {
@@ -409,6 +284,14 @@
           "assists": 1
         }
       ]
-    }
+    },
+    "todayMatches": [
+      {
+        "date": "03.04",
+        "time": "",
+        "home": "Локомотив Пловдив",
+        "away": "Локомотив София"
+      }
+    ]
   }
 }

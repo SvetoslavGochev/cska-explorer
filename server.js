@@ -110,7 +110,7 @@ function containsExpectedTeam(teamName) {
 }
 
 function isLikelyEfbetStandings(rows) {
-  if (!Array.isArray(rows) || rows.length < 10) {
+  if (!Array.isArray(rows) || rows.length < 3) {
     return false;
   }
 
@@ -118,7 +118,9 @@ function isLikelyEfbetStandings(rows) {
     return KNOWN_EFBET_TEAMS.has(String(row?.team || "").trim()) ? count + 1 : count;
   }, 0);
 
-  return hits >= 6;
+  // Accept if at least 60% of rows are known Efbet teams (min 3 hits)
+  const required = Math.max(3, Math.min(6, Math.ceil(rows.length * 0.6)));
+  return hits >= required;
 }
 
 function isLikelyCskaMatches(rows) {
@@ -495,7 +497,7 @@ async function buildFreshPayloadFromSource() {
   };
 
   if (standingsResult.status === "fulfilled" && Array.isArray(standingsResult.value?.table)) {
-    const parsedStandings = standingsResult.value.table
+    const parseStandingsTable = (table) => table
       .map((row) => ({
         rank: toNumber(row.intRank, 0),
         team: translateTeamName(row.strTeam),
@@ -511,11 +513,32 @@ async function buildFreshPayloadFromSource() {
       .filter((row) => row.rank > 0)
       .sort((a, b) => a.rank - b.rank);
 
+    const parsedStandings = parseStandingsTable(standingsResult.value.table);
+
     if (isLikelyEfbetStandings(parsedStandings)) {
       nextPayload.standings = parsedStandings;
     } else {
-      warnings.push("standings fallback kept");
-      nextPayload.standings = Array.isArray(fallback.standings) ? fallback.standings : [];
+      // Try previous season as fallback if current is incomplete
+      const prevSeason = (() => {
+        const [y1] = season.split("-").map(Number);
+        return `${y1 - 1}-${y1}`;
+      })();
+      try {
+        const prevData = await fetchJson(`${SPORTSDB_BASE}/lookuptable.php?l=${BULGARIAN_LEAGUE_ID}&s=${prevSeason}`);
+        const prevParsed = Array.isArray(prevData?.table) ? parseStandingsTable(prevData.table) : [];
+        if (isLikelyEfbetStandings(prevParsed)) {
+          nextPayload.standings = prevParsed;
+          warnings.push(`standings from ${prevSeason} (current season incomplete)`);
+        } else {
+          warnings.push("standings fallback kept");
+          nextPayload.standings = Array.isArray(fallback.standings) ? fallback.standings : parsedStandings;
+        }
+      } catch (_) {
+        warnings.push("standings fallback kept");
+        nextPayload.standings = Array.isArray(fallback.standings) && fallback.standings.length > 0
+          ? fallback.standings
+          : parsedStandings;
+      }
     }
   } else {
     warnings.push("standings fetch failed");
