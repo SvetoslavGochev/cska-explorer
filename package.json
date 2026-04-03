@@ -6,7 +6,10 @@
   "scripts": {
     "start": "node server.js",
     "test": "node tests/today-matches.test.js",
-    "test:live": "node tests/today-matches.test.js --live"
+    "test:live": "node tests/today-matches.test.js --live",
+    "ops:refresh": "node scripts/refresh-player-stats.js",
+    "ops:verify:local": "node scripts/verify-local.js",
+    "ops:verify:live": "node scripts/verify-live.js"
   },
   "dependencies": {}
 }

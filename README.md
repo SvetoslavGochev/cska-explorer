@@ -58,3 +58,15 @@ https://svetoslavgochev.github.io/cska-explorer/
 
 - Ако няма резултат, провери правописа на името на отбора.
 - Ако браузърът блокира заявките (CORS), пусни страницата през локален сървър вместо директно от file://.
+
+## Ops Helpers
+
+Бързи команди за поддръжка и проверка:
+
+- `npm run ops:refresh` — обновява статистиките на играчите в `data/bootstrap-data.json` от Sportal + Flashscore и добавя ред в `data/refresh-log.ndjson`.
+- `npm run ops:verify:local` — проверява локалните `api/health` и `api/data` метрики.
+- `npm run ops:verify:live` — проверява live данните от GitHub Pages (`updatedAt`, играчи, флагове, мачове).
+
+Лог файл:
+
+- `data/refresh-log.ndjson` съдържа по един JSON ред за всяко обновяване (timestamp, брой играчи, флагове, мачове, source).
