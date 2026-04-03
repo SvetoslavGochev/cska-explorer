@@ -28,6 +28,7 @@ const I18N = {
     legendRel: "Изпадане",
     sourcePrefix: "Източник:",
     nextMatchesTitle: "Следващи мачове на ЦСКА",
+    todayMatchesTitle: "Мачове днес",
     lastResultsTitle: "Последни резултати",
     squadTitle: "Състав на ЦСКА София",
     groupGoalkeepers: "Вратари",
@@ -58,7 +59,8 @@ const I18N = {
     statusFromServer: "Показани са последните данни от сървъра.",
     errLoadData: "Неуспешно зареждане на данни",
     errInvalidData: "Получени са невалидни/повредени данни. Пробвай форсирано опресняване.",
-    errPrefix: "Грешка:"
+    errPrefix: "Грешка:",
+    noMatchesToday: "Няма мачове за днес"
   },
   en: {
     navStandings: "Standings",
@@ -85,6 +87,7 @@ const I18N = {
     legendRel: "Relegation",
     sourcePrefix: "Source:",
     nextMatchesTitle: "Upcoming CSKA Matches",
+    todayMatchesTitle: "Matches Today",
     lastResultsTitle: "Recent Results",
     squadTitle: "CSKA Sofia Squad",
     groupGoalkeepers: "Goalkeepers",
@@ -115,7 +118,8 @@ const I18N = {
     statusFromServer: "Showing the latest data from the server.",
     errLoadData: "Failed to load data",
     errInvalidData: "Received invalid/corrupted data. Try forced refresh.",
-    errPrefix: "Error:"
+    errPrefix: "Error:",
+    noMatchesToday: "No matches today"
   }
 };
 
@@ -311,6 +315,39 @@ function render(data, fromLocalCache) {
     li.textContent = `${m.date} ${m.time} | ${m.home} - ${m.away}`;
     nextMatches.appendChild(li);
   });
+
+  const todayKey = new Date().toLocaleDateString("bg-BG", {
+    day: "2-digit",
+    month: "2-digit"
+  }).replace(/\//g, ".");
+
+  const todayMatches = document.getElementById("todayMatches");
+  const explicitTodayMatches = Array.isArray(data.cska?.todayMatches) ? data.cska.todayMatches : [];
+  const derivedTodayFromNext = (data.cska?.nextMatches || [])
+    .filter((m) => String(m?.date || "") === todayKey)
+    .map((m) => ({ ...m, kind: "next" }));
+  const derivedTodayFromLast = (data.cska?.lastResults || [])
+    .filter((m) => String(m?.date || "") === todayKey)
+    .map((m) => ({ ...m, kind: "last" }));
+  const mergedTodayMatches = explicitTodayMatches.length > 0
+    ? explicitTodayMatches
+    : [...derivedTodayFromNext, ...derivedTodayFromLast];
+
+  todayMatches.innerHTML = "";
+  if (mergedTodayMatches.length === 0) {
+    const li = document.createElement("li");
+    li.textContent = t("noMatchesToday");
+    todayMatches.appendChild(li);
+  } else {
+    mergedTodayMatches.forEach((m) => {
+      const li = document.createElement("li");
+      const isResult = Boolean(m?.score) || m?.kind === "last";
+      li.textContent = isResult
+        ? `${m.date} | ${m.home} ${m.score ?? "-"} ${m.away}`
+        : `${m.date} ${m.time || ""} | ${m.home} - ${m.away}`;
+      todayMatches.appendChild(li);
+    });
+  }
 
   const lastResults = document.getElementById("lastResults");
   lastResults.innerHTML = "";

@@ -20,6 +20,7 @@ const I18N = {
     legendRel: "Изпадане",
     sourcePrefix: "Източник:",
     nextMatchesTitle: "Следващи мачове на ЦСКА",
+    todayMatchesTitle: "Мачове днес",
     lastResultsTitle: "Последни резултати",
     squadTitle: "Състав на ЦСКА София",
     groupGoalkeepers: "Вратари",
@@ -46,7 +47,8 @@ const I18N = {
     warnNextMatchesFetchFailed: "Следващи мачове (грешка при заявка)",
     sourceMissingStats: "В таблицата липсващите статистики се допълват с \"-\".",
     statusFromCache: "Показани са данни от локалния кеш (без нова заявка).",
-    statusLatest: "Показани са последните данни."
+    statusLatest: "Показани са последните данни.",
+    noMatchesToday: "Няма мачове за днес"
   },
   en: {
     standingsTitle: "Efbet League - Standings",
@@ -65,6 +67,7 @@ const I18N = {
     legendRel: "Relegation",
     sourcePrefix: "Source:",
     nextMatchesTitle: "Upcoming CSKA Matches",
+    todayMatchesTitle: "Matches Today",
     lastResultsTitle: "Recent Results",
     squadTitle: "CSKA Sofia Squad",
     groupGoalkeepers: "Goalkeepers",
@@ -91,7 +94,8 @@ const I18N = {
     warnNextMatchesFetchFailed: "Next matches (fetch failed)",
     sourceMissingStats: "Missing statistics are shown as \"-\" in the table.",
     statusFromCache: "Showing data from local cache (without a new request).",
-    statusLatest: "Showing the latest data."
+    statusLatest: "Showing the latest data.",
+    noMatchesToday: "No matches today"
   }
 };
 
@@ -352,6 +356,30 @@ function matchMarkup(match, withScore) {
   `;
 }
 
+function todayKey() {
+  return new Date().toLocaleDateString("bg-BG", {
+    day: "2-digit",
+    month: "2-digit"
+  }).replace(/\//g, ".");
+}
+
+function buildTodayMatchesRows(cska) {
+  const explicitTodayMatches = Array.isArray(cska?.todayMatches) ? cska.todayMatches : [];
+  if (explicitTodayMatches.length > 0) {
+    return explicitTodayMatches;
+  }
+
+  const key = todayKey();
+  const fromNext = (cska?.nextMatches || [])
+    .filter((m) => String(m?.date || "") === key)
+    .map((m) => ({ ...m, kind: "next" }));
+  const fromLast = (cska?.lastResults || [])
+    .filter((m) => String(m?.date || "") === key)
+    .map((m) => ({ ...m, kind: "last" }));
+
+  return [...fromNext, ...fromLast];
+}
+
 function renderSquad(squad) {
   const groups = [
     { key: "groupGoalkeepers", players: squad.goalkeepers || [], isGoalkeeper: true },
@@ -430,6 +458,18 @@ function render(payload, fromCache) {
     "nextMatches",
     payload.cska?.nextMatches || [],
     (m) => matchMarkup(m, false)
+  );
+
+  const todayRows = buildTodayMatchesRows(payload.cska || {});
+  renderMatches(
+    "todayMatches",
+    todayRows.length > 0 ? todayRows : [{ empty: true }],
+    (m) => {
+      if (m.empty) {
+        return `<div class="match-item"><div class="match-meta">${t("noMatchesToday")}</div></div>`;
+      }
+      return matchMarkup(m, Boolean(m?.score) || m?.kind === "last");
+    }
   );
 
   renderMatches(
