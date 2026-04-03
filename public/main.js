@@ -267,6 +267,58 @@ function normalizeTeamName(team) {
   return team;
 }
 
+const FULL_EFBET_TEAMS = [
+  "Левски София",
+  "Лудогорец",
+  "ЦСКА 1948",
+  "ЦСКА София",
+  "Черно море",
+  "Арда",
+  "Ботев Пловдив",
+  "Локомотив Пловдив",
+  "Локомотив София",
+  "Славия София",
+  "Добруджа",
+  "Спартак Варна",
+  "Берое",
+  "Септември София",
+  "Монтана",
+  "Ботев Враца"
+];
+
+function buildFullStandings(standings) {
+  const byTeam = new Map(
+    (standings || []).map((row) => [normalizeTeamName(row.team), row])
+  );
+  const maxKnownRank = Math.max(0, ...((standings || []).map((r) => Number(r.rank) || 0)));
+  let nextRank = maxKnownRank + 1;
+
+  return FULL_EFBET_TEAMS.map((team) => {
+    const existing = byTeam.get(team);
+    if (existing) {
+      return {
+        ...existing,
+        team
+      };
+    }
+
+    const row = {
+      rank: nextRank,
+      team,
+      mp: "-",
+      w: "-",
+      d: "-",
+      l: "-",
+      gf: "-",
+      ga: "-",
+      gd: "-",
+      pts: "-"
+    };
+    nextRank += 1;
+    return row;
+  });
+}
+
 function formatTeamDisplayName(team) {
   if (team === "Локомотив Пловдив") return "Локо Пловдив";
   if (team === "Локомотив София") return "Локо София";
@@ -286,9 +338,11 @@ function render(data, fromLocalCache) {
     cacheInfoEl.textContent = `Кеш: ${data.cache?.source || "unknown"}`;
   }
 
+  const fullStandings = buildFullStandings(data.standings || []);
+
   const standingsBody = document.querySelector("#standingsTable tbody");
   standingsBody.innerHTML = "";
-  [...(data.standings || [])]
+  [...fullStandings]
     .sort((left, right) => {
       const leftRank = Number(left?.rank) || Number.MAX_SAFE_INTEGER;
       const rightRank = Number(right?.rank) || Number.MAX_SAFE_INTEGER;
