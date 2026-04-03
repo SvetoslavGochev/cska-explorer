@@ -37,6 +37,26 @@ const TEAM_NAME_MAP = {
   "Spartak Varna": "Спартак Варна"
 };
 
+const EXPECTED_TEAM_KEYS = ["ЦСКА София", "CSKA Sofia", "ЦСКА"];
+const KNOWN_EFBET_TEAMS = new Set([
+  "Левски София",
+  "Лудогорец",
+  "ЦСКА 1948",
+  "ЦСКА София",
+  "Черно море",
+  "Арда",
+  "Ботев Пловдив",
+  "Локо Пловдив",
+  "Локо София",
+  "Славия София",
+  "Ботев Враца",
+  "Добруджа",
+  "Спартак Варна",
+  "Берое",
+  "Септември София",
+  "Монтана"
+]);
+
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, "utf8"));
 }
@@ -66,6 +86,33 @@ function toNumber(value, fallback = 0) {
 function translateTeamName(name) {
   const raw = String(name || "").trim();
   return TEAM_NAME_MAP[raw] || raw || "-";
+}
+
+function containsExpectedTeam(teamName) {
+  const value = String(teamName || "").toLowerCase();
+  return EXPECTED_TEAM_KEYS.some((key) => value.includes(String(key).toLowerCase()));
+}
+
+function isLikelyEfbetStandings(rows) {
+  if (!Array.isArray(rows) || rows.length < 10) {
+    return false;
+  }
+
+  const hits = rows.reduce((count, row) => {
+    return KNOWN_EFBET_TEAMS.has(String(row?.team || "").trim()) ? count + 1 : count;
+  }, 0);
+
+  return hits >= 6;
+}
+
+function isLikelyCskaMatches(rows) {
+  if (!Array.isArray(rows) || rows.length < 3) {
+    return false;
+  }
+
+  return rows.some((event) => {
+    return containsExpectedTeam(event?.home) || containsExpectedTeam(event?.away);
+  });
 }
 
 function formatEventDate(dateValue) {
@@ -253,6 +300,7 @@ function withCacheMeta(payload, source, budget) {
 async function buildFreshPayloadFromSource() {
   const fallback = readJson(BOOTSTRAP_FILE);
   const season = getSeasonKey();
+  const warnings = [];
 
   const [standingsResult, resultsResult, upcomingResult, squadPageResult] = await Promise.allSettled([
     fetchJson(`${SPORTSDB_BASE}/lookuptable.php?l=${BULGARIAN_LEAGUE_ID}&s=${season}`),
@@ -271,7 +319,7 @@ async function buildFreshPayloadFromSource() {
   };
 
   if (standingsResult.status === "fulfilled" && Array.isArray(standingsResult.value?.table)) {
-    nextPayload.standings = standingsResult.value.table
+    const parsedStandings = standingsResult.value.table
       .map((row) => ({
         rank: toNumber(row.intRank, 0),
         team: translateTeamName(row.strTeam),
@@ -286,6 +334,16 @@ async function buildFreshPayloadFromSource() {
       }))
       .filter((row) => row.rank > 0)
       .sort((a, b) => a.rank - b.rank);
+
+    if (isLikelyEfbetStandings(parsedStandings)) {
+      nextPayload.standings = parsedStandings;
+    } else {
+      warnings.push("standings fallback kept");
+      nextPayload.standings = Array.isArray(fallback.standings) ? fallback.standings : [];
+    }
+  } else {
+    warnings.push("standings fetch failed");
+    nextPayload.standings = Array.isArray(fallback.standings) ? fallback.standings : [];
   }
 
   if (!nextPayload.cska) {
@@ -293,26 +351,58 @@ async function buildFreshPayloadFromSource() {
   }
 
   if (resultsResult.status === "fulfilled" && Array.isArray(resultsResult.value?.results)) {
-    nextPayload.cska.lastResults = resultsResult.value.results.slice(0, 5).map((event) => ({
+    const parsedLastResults = resultsResult.value.results.slice(0, 5).map((event) => ({
       date: formatEventDate(event.dateEvent),
       home: translateTeamName(event.strHomeTeam),
       away: translateTeamName(event.strAwayTeam),
       score: `${event.intHomeScore ?? "-"}:${event.intAwayScore ?? "-"}`
     }));
+
+    if (isLikelyCskaMatches(parsedLastResults)) {
+      nextPayload.cska.lastResults = parsedLastResults;
+    } else {
+      warnings.push("lastResults fallback kept");
+      nextPayload.cska.lastResults = Array.isArray(fallback?.cska?.lastResults)
+        ? fallback.cska.lastResults
+        : [];
+    }
+  } else {
+    warnings.push("lastResults fetch failed");
+    nextPayload.cska.lastResults = Array.isArray(fallback?.cska?.lastResults)
+      ? fallback.cska.lastResults
+      : [];
   }
 
   if (upcomingResult.status === "fulfilled" && Array.isArray(upcomingResult.value?.events)) {
-    nextPayload.cska.nextMatches = upcomingResult.value.events.slice(0, 5).map((event) => ({
+    const parsedNextMatches = upcomingResult.value.events.slice(0, 5).map((event) => ({
       date: formatEventDate(event.dateEvent),
       time: formatEventTime(event.strTime),
       home: translateTeamName(event.strHomeTeam),
       away: translateTeamName(event.strAwayTeam)
     }));
+
+    if (isLikelyCskaMatches(parsedNextMatches)) {
+      nextPayload.cska.nextMatches = parsedNextMatches;
+    } else {
+      warnings.push("nextMatches fallback kept");
+      nextPayload.cska.nextMatches = Array.isArray(fallback?.cska?.nextMatches)
+        ? fallback.cska.nextMatches
+        : [];
+    }
+  } else {
+    warnings.push("nextMatches fetch failed");
+    nextPayload.cska.nextMatches = Array.isArray(fallback?.cska?.nextMatches)
+      ? fallback.cska.nextMatches
+      : [];
   }
 
   if (squadPageResult.status === "fulfilled") {
     const statsByName = extractFlashscoreSquadStats(squadPageResult.value);
     nextPayload.cska.squad = mergeSquadStats(nextPayload.cska.squad || fallback.cska?.squad || {}, statsByName);
+  }
+
+  if (warnings.length > 0) {
+    nextPayload.source.note = `Automatic server refresh with validation (${warnings.join(", ")}).`;
   }
 
   return nextPayload;

@@ -4,70 +4,410 @@
     "standingsUrl": "https://www.flashscore.bg/soccer/bulgaria/efbet/#/ID1TwQHr/standings/overall/",
     "teamUrl": "https://www.flashscore.bg/team/cska-sofia/0xFNNECi/",
     "squadUrl": "https://www.flashscore.bg/team/cska-sofia/0xFNNECi/squad/",
-    "note": "Automatic extraction from dynamic pages can be partial. Some standings entries are best-effort parsed."
+    "note": "Automatic server refresh with validation (standings fallback kept, lastResults fallback kept, nextMatches fallback kept)."
   },
-  "updatedAt": "2026-04-02T00:00:00.000Z",
+  "updatedAt": "2026-04-03T08:29:38.814Z",
   "standings": [
-    { "rank": 1, "team": "Левски София", "mp": 27, "w": 21, "d": 2, "l": 4, "gf": 60, "ga": 19, "gd": 41, "pts": 65 },
-    { "rank": 2, "team": "Лудогорец", "mp": 27, "w": 16, "d": 8, "l": 3, "gf": 54, "ga": 19, "gd": 35, "pts": 56 },
-    { "rank": 3, "team": "ЦСКА 1948", "mp": 27, "w": 16, "d": 5, "l": 6, "gf": 45, "ga": 28, "gd": 17, "pts": 53 },
-    { "rank": 4, "team": "ЦСКА София", "mp": 27, "w": 14, "d": 7, "l": 6, "gf": 38, "ga": 22, "gd": 16, "pts": 49 },
-    { "rank": 5, "team": "Черно море", "mp": 27, "w": 11, "d": 10, "l": 6, "gf": 32, "ga": 19, "gd": 13, "pts": 43 },
-    { "rank": 6, "team": "Локо Пловдив", "mp": 27, "w": 10, "d": 11, "l": 6, "gf": 28, "ga": 32, "gd": -4, "pts": 41 },
-    { "rank": 7, "team": "Арда", "mp": 27, "w": 10, "d": 8, "l": 9, "gf": 30, "ga": 25, "gd": 5, "pts": 38 },
-    { "rank": 8, "team": "Славия София", "mp": 27, "w": 9, "d": 8, "l": 10, "gf": 32, "ga": 30, "gd": 2, "pts": 35 },
-    { "rank": 9, "team": "Ботев Враца", "mp": 27, "w": 8, "d": 10, "l": 9, "gf": 21, "ga": 23, "gd": -2, "pts": 34 },
-    { "rank": 10, "team": "Локо София", "mp": 27, "w": 8, "d": 10, "l": 9, "gf": 36, "ga": 34, "gd": 2, "pts": 34 },
-    { "rank": 11, "team": "Ботев Пловдив", "mp": 27, "w": 9, "d": 6, "l": 12, "gf": 31, "ga": 36, "gd": -5, "pts": 33 },
-    { "rank": 12, "team": "Добруджа", "mp": 27, "w": 7, "d": 4, "l": 16, "gf": 21, "ga": 37, "gd": -16, "pts": 25 },
-    { "rank": 13, "team": "Спартак Варна", "mp": 27, "w": 4, "d": 11, "l": 12, "gf": 24, "ga": 45, "gd": -21, "pts": 23 },
-    { "rank": 14, "team": "Берое", "mp": 27, "w": 4, "d": 10, "l": 13, "gf": 18, "ga": 39, "gd": -21, "pts": 22 },
-    { "rank": 15, "team": "Септември София", "mp": 27, "w": 6, "d": 3, "l": 18, "gf": 23, "ga": 57, "gd": -34, "pts": 21 },
-    { "rank": 16, "team": "Монтана", "mp": 27, "w": 3, "d": 7, "l": 17, "gf": 14, "ga": 42, "gd": -28, "pts": 16 }
+    {
+      "rank": 1,
+      "team": "Левски София",
+      "mp": 27,
+      "w": 21,
+      "d": 2,
+      "l": 4,
+      "gf": 60,
+      "ga": 19,
+      "gd": 41,
+      "pts": 65
+    },
+    {
+      "rank": 2,
+      "team": "Лудогорец",
+      "mp": 27,
+      "w": 16,
+      "d": 8,
+      "l": 3,
+      "gf": 54,
+      "ga": 19,
+      "gd": 35,
+      "pts": 56
+    },
+    {
+      "rank": 3,
+      "team": "ЦСКА 1948",
+      "mp": 27,
+      "w": 16,
+      "d": 5,
+      "l": 6,
+      "gf": 45,
+      "ga": 28,
+      "gd": 17,
+      "pts": 53
+    },
+    {
+      "rank": 4,
+      "team": "ЦСКА София",
+      "mp": 27,
+      "w": 14,
+      "d": 7,
+      "l": 6,
+      "gf": 38,
+      "ga": 22,
+      "gd": 16,
+      "pts": 49
+    },
+    {
+      "rank": 5,
+      "team": "Черно море",
+      "mp": 27,
+      "w": 11,
+      "d": 10,
+      "l": 6,
+      "gf": 32,
+      "ga": 19,
+      "gd": 13,
+      "pts": 43
+    },
+    {
+      "rank": 6,
+      "team": "Локо Пловдив",
+      "mp": 27,
+      "w": 10,
+      "d": 11,
+      "l": 6,
+      "gf": 28,
+      "ga": 32,
+      "gd": -4,
+      "pts": 41
+    },
+    {
+      "rank": 7,
+      "team": "Арда",
+      "mp": 27,
+      "w": 10,
+      "d": 8,
+      "l": 9,
+      "gf": 30,
+      "ga": 25,
+      "gd": 5,
+      "pts": 38
+    },
+    {
+      "rank": 8,
+      "team": "Славия София",
+      "mp": 27,
+      "w": 9,
+      "d": 8,
+      "l": 10,
+      "gf": 32,
+      "ga": 30,
+      "gd": 2,
+      "pts": 35
+    },
+    {
+      "rank": 9,
+      "team": "Ботев Враца",
+      "mp": 27,
+      "w": 8,
+      "d": 10,
+      "l": 9,
+      "gf": 21,
+      "ga": 23,
+      "gd": -2,
+      "pts": 34
+    },
+    {
+      "rank": 10,
+      "team": "Локо София",
+      "mp": 27,
+      "w": 8,
+      "d": 10,
+      "l": 9,
+      "gf": 36,
+      "ga": 34,
+      "gd": 2,
+      "pts": 34
+    },
+    {
+      "rank": 11,
+      "team": "Ботев Пловдив",
+      "mp": 27,
+      "w": 9,
+      "d": 6,
+      "l": 12,
+      "gf": 31,
+      "ga": 36,
+      "gd": -5,
+      "pts": 33
+    },
+    {
+      "rank": 12,
+      "team": "Добруджа",
+      "mp": 27,
+      "w": 7,
+      "d": 4,
+      "l": 16,
+      "gf": 21,
+      "ga": 37,
+      "gd": -16,
+      "pts": 25
+    },
+    {
+      "rank": 13,
+      "team": "Спартак Варна",
+      "mp": 27,
+      "w": 4,
+      "d": 11,
+      "l": 12,
+      "gf": 24,
+      "ga": 45,
+      "gd": -21,
+      "pts": 23
+    },
+    {
+      "rank": 14,
+      "team": "Берое",
+      "mp": 27,
+      "w": 4,
+      "d": 10,
+      "l": 13,
+      "gf": 18,
+      "ga": 39,
+      "gd": -21,
+      "pts": 22
+    },
+    {
+      "rank": 15,
+      "team": "Септември София",
+      "mp": 27,
+      "w": 6,
+      "d": 3,
+      "l": 18,
+      "gf": 23,
+      "ga": 57,
+      "gd": -34,
+      "pts": 21
+    },
+    {
+      "rank": 16,
+      "team": "Монтана",
+      "mp": 27,
+      "w": 3,
+      "d": 7,
+      "l": 17,
+      "gf": 14,
+      "ga": 42,
+      "gd": -28,
+      "pts": 16
+    }
   ],
   "cska": {
     "team": "ЦСКА София",
     "stadium": "Нац. стадион Васил Левски",
     "nextMatches": [
-      { "date": "04.04", "time": "19:30", "home": "Берое", "away": "ЦСКА София" },
-      { "date": "08.04", "time": "18:00", "home": "Монтана", "away": "ЦСКА София" },
-      { "date": "13.04", "time": "16:00", "home": "ЦСКА София", "away": "Левски София" }
+      {
+        "date": "04.04",
+        "time": "19:30",
+        "home": "Берое",
+        "away": "ЦСКА София"
+      },
+      {
+        "date": "08.04",
+        "time": "18:00",
+        "home": "Монтана",
+        "away": "ЦСКА София"
+      },
+      {
+        "date": "13.04",
+        "time": "16:00",
+        "home": "ЦСКА София",
+        "away": "Левски София"
+      }
     ],
     "lastResults": [
-      { "date": "22.03", "home": "ЦСКА София", "away": "Добруджа", "score": "2:0" },
-      { "date": "14.03", "home": "Лудогорец", "away": "ЦСКА София", "score": "3:0" },
-      { "date": "08.03", "home": "ЦСКА София", "away": "Локомотив София", "score": "2:0" },
-      { "date": "04.03", "home": "ЦСКА София", "away": "Ботев Враца", "score": "1:0" },
-      { "date": "28.02", "home": "Септември София", "away": "ЦСКА София", "score": "2:0" }
+      {
+        "date": "22.03",
+        "home": "ЦСКА София",
+        "away": "Добруджа",
+        "score": "2:0"
+      },
+      {
+        "date": "14.03",
+        "home": "Лудогорец",
+        "away": "ЦСКА София",
+        "score": "3:0"
+      },
+      {
+        "date": "08.03",
+        "home": "ЦСКА София",
+        "away": "Локомотив София",
+        "score": "2:0"
+      },
+      {
+        "date": "04.03",
+        "home": "ЦСКА София",
+        "away": "Ботев Враца",
+        "score": "1:0"
+      },
+      {
+        "date": "28.02",
+        "home": "Септември София",
+        "away": "ЦСКА София",
+        "score": "2:0"
+      }
     ],
     "squad": {
       "goalkeepers": [
-        { "name": "Лапоухов Фьодор", "number": 21, "matches": 23, "goals": 0, "assists": 0, "savesPerMatch": null, "penaltiesSaved": null },
-        { "name": "Ефтимов Димитър", "number": 35, "matches": 0, "goals": 0, "assists": 0, "savesPerMatch": null, "penaltiesSaved": null }
+        {
+          "name": "Лапоухов Фьодор",
+          "number": 21,
+          "matches": 23,
+          "goals": 0,
+          "assists": 0,
+          "savesPerMatch": null,
+          "penaltiesSaved": null
+        },
+        {
+          "name": "Ефтимов Димитър",
+          "number": 35,
+          "matches": 0,
+          "goals": 0,
+          "assists": 0,
+          "savesPerMatch": null,
+          "penaltiesSaved": null
+        }
       ],
       "defenders": [
-        { "name": "Пастор", "number": 2, "matches": 24, "goals": 0, "assists": 4 },
-        { "name": "Йорданов Андрей", "number": 3, "matches": 4, "goals": 0, "assists": 0 },
-        { "name": "Лапеня Адриан", "number": 4, "matches": 22, "goals": 0, "assists": 0 },
-        { "name": "Делова Лумбард", "number": 5, "matches": 25, "goals": 2, "assists": 0 },
-        { "name": "Иванов Теодор", "number": 14, "matches": 21, "goals": 0, "assists": 0 },
-        { "name": "Мартино Анхело", "number": 17, "matches": 22, "goals": 0, "assists": 0 }
+        {
+          "name": "Пастор",
+          "number": 2,
+          "matches": 24,
+          "goals": 0,
+          "assists": 4
+        },
+        {
+          "name": "Йорданов Андрей",
+          "number": 3,
+          "matches": 4,
+          "goals": 0,
+          "assists": 0
+        },
+        {
+          "name": "Лапеня Адриан",
+          "number": 4,
+          "matches": 22,
+          "goals": 0,
+          "assists": 0
+        },
+        {
+          "name": "Делова Лумбард",
+          "number": 5,
+          "matches": 25,
+          "goals": 2,
+          "assists": 0
+        },
+        {
+          "name": "Иванов Теодор",
+          "number": 14,
+          "matches": 21,
+          "goals": 0,
+          "assists": 0
+        },
+        {
+          "name": "Мартино Анхело",
+          "number": 17,
+          "matches": 22,
+          "goals": 0,
+          "assists": 0
+        }
       ],
       "midfielders": [
-        { "name": "Ето'о Джеймс", "number": 9, "matches": 27, "goals": 4, "assists": 8 },
-        { "name": "Ебонг Макс", "number": 10, "matches": 9, "goals": 3, "assists": 0 },
-        { "name": "Жордао Бруно", "number": 16, "matches": 22, "goals": 3, "assists": 0 },
-        { "name": "Илиев Илиан", "number": 73, "matches": 22, "goals": 1, "assists": 2 },
-        { "name": "Илиев Юлиан", "number": 8, "matches": 1, "goals": 0, "assists": 0 },
-        { "name": "Панайотов Петко", "number": 30, "matches": 25, "goals": 2, "assists": 2 }
+        {
+          "name": "Ето'о Джеймс",
+          "number": 99,
+          "matches": 27,
+          "goals": 4,
+          "assists": 8
+        },
+        {
+          "name": "Ебонг Макс",
+          "number": 10,
+          "matches": 9,
+          "goals": 3,
+          "assists": 0
+        },
+        {
+          "name": "Жордао Бруно",
+          "number": 6,
+          "matches": 22,
+          "goals": 3,
+          "assists": 0
+        },
+        {
+          "name": "Илиев Илиан",
+          "number": 73,
+          "matches": 22,
+          "goals": 1,
+          "assists": 2
+        },
+        {
+          "name": "Илиев Юлиан",
+          "number": 8,
+          "matches": 1,
+          "goals": 0,
+          "assists": 0
+        },
+        {
+          "name": "Панайотов Петко",
+          "number": 30,
+          "matches": 25,
+          "goals": 2,
+          "assists": 2
+        }
       ],
       "forwards": [
-        { "name": "Пиедраита Алехандро", "number": 7, "matches": 7, "goals": 2, "assists": 0 },
-        { "name": "Брахими Мохамед", "number": 11, "matches": 21, "goals": 2, "assists": 2 },
-        { "name": "Годой Леандро", "number": 20, "matches": 24, "goals": 12, "assists": 1 },
-        { "name": "Лео Перейра", "number": 38, "matches": 9, "goals": 2, "assists": 1 },
-        { "name": "Питас Йоанис", "number": 28, "matches": 29, "goals": 8, "assists": 2 },
-        { "name": "Тасев Иван", "number": 72, "matches": 5, "goals": 0, "assists": 1 }
+        {
+          "name": "Пиедраита Алехандро",
+          "number": 77,
+          "matches": 7,
+          "goals": 2,
+          "assists": 0
+        },
+        {
+          "name": "Брахими Мохамед",
+          "number": 11,
+          "matches": 21,
+          "goals": 2,
+          "assists": 2
+        },
+        {
+          "name": "Годой Леандро",
+          "number": 9,
+          "matches": 24,
+          "goals": 12,
+          "assists": 1
+        },
+        {
+          "name": "Лео Перейра",
+          "number": 38,
+          "matches": 9,
+          "goals": 2,
+          "assists": 1
+        },
+        {
+          "name": "Питас Йоанис",
+          "number": 28,
+          "matches": 29,
+          "goals": 8,
+          "assists": 2
+        },
+        {
+          "name": "Тасев Иван",
+          "number": 72,
+          "matches": 5,
+          "goals": 0,
+          "assists": 1
+        }
       ]
     }
   }
