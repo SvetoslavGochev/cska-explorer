@@ -135,6 +135,38 @@ let currentLanguage = localStorage.getItem(LANGUAGE_KEY) === "en" ? "en" : "bg";
 let lastRenderedPayload = null;
 let lastRenderedFromLocalCache = false;
 
+const TEAM_LOGOS = {
+  "Левски София": "https://static.flashscore.com/res/image/data/hOa8FKR0-zeLrkjui.png",
+  "Лудогорец": "https://static.flashscore.com/res/image/data/KG84D6Rq-Kjkd1Ayp.png",
+  "ЦСКА 1948": "https://static.flashscore.com/res/image/data/CrPTEUT0-dIoxO1fK.png",
+  "ЦСКА София": "https://static.flashscore.com/res/image/data/MZmpVA7k-nTkb2fj6.png",
+  "Черно море": "https://static.flashscore.com/res/image/data/GrK5iugT-tjkFB7mQ.png",
+  "Арда": "https://static.flashscore.com/res/image/data/UwKU0w86-8huEu0wU.png",
+  "Ботев Пловдив": "https://static.flashscore.com/res/image/data/KKH0khRq-UVZMFjiK.png",
+  "Локомотив Пловдив": "https://static.flashscore.com/res/image/data/zNR5wyBN-CrHFHNPj.png",
+  "Локомотив София": "https://static.flashscore.com/res/image/data/KbTwOMkC-0xN9676E.png",
+  "Славия София": "https://static.flashscore.com/res/image/data/IgY8NX7k-rXOMwTEr.png",
+  "Ботев Враца": "https://static.flashscore.com/res/image/data/nku6ne8k-vTHHOmI9.png",
+  "Добруджа": "https://static.flashscore.com/res/image/data/Y1cNNK5k-bspvajO9.png",
+  "Спартак Варна": "https://static.flashscore.com/res/image/data/6TetCWBN-boO56d81.png",
+  "Берое": "https://static.flashscore.com/res/image/data/xpH48q86-fmfS2lRL.png",
+  "Септември София": "https://static.flashscore.com/res/image/data/G8c1lpgT-Oj0MPYxU.png",
+  "Монтана": "https://static.flashscore.com/res/image/data/QLieRNR0-COvJNbKS.png"
+};
+
+const TEAM_NAME_ALIASES = {
+  "Левски": "Левски София",
+  "Локо Пловдив": "Локомотив Пловдив",
+  "Локо София": "Локомотив София",
+  "Локомотив (Пловдив)": "Локомотив Пловдив",
+  "Локомотив (София)": "Локомотив София",
+  "Арда (Кърджали)": "Арда",
+  "Ботев (Враца)": "Ботев Враца",
+  "Ботев (Пловдив)": "Ботев Пловдив",
+  "Спартак (Варна)": "Спартак Варна",
+  "Септември (София)": "Септември София"
+};
+
 function t(key) {
   return I18N[currentLanguage]?.[key] || I18N.bg[key] || key;
 }
@@ -265,6 +297,14 @@ function formatTeamDisplayName(team) {
   return team;
 }
 
+function normalizeTeamName(team) {
+  return TEAM_NAME_ALIASES[team] || team;
+}
+
+function getTeamLogo(team) {
+  return TEAM_LOGOS[normalizeTeamName(team)] || "";
+}
+
 function render(data, fromLocalCache) {
   lastRenderedPayload = data;
   lastRenderedFromLocalCache = fromLocalCache;
@@ -287,6 +327,7 @@ function render(data, fromLocalCache) {
       return leftRank - rightRank;
     })
     .forEach((row) => {
+    const logo = getTeamLogo(row.team);
     const tr = document.createElement("tr");
     const rank = Number(row.rank);
     if (rank === 1) tr.classList.add("zone-champion");
@@ -297,7 +338,12 @@ function render(data, fromLocalCache) {
     else if (rank >= 15) tr.classList.add("zone-rel");
     tr.innerHTML = `
       <td>${row.rank ?? "-"}</td>
-      <td><span class="standings-team-bubble">${formatTeamDisplayName(row.team ?? "-")}</span></td>
+      <td>
+        <div class="team-cell">
+          ${logo ? `<img class="team-logo" src="${logo}" alt="${row.team}" loading="lazy" />` : ""}
+          <span class="standings-team-bubble" title="${row.team ?? "-"}">${formatTeamDisplayName(row.team ?? "-")}</span>
+        </div>
+      </td>
       <td><span class="standings-stat-bubble">${row.mp ?? "-"}</span></td>
       <td><span class="standings-stat-bubble">${row.w ?? "-"}</span></td>
       <td><span class="standings-stat-bubble">${row.d ?? "-"}</span></td>
