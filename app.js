@@ -259,10 +259,14 @@ function normalizeTeamName(team) {
 }
 
 function formatTeamDisplayName(team) {
-  if (normalizeTeamName(team) === 'ЦСКА София' || team === 'ЦСКА') {
-    return `<img src="https://upload.wikimedia.org/wikipedia/commons/6/6e/CSKA_Sofia_logo.png" alt="ЦСКА" style="height:1em;vertical-align:middle;margin-right:0.3em">ЦСКА`;
+  const normalized = normalizeTeamName(team);
+  const logo = getTeamLogo(team);
+  let displayName = normalized;
+  // Ако е ЦСКА, винаги изписвай "ЦСКА"
+  if (normalized === 'ЦСКА София' || team === 'ЦСКА') {
+    displayName = 'ЦСКА';
   }
-  return team;
+  return logo ? `<img src="${logo}" alt="${displayName}" style="height:1em;vertical-align:middle;margin-right:0.3em">${displayName}` : displayName;
 }
 
 function getTeamLogo(team) {

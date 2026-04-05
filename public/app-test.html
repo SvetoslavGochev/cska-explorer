@@ -258,7 +258,46 @@
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${row.rank ?? '-'}</td>
-          <td class="team">${row.team === 'ЦСКА' ? '<img src="https://upload.wikimedia.org/wikipedia/commons/6/6e/CSKA_Sofia_logo.png" alt="ЦСКА" style="height:1em;vertical-align:middle;margin-right:0.3em">ЦСКА' : row.team ?? '-'}</td>
+          <td class="team">
+            ${(() => {
+              const TEAM_LOGOS = {
+                "Левски София": "https://static.flashscore.com/res/image/data/hOa8FKR0-zeLrkjui.png",
+                "Лудогорец": "https://static.flashscore.com/res/image/data/KG84D6Rq-Kjkd1Ayp.png",
+                "ЦСКА 1948": "https://static.flashscore.com/res/image/data/CrPTEUT0-dIoxO1fK.png",
+                "ЦСКА София": "https://static.flashscore.com/res/image/data/MZmpVA7k-nTkb2fj6.png",
+                "Черно море": "https://static.flashscore.com/res/image/data/GrK5iugT-tjkFB7mQ.png",
+                "Арда": "https://static.flashscore.com/res/image/data/UwKU0w86-8huEu0wU.png",
+                "Ботев Пловдив": "https://static.flashscore.com/res/image/data/KKH0khRq-UVZMFjiK.png",
+                "Локомотив Пловдив": "https://static.flashscore.com/res/image/data/zNR5wyBN-CrHFHNPj.png",
+                "Локомотив София": "https://static.flashscore.com/res/image/data/KbTwOMkC-0xN9676E.png",
+                "Славия София": "https://static.flashscore.com/res/image/data/IgY8NX7k-rXOMwTEr.png",
+                "Ботев Враца": "https://static.flashscore.com/res/image/data/nku6ne8k-vTHHOmI9.png",
+                "Добруджа": "https://static.flashscore.com/res/image/data/Y1cNNK5k-bspvajO9.png",
+                "Спартак Варна": "https://static.flashscore.com/res/image/data/6TetCWBN-boO56d81.png",
+                "Берое": "https://static.flashscore.com/res/image/data/xpH48q86-fmfS2lRL.png",
+                "Септември София": "https://static.flashscore.com/res/image/data/G8c1lpgT-Oj0MPYxU.png",
+                "Монтана": "https://static.flashscore.com/res/image/data/QLieRNR0-COvJNbKS.png"
+              };
+              const TEAM_NAME_ALIASES = {
+                "Левски": "Левски София",
+                "Локо Пловдив": "Локомотив Пловдив",
+                "Локо София": "Локомотив София",
+                "Локомотив (Пловдив)": "Локомотив Пловдив",
+                "Локомотив (София)": "Локомотив София",
+                "Арда (Кърджали)": "Арда",
+                "Ботев (Враца)": "Ботев Враца",
+                "Ботев (Пловдив)": "Ботев Пловдив",
+                "Спартак (Варна)": "Спартак Варна",
+                "Септември (София)": "Септември София"
+              };
+              const normalizeTeamName = t => TEAM_NAME_ALIASES[t] || t;
+              let t = row.team ?? '-';
+              let normalized = normalizeTeamName(t);
+              let logo = TEAM_LOGOS[normalized];
+              if (normalized === 'ЦСКА София' || t === 'ЦСКА') normalized = 'ЦСКА';
+              return logo ? `<img src="${logo}" alt="${normalized}" style="height:1em;vertical-align:middle;margin-right:0.3em">${normalized}` : normalized;
+            })()}
+          </td>
           <td>${row.mp ?? '-'}</td>
           <td>${row.w ?? '-'}</td>
           <td>${row.d ?? '-'}</td>
