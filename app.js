@@ -364,48 +364,6 @@ function buildTodayMatchesRows(cska) {
     .catch((err) => {
       showError(err.message || t("errLoadData"));
     });
-      const name = typeof player === "object" ? player.name : player;
-      const num  = typeof player === "object" ? player.number : null;
-      const matches = Number(typeof player === "object" ? player.matches : NaN);
-      const goals = Number(typeof player === "object" ? player.goals : NaN);
-      const assists = Number(typeof player === "object" ? player.assists : NaN);
-      const hattricks = Number(typeof player === "object" ? player.hattricks : NaN);
-      const savesPerMatch = Number(typeof player === "object" ? player.savesPerMatch : NaN);
-      const penaltiesSaved = Number(typeof player === "object" ? player.penaltiesSaved : NaN);
-      const goalPerMatch = Number.isFinite(matches) && matches > 0 && Number.isFinite(goals)
-        ? (goals / matches).toFixed(2)
-        : "-";
-      const safeMatches = Number.isFinite(matches) ? matches : "-";
-      const safeGoals = Number.isFinite(goals) ? goals : "-";
-      const safeAssists = Number.isFinite(assists) ? assists : "-";
-      const safeHattricks = Number.isFinite(hattricks) ? hattricks : 0;
-      const impactScore =
-        (Number.isFinite(matches) ? matches * 0.25 : 0) +
-        (Number.isFinite(assists) ? assists * 0.5 : 0) +
-        (Number.isFinite(goals) ? goals * 1 : 0) +
-        (safeHattricks * 2);
-
-      li.innerHTML = `
-        ${num != null ? `<span class="jersey-num">${num}</span>` : ""}
-        <div class="player-meta">
-          <span class="player-name">${name}</span>
-          <span class="player-stats">
-            <span class="stat-chip"><span class="stat-label">${t("statMatches")}</span><span class="stat-value">${safeMatches}</span></span>
-            <span class="stat-chip"><span class="stat-label">${t("statGoals")}</span><span class="stat-value">${safeGoals}</span></span>
-            <span class="stat-chip"><span class="stat-label">${t("statAssists")}</span><span class="stat-value">${safeAssists}</span></span>
-            <span class="stat-chip"><span class="stat-label">${t("statGoalsPerMatch")}</span><span class="stat-value">${goalPerMatch}</span></span>
-            ${group.isGoalkeeper ? `<span class="stat-chip"><span class="stat-label">${t("statSavesPerMatch")}</span><span class="stat-value">${Number.isFinite(savesPerMatch) ? savesPerMatch.toFixed(2) : "-"}</span></span>` : ""}
-            ${group.isGoalkeeper ? `<span class="stat-chip"><span class="stat-label">${t("statPenaltiesSaved")}</span><span class="stat-value">${Number.isFinite(penaltiesSaved) ? penaltiesSaved : "-"}</span></span>` : ""}
-            <span class="stat-chip"><span class="stat-label">${t("statImpact")}</span><span class="stat-value">${impactScore > 0 ? impactScore.toFixed(2) : "-"}</span></span>
-          </span>
-        </div>
-      `;
-      ul.appendChild(li);
-    });
-
-    wrap.appendChild(ul);
-    root.appendChild(wrap);
-  });
 }
 
 function render(payload, fromCache) {
