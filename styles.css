@@ -46,15 +46,36 @@ body {
   padding: 20px 0 48px;
 }
 
-.hero {
-  background:
-    radial-gradient(700px 200px at 80% 0%, rgba(255, 255, 255, 0.18), transparent 60%),
-    linear-gradient(135deg, var(--red-dark), var(--red));
-  color: #fff;
-  border-radius: 20px;
-  padding: 28px;
-  box-shadow: 0 22px 46px rgba(95, 8, 13, 0.28);
-}
+  .hero {
+    background:
+      radial-gradient(700px 200px at 80% 0%, rgba(255, 255, 255, 0.18), transparent 60%),
+      linear-gradient(135deg, var(--red-dark), var(--red));
+    color: #fff;
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 22px 46px rgba(95, 8, 13, 0.28);
+  }
+
+  #mainTitle {
+    font-size: 2.2rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    margin: 0.2em 0 0.5em 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5em;
+  }
+
+  .main-version {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #ffe6b0;
+    opacity: 0.85;
+    letter-spacing: 0.01em;
+    margin-left: 0.2em;
+    user-select: all;
+  }
 
 .hero-topline {
   display: flex;

@@ -1,3 +1,24 @@
+/* Refresh button style */
+.refresh-btn {
+  display: inline-block;
+  margin-bottom: 10px;
+  padding: 6px 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background: #b3131b;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.refresh-btn:hover:not(:disabled) {
+  background: #7f0f15;
+}
+.refresh-btn:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
 :root {
   --bg: #f4f1ea;
   --bg-accent: #efe5d2;
@@ -97,87 +118,12 @@ body {
   transform: translateY(-1px);
 }
 
+/* Clean language buttons: only text, no flag backgrounds */
 .lang-btn.is-active {
   background: linear-gradient(135deg, var(--red-dark), var(--red));
-  color: transparent;
+  color: #fff;
   border-color: rgba(128, 15, 21, 0.85);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14) inset, 0 2px 8px rgba(57, 18, 3, 0.32);
-}
-
-.lang-btn.is-active::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  opacity: 1;
-  z-index: 0;
-}
-
-.lang-btn.is-active[data-lang="bg"]::before {
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.10)),
-    linear-gradient(
-      180deg,
-      #ffffff 0%,
-      #ffffff 33.33%,
-      #00966e 33.33%,
-      #00966e 66.66%,
-      #d62612 66.66%,
-      #d62612 100%
-    );
-}
-
-.lang-btn.is-active[data-lang="en"]::before {
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.10)),
-    linear-gradient(26deg, transparent 44%, #ffffff 44%, #ffffff 56%, transparent 56%),
-    linear-gradient(-26deg, transparent 44%, #ffffff 44%, #ffffff 56%, transparent 56%),
-    linear-gradient(26deg, transparent 47%, #c8102e 47%, #c8102e 53%, transparent 53%),
-    linear-gradient(-26deg, transparent 47%, #c8102e 47%, #c8102e 53%, transparent 53%),
-    linear-gradient(90deg, transparent 39%, #ffffff 39%, #ffffff 61%, transparent 61%),
-    linear-gradient(0deg, transparent 39%, #ffffff 39%, #ffffff 61%, transparent 61%),
-    linear-gradient(90deg, transparent 45%, #c8102e 45%, #c8102e 55%, transparent 55%),
-    linear-gradient(0deg, transparent 45%, #c8102e 45%, #c8102e 55%, transparent 55%),
-    #012169;
-}
-
-.lang-btn.is-active::before {
-  background-size: 100% 100%, 180% 180%, 180% 180%, 180% 180%, 180% 180%, 180% 180%, 180% 180%, 180% 180%, 180% 180%;
-  animation: langFlagShimmer 3.8s ease-in-out infinite;
-}
-
-.lang-btn.is-active::after {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  font-size: inherit;
-  font-weight: inherit;
-  letter-spacing: inherit;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
-  z-index: 1;
-}
-
-.lang-btn.is-active[data-lang="bg"]::after {
-  content: "BG";
-}
-
-.lang-btn.is-active[data-lang="en"]::after {
-  content: "ENG";
-}
-
-@keyframes langFlagShimmer {
-  0% {
-    filter: saturate(1) brightness(1);
-  }
-  50% {
-    filter: saturate(1.1) brightness(1.08);
-  }
-  100% {
-    filter: saturate(1) brightness(1);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -186,9 +132,8 @@ body {
   }
 }
 
-.lang-btn {
-  z-index: 1;
-}
+
+/* Remove unnecessary z-index for .lang-btn */
 
 .container {
   width: min(1100px, 92vw);
@@ -574,17 +519,13 @@ button {
   -webkit-backdrop-filter: blur(4px);
 }
 
+/* --- Responsive styles grouped at end for optimization --- */
 @media (max-width: 900px) {
   body {
-    background:
-      linear-gradient(180deg, rgba(40, 23, 18, 0.30) 0%, rgba(30, 18, 14, 0.48) 100%),
-      radial-gradient(900px 520px at -10% -10%, rgba(176, 24, 34, 0.15) 0%, transparent 62%),
-      radial-gradient(700px 420px at 115% 8%, rgba(120, 68, 22, 0.12) 0%, transparent 56%),
-      url("assets/cska-stadium-render.jpg");
-    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
-    background-size: auto, auto, auto, cover;
-    background-position: center, left top, right top, center top;
-    background-attachment: scroll, scroll, scroll, scroll;
+    background: linear-gradient(180deg, #ffffff 0%, #00966e 33.33%, #00966e 66.66%, #d62612 66.66%, #d62612 100%);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-attachment: scroll;
   }
 
   .site-header-inner {
@@ -651,5 +592,10 @@ button {
   .lang-btn {
     min-width: 52px;
     min-height: 30px;
+  }
+
+  /* Use :where() for more resilient selector specificity */
+  :where(.main-nav a, .lang-btn, .mini-card, .card, .squad-group, .form-dot) {
+    box-shadow: none;
   }
 }

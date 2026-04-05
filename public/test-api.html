@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <title>Тест API: Мачове днес и Класиране</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f8f8f8; margin: 0; padding: 2em; }
+    h1 { color: #b00; }
+    section { background: #fff; border-radius: 8px; box-shadow: 0 2px 8px #0001; margin-bottom: 2em; padding: 1em 2em; }
+    ul, table { width: 100%; margin: 0; padding: 0; }
+    ul { list-style: none; }
+    li { padding: 0.5em 0; border-bottom: 1px solid #eee; }
+    li:last-child { border-bottom: none; }
+    table { border-collapse: collapse; }
+    th, td { padding: 0.5em; border: 1px solid #ddd; text-align: center; }
+    th { background: #eee; }
+    .team { text-align: left; }
+  </style>
+</head>
+<body>
+  <h1>Тест: Мачове днес и Класиране</h1>
+  <section>
+    <h2>Мачове днес</h2>
+    <ul id="todayMatches"></ul>
+  </section>
+  <section>
+    <h2>Класиране</h2>
+    <table id="standingsTable">
+      <thead>
+        <tr>
+          <th>#</th><th>Отбор</th><th>М</th><th>П</th><th>Р</th><th>З</th><th>ГР</th><th>Т</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+  <script>
+    const CACHE_KEY = 'testApiCache';
+    const CACHE_TTL = 10 * 60 * 1000; // 10 минути
+    function render(data) {
+      // Мачове днес
+      const todayMatches = Array.isArray(data.cska?.todayMatches) ? data.cska.todayMatches : [];
+      const todayList = document.getElementById('todayMatches');
+      todayList.innerHTML = '';
+      if (todayMatches.length === 0) {
+        todayList.innerHTML = '<li>Няма мачове днес</li>';
+      } else {
+        todayMatches.forEach(m => {
+          const li = document.createElement('li');
+          li.textContent = `${m.date} ${m.time || ''} — ${m.home} vs ${m.away}`;
+          todayList.appendChild(li);
+        });
+      }
+      // Класиране
+      const standings = Array.isArray(data.standings) ? data.standings : [];
+      const tbody = document.querySelector('#standingsTable tbody');
+      tbody.innerHTML = '';
+      standings.forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${row.rank ?? '-'}</td>
+          <td class="team">${row.team ?? '-'}</td>
+          <td>${row.mp ?? '-'}</td>
+          <td>${row.w ?? '-'}</td>
+          <td>${row.d ?? '-'}</td>
+          <td>${row.l ?? '-'}</td>
+          <td>${row.gf ?? '-'}:${row.ga ?? '-'}</td>
+          <td>${row.pts ?? '-'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+    function saveCache(data) {
+      localStorage.setItem(CACHE_KEY, JSON.stringify({ data, expires: Date.now() + CACHE_TTL }));
+    }
+    function loadCache() {
+      try {
+        const raw = localStorage.getItem(CACHE_KEY);
+        if (!raw) return null;
+        const obj = JSON.parse(raw);
+        if (obj.expires > Date.now()) return obj.data;
+        return null;
+      } catch { return null; }
+    }
+    const cached = loadCache();
+    if (cached) {
+      render(cached);
+    } else {
+      fetch('/api/data')
+        .then(r => r.json())
+        .then(data => {
+          saveCache(data);
+          render(data);
+        })
+        .catch(err => {
+          document.getElementById('todayMatches').innerHTML = '<li>Грешка при зареждане на API</li>';
+          document.querySelector('#standingsTable tbody').innerHTML = '<tr><td colspan="8">Грешка при зареждане на API</td></tr>';
+        });
+    }
+  </script>
+</body>
+</html>

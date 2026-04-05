@@ -1,0 +1,180 @@
+// common.js - Shared constants and helpers for CSKA Explorer
+
+// Version is injected from package.json or set manually
+export const APP_VERSION = "v1.0.0";
+
+export const I18N = {
+  bg: {
+    navStandings: "Класиране",
+    navMatches: "Мачове",
+    navSquad: "Състав",
+    heroSubtitle: "Всичко важно за ЦСКА и Efbet Лига на едно място.",
+    miniRows: "Редове в класиране",
+    miniNextMatch: "Следващ мач",
+    miniPlayers: "Футболисти в списък",
+    miniUpdated: "Последно авто-обновяване",
+    standingsTitle: "Efbet Лига - Класиране",
+    thTeam: "Отбор",
+    thMP: "М",
+    thW: "П",
+    thD: "Р",
+    thL: "З",
+    thGD: "ГР",
+    thPTS: "Т",
+    legendChampion: "Шампион / КЛ",
+    legendUcl: "КЛ квалификации",
+    legendUel: "ЛЕ квалификации",
+    legendUecl: "КЛЕ квалификации",
+    legendPlayoff: "Бараж",
+    legendRel: "Изпадане",
+    sourcePrefix: "Източник:",
+    nextMatchesTitle: "Следващи мачове на ЦСКА",
+    todayMatchesTitle: "Мачове днес",
+    lastResultsTitle: "Последни резултати",
+    squadTitle: "Състав на ЦСКА София",
+    groupGoalkeepers: "Вратари",
+    groupDefenders: "Защитници",
+    groupMidfielders: "Халфове",
+    groupForwards: "Нападатели",
+    statMatches: "Мачове",
+    statGoals: "Голове",
+    statAssists: "Асист.",
+    statGoalsPerMatch: "Г/М",
+    statSavesPerMatch: "Спасяв./М",
+    statPenaltiesSaved: "Спас. дузпи",
+    statImpact: "КПД",
+    impactFormula: "КПД = (Мачове x 0.25) + (Асист. x 0.5) + (Голове x 1) + (Хеттрици x 2).",
+    sourceRefreshLabel: "Обновяване:",
+    sourceValidationLabel: "Валидиране:",
+    sourceMissingStatsLabel: "Липсващи данни:",
+    sourceImpactLabel: "Формула КПД:",
+    sourceMissingStats: "В таблицата липсващите статистики се допълват с \"-\".",
+    warnStandingsFallback: "Класиране (fallback)",
+    warnLastResultsFallback: "Последни резултати (fallback)",
+    warnNextMatchesFallback: "Следващи мачове (fallback)",
+    warnStandingsFetchFailed: "Класиране (грешка при заявка)",
+    warnLastResultsFetchFailed: "Последни резултати (грешка при заявка)",
+    warnNextMatchesFetchFailed: "Следващи мачове (грешка при заявка)",
+    footerDisclaimer: "Този сайт е създаден с учебна цел. Данните са информативни и е възможно да има разминавания при автоматичното обновяване.",
+    noData: "Няма данни",
+    statusFromCache: "Показани са данни от локалния кеш (без нова заявка).",
+    statusFromServer: "Показани са последните данни от сървъра.",
+    errLoadData: "Неуспешно зареждане на данни",
+    errInvalidData: "Получени са невалидни/повредени данни. Пробвай форсирано опресняване.",
+    errPrefix: "Грешка:",
+    noMatchesToday: "Няма мачове за днес",
+    stadiumLabel: "Стадион:",
+    foundedLabel: "Основан:",
+    cskaNotes: "Форма:"
+  },
+  en: {
+    navStandings: "Standings",
+    navMatches: "Matches",
+    navSquad: "Squad",
+    heroSubtitle: "Everything important about CSKA and the Efbet League in one place.",
+    miniRows: "Standings Rows",
+    miniNextMatch: "Next Match",
+    miniPlayers: "Players Listed",
+    miniUpdated: "Last Auto Update",
+    standingsTitle: "Efbet League - Standings",
+    thTeam: "Team",
+    thMP: "MP",
+    thW: "W",
+    thD: "D",
+    thL: "L",
+    thGD: "GD",
+    thPTS: "PTS",
+    legendChampion: "Champion / UCL",
+    legendUcl: "UCL qualification",
+    legendUel: "UEL qualification",
+    legendUecl: "UECL qualification",
+    legendPlayoff: "Playoff",
+    legendRel: "Relegation",
+    sourcePrefix: "Source:",
+    nextMatchesTitle: "Upcoming CSKA Matches",
+    todayMatchesTitle: "Matches Today",
+    lastResultsTitle: "Recent Results",
+    squadTitle: "CSKA Sofia Squad",
+    groupGoalkeepers: "Goalkeepers",
+    groupDefenders: "Defenders",
+    groupMidfielders: "Midfielders",
+    groupForwards: "Forwards",
+    statMatches: "Matches",
+    statGoals: "Goals",
+    statAssists: "Assists",
+    statGoalsPerMatch: "G/Match",
+    statSavesPerMatch: "Saves/Match",
+    statPenaltiesSaved: "Pens Saved",
+    statImpact: "Impact",
+    impactFormula: "Impact = (Matches x 0.25) + (Assists x 0.5) + (Goals x 1) + (Hattricks x 2).",
+    sourceRefreshLabel: "Refresh:",
+    sourceValidationLabel: "Validation:",
+    sourceMissingStatsLabel: "Missing data:",
+    sourceImpactLabel: "Impact formula:",
+    warnStandingsFallback: "Standings (fallback)",
+    warnLastResultsFallback: "Last results (fallback)",
+    warnNextMatchesFallback: "Next matches (fallback)",
+    warnStandingsFetchFailed: "Standings (fetch failed)",
+    warnLastResultsFetchFailed: "Last results (fetch failed)",
+    warnNextMatchesFetchFailed: "Next matches (fetch failed)",
+    footerDisclaimer: "This site was created for educational purposes. The data is informational and discrepancies may occur during automatic updates.",
+    noData: "No data",
+    statusFromCache: "Showing data from local cache (without a new request).",
+    statusFromServer: "Showing the latest data from the server.",
+    errLoadData: "Failed to load data",
+    errInvalidData: "Received invalid/corrupted data. Try forced refresh.",
+    errPrefix: "Error:",
+    noMatchesToday: "No matches today",
+    stadiumLabel: "Stadium:",
+    foundedLabel: "Founded:",
+    cskaNotes: "Form:"
+  }
+};
+
+export const TEAM_LOGOS = {
+  "Левски София": "https://static.flashscore.com/res/image/data/hOa8FKR0-zeLrkjui.png",
+  "Лудогорец": "https://static.flashscore.com/res/image/data/KG84D6Rq-Kjkd1Ayp.png",
+  "ЦСКА 1948": "https://static.flashscore.com/res/image/data/CrPTEUT0-dIoxO1fK.png",
+  "ЦСКА София": "https://static.flashscore.com/res/image/data/MZmpVA7k-nTkb2fj6.png",
+  "Черно море": "https://static.flashscore.com/res/image/data/GrK5iugT-tjkFB7mQ.png",
+  "Арда": "https://static.flashscore.com/res/image/data/UwKU0w86-8huEu0wU.png",
+  "Ботев Пловдив": "https://static.flashscore.com/res/image/data/KKH0khRq-UVZMFjiK.png",
+  "Локомотив Пловдив": "https://static.flashscore.com/res/image/data/zNR5wyBN-CrHFHNPj.png",
+  "Локомотив София": "https://static.flashscore.com/res/image/data/KbTwOMkC-0xN9676E.png",
+  "Славия София": "https://static.flashscore.com/res/image/data/IgY8NX7k-rXOMwTEr.png",
+  "Ботев Враца": "https://static.flashscore.com/res/image/data/nku6ne8k-vTHHOmI9.png",
+  "Добруджа": "https://static.flashscore.com/res/image/data/Y1cNNK5k-bspvajO9.png",
+  "Спартак Варна": "https://static.flashscore.com/res/image/data/6TetCWBN-boO56d81.png",
+  "Берое": "https://static.flashscore.com/res/image/data/xpH48q86-fmfS2lRL.png",
+  "Септември София": "https://static.flashscore.com/res/image/data/G8c1lpgT-Oj0MPYxU.png",
+  "Монтана": "https://static.flashscore.com/res/image/data/QLieRNR0-COvJNbKS.png",
+};
+
+export const TEAM_NAME_ALIASES = {
+  "Левски": "Левски София",
+  "Локо Пловдив": "Локомотив Пловдив",
+  "Локо София": "Локомотив София",
+  "Локомотив (Пловдив)": "Локомотив Пловдив",
+  "Локомотив (София)": "Локомотив София",
+  "Арда (Кърджали)": "Арда",
+  "Ботев (Враца)": "Ботев Враца",
+  "Ботев (Пловдив)": "Ботев Пловдив",
+  "Спартак (Варна)": "Спартак Варна",
+  "Септември (София)": "Септември София"
+};
+
+export function normalizeTeamName(team) {
+  return TEAM_NAME_ALIASES[team] || team;
+}
+
+export function getTeamLogo(team) {
+  return TEAM_LOGOS[normalizeTeamName(team)] || "";
+}
+
+export function formatTeamDisplayName(team) {
+  return team;
+}
+
+export function t(key, lang = "bg") {
+  return I18N[lang]?.[key] || I18N.bg[key] || key;
+}

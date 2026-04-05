@@ -1,175 +1,28 @@
+// Показване на версията във footer-а
+
+import { APP_VERSION, I18N, TEAM_LOGOS, TEAM_NAME_ALIASES, normalizeTeamName, getTeamLogo, formatTeamDisplayName, t } from "./common.js";
+
+function setAppVersion() {
+  const el = document.getElementById("appVersion");
+  if (el) {
+    el.textContent = APP_VERSION;
+  }
+  const mainVer = document.getElementById("mainVersion");
+  if (mainVer) {
+    mainVer.textContent = APP_VERSION;
+  }
+  if (typeof console !== "undefined") {
+    console.log(`CSKA Explorer version: ${APP_VERSION}`);
+  }
+}
+
 const LOCAL_CACHE_KEY = "cska_site_cache_v4";
 const LOCAL_CACHE_TTL_MS = 10 * 60 * 1000;
 const LANGUAGE_KEY = "cska_site_language";
 
-const I18N = {
-  bg: {
-    navStandings: "Класиране",
-    navMatches: "Мачове",
-    navSquad: "Състав",
-    heroSubtitle: "Всичко важно за ЦСКА и Efbet Лига на едно място.",
-    miniRows: "Редове в класиране",
-    miniNextMatch: "Следващ мач",
-    miniPlayers: "Футболисти в списък",
-    miniUpdated: "Последно авто-обновяване",
-    standingsTitle: "Efbet Лига - Класиране",
-    thTeam: "Отбор",
-    thMP: "М",
-    thW: "П",
-    thD: "Р",
-    thL: "З",
-    thGD: "ГР",
-    thPTS: "Т",
-    legendChampion: "Шампион / КЛ",
-    legendUcl: "КЛ квалификации",
-    legendUel: "ЛЕ квалификации",
-    legendUecl: "КЛЕ квалификации",
-    legendPlayoff: "Бараж",
-    legendRel: "Изпадане",
-    sourcePrefix: "Източник:",
-    nextMatchesTitle: "Следващи мачове на ЦСКА",
-    todayMatchesTitle: "Мачове днес",
-    lastResultsTitle: "Последни резултати",
-    squadTitle: "Състав на ЦСКА София",
-    groupGoalkeepers: "Вратари",
-    groupDefenders: "Защитници",
-    groupMidfielders: "Халфове",
-    groupForwards: "Нападатели",
-    statMatches: "Мачове",
-    statGoals: "Голове",
-    statAssists: "Асист.",
-    statGoalsPerMatch: "Г/М",
-    statSavesPerMatch: "Спасяв./М",
-    statPenaltiesSaved: "Спас. дузпи",
-    statImpact: "КПД",
-    impactFormula: "КПД = (Мачове x 0.25) + (Асист. x 0.5) + (Голове x 1) + (Хеттрици x 2).",
-    sourceRefreshLabel: "Обновяване:",
-    sourceValidationLabel: "Валидиране:",
-    sourceMissingStatsLabel: "Липсващи данни:",
-    sourceImpactLabel: "Формула КПД:",
-    sourceMissingStats: "В таблицата липсващите статистики се допълват с \"-\".",
-    warnStandingsFallback: "Класиране (fallback)",
-    warnLastResultsFallback: "Последни резултати (fallback)",
-    warnNextMatchesFallback: "Следващи мачове (fallback)",
-    warnStandingsFetchFailed: "Класиране (грешка при заявка)",
-    warnLastResultsFetchFailed: "Последни резултати (грешка при заявка)",
-    warnNextMatchesFetchFailed: "Следващи мачове (грешка при заявка)",
-    footerDisclaimer: "Този сайт е създаден с учебна цел. Данните са информативни и е възможно да има разминавания при автоматичното обновяване.",
-    noData: "Няма данни",
-    statusFromCache: "Показани са данни от локалния кеш (без нова заявка).",
-    statusFromServer: "Показани са последните данни от сървъра.",
-    errLoadData: "Неуспешно зареждане на данни",
-    errInvalidData: "Получени са невалидни/повредени данни. Пробвай форсирано опресняване.",
-    errPrefix: "Грешка:",
-    noMatchesToday: "Няма мачове за днес",
-    stadiumLabel: "Стадион:",
-    foundedLabel: "Основан:",
-    cskaNotes: "Форма:"
-  },
-  en: {
-    navStandings: "Standings",
-    navMatches: "Matches",
-    navSquad: "Squad",
-    heroSubtitle: "Everything important about CSKA and the Efbet League in one place.",
-    miniRows: "Standings Rows",
-    miniNextMatch: "Next Match",
-    miniPlayers: "Players Listed",
-    miniUpdated: "Last Auto Update",
-    standingsTitle: "Efbet League - Standings",
-    thTeam: "Team",
-    thMP: "MP",
-    thW: "W",
-    thD: "D",
-    thL: "L",
-    thGD: "GD",
-    thPTS: "PTS",
-    legendChampion: "Champion / UCL",
-    legendUcl: "UCL qualification",
-    legendUel: "UEL qualification",
-    legendUecl: "UECL qualification",
-    legendPlayoff: "Playoff",
-    legendRel: "Relegation",
-    sourcePrefix: "Source:",
-    nextMatchesTitle: "Upcoming CSKA Matches",
-    todayMatchesTitle: "Matches Today",
-    lastResultsTitle: "Recent Results",
-    squadTitle: "CSKA Sofia Squad",
-    groupGoalkeepers: "Goalkeepers",
-    groupDefenders: "Defenders",
-    groupMidfielders: "Midfielders",
-    groupForwards: "Forwards",
-    statMatches: "Matches",
-    statGoals: "Goals",
-    statAssists: "Assists",
-    statGoalsPerMatch: "G/Match",
-    statSavesPerMatch: "Saves/Match",
-    statPenaltiesSaved: "Pens Saved",
-    statImpact: "Impact",
-    impactFormula: "Impact = (Matches x 0.25) + (Assists x 0.5) + (Goals x 1) + (Hattricks x 2).",
-    sourceRefreshLabel: "Refresh:",
-    sourceValidationLabel: "Validation:",
-    sourceMissingStatsLabel: "Missing data:",
-    sourceImpactLabel: "Impact formula:",
-    sourceMissingStats: "Missing statistics are shown as \"-\" in the table.",
-    warnStandingsFallback: "Standings (fallback)",
-    warnLastResultsFallback: "Last results (fallback)",
-    warnNextMatchesFallback: "Next matches (fallback)",
-    warnStandingsFetchFailed: "Standings (fetch failed)",
-    warnLastResultsFetchFailed: "Last results (fetch failed)",
-    warnNextMatchesFetchFailed: "Next matches (fetch failed)",
-    footerDisclaimer: "This site was created for educational purposes. The data is informational and discrepancies may occur during automatic updates.",
-    noData: "No data",
-    statusFromCache: "Showing data from local cache (without a new request).",
-    statusFromServer: "Showing the latest data from the server.",
-    errLoadData: "Failed to load data",
-    errInvalidData: "Received invalid/corrupted data. Try forced refresh.",
-    errPrefix: "Error:",
-    noMatchesToday: "No matches today",
-    stadiumLabel: "Stadium:",
-    foundedLabel: "Founded:",
-    cskaNotes: "Form:"
-  }
-};
-
 let currentLanguage = localStorage.getItem(LANGUAGE_KEY) === "en" ? "en" : "bg";
 let lastRenderedPayload = null;
 let lastRenderedFromLocalCache = false;
-
-const TEAM_LOGOS = {
-  "Левски София": "https://static.flashscore.com/res/image/data/hOa8FKR0-zeLrkjui.png",
-  "Лудогорец": "https://static.flashscore.com/res/image/data/KG84D6Rq-Kjkd1Ayp.png",
-  "ЦСКА 1948": "https://static.flashscore.com/res/image/data/CrPTEUT0-dIoxO1fK.png",
-  "ЦСКА София": "https://static.flashscore.com/res/image/data/MZmpVA7k-nTkb2fj6.png",
-  "Черно море": "https://static.flashscore.com/res/image/data/GrK5iugT-tjkFB7mQ.png",
-  "Арда": "https://static.flashscore.com/res/image/data/UwKU0w86-8huEu0wU.png",
-  "Ботев Пловдив": "https://static.flashscore.com/res/image/data/KKH0khRq-UVZMFjiK.png",
-  "Локомотив Пловдив": "https://static.flashscore.com/res/image/data/zNR5wyBN-CrHFHNPj.png",
-  "Локомотив София": "https://static.flashscore.com/res/image/data/KbTwOMkC-0xN9676E.png",
-  "Славия София": "https://static.flashscore.com/res/image/data/IgY8NX7k-rXOMwTEr.png",
-  "Ботев Враца": "https://static.flashscore.com/res/image/data/nku6ne8k-vTHHOmI9.png",
-  "Добруджа": "https://static.flashscore.com/res/image/data/Y1cNNK5k-bspvajO9.png",
-  "Спартак Варна": "https://static.flashscore.com/res/image/data/6TetCWBN-boO56d81.png",
-  "Берое": "https://static.flashscore.com/res/image/data/xpH48q86-fmfS2lRL.png",
-  "Септември София": "https://static.flashscore.com/res/image/data/G8c1lpgT-Oj0MPYxU.png",
-  "Монтана": "https://static.flashscore.com/res/image/data/QLieRNR0-COvJNbKS.png"
-};
-
-const TEAM_NAME_ALIASES = {
-  "Левски": "Левски София",
-  "Локо Пловдив": "Локомотив Пловдив",
-  "Локо София": "Локомотив София",
-  "Локомотив (Пловдив)": "Локомотив Пловдив",
-  "Локомотив (София)": "Локомотив София",
-  "Арда (Кърджали)": "Арда",
-  "Ботев (Враца)": "Ботев Враца",
-  "Ботев (Пловдив)": "Ботев Пловдив",
-  "Спартак (Варна)": "Спартак Варна",
-  "Септември (София)": "Септември София"
-};
-
-function t(key) {
-  return I18N[currentLanguage]?.[key] || I18N.bg[key] || key;
-}
 
 function getLocale() {
   return currentLanguage === "en" ? "en-GB" : "bg-BG";
@@ -178,20 +31,16 @@ function getLocale() {
 function getCountryInitials(countryName) {
   const value = String(countryName || "").trim();
   if (!value) return "";
-
   const normalized = value.toLowerCase();
   if (normalized.includes("централноафрикан")) return "ЦАР";
-
   const parts = value
     .replace(/[^\p{L}\s]/gu, " ")
     .split(/\s+/)
     .map((part) => part.trim())
     .filter(Boolean);
-
   if (parts.length >= 2) {
     return parts.slice(0, 3).map((part) => part[0]).join("").toUpperCase();
   }
-
   const single = parts[0] || value;
   return single.slice(0, 2).toUpperCase();
 }
@@ -407,36 +256,15 @@ function render(data, fromLocalCache) {
     month: "2-digit"
   }).replace(/\//g, ".");
 
-  const todayMatches = document.getElementById("todayMatches");
-  const explicitTodayMatches = Array.isArray(data.cska?.todayMatches) ? data.cska.todayMatches : [];
-  const derivedTodayFromNext = (data.cska?.nextMatches || [])
-    .filter((m) => String(m?.date || "") === todayKey)
-    .map((m) => ({ ...m, kind: "next" }));
-  const derivedTodayFromLast = (data.cska?.lastResults || [])
-    .filter((m) => String(m?.date || "") === todayKey)
-    .map((m) => ({ ...m, kind: "last" }));
-  const mergedTodayMatches = explicitTodayMatches.length > 0
-    ? explicitTodayMatches
-    : [...derivedTodayFromNext, ...derivedTodayFromLast];
 
-  todayMatches.innerHTML = "";
-  if (mergedTodayMatches.length === 0) {
-    const li = document.createElement("li");
-    li.textContent = t("noMatchesToday");
-    todayMatches.appendChild(li);
-  } else {
-    mergedTodayMatches.forEach((m) => {
-      const li = document.createElement("li");
-      const isResult = Boolean(m?.score) || m?.kind === "last";
-      const extra = [m.round, m.venue].filter(Boolean).join(" · ");
-      if (isResult) {
-        li.innerHTML = `<span class="match-line-date">${m.date}</span>${extra ? `<span class="match-sub">${extra}</span>` : ""}<span class="match-line-teams">${m.home} <strong>${m.score ?? "-"}</strong> ${m.away}</span>`;
-      } else {
-        li.innerHTML = `<span class="match-line-date">${m.date} ${m.time || ""}</span>${extra ? `<span class="match-sub">${extra}</span>` : ""}<span class="match-line-teams">${m.home} – ${m.away}</span>`;
-      }
+    const todayMatches = document.getElementById("todayMatches");
+    todayMatches.innerHTML = '';
+    (data.cska?.todayMatches || []).forEach(m => {
+      const li = document.createElement('li');
+      li.textContent = `${m.date} ${m.time || ''} — ${m.home} vs ${m.away}`;
       todayMatches.appendChild(li);
     });
-  }
+    if (!data.cska?.todayMatches?.length) todayMatches.innerHTML = '<li>Няма мачове днес</li>';
 
   const lastResults = document.getElementById("lastResults");
   lastResults.innerHTML = "";
@@ -598,4 +426,5 @@ async function init() {
   }
 }
 
+setAppVersion();
 init();

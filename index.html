@@ -16,13 +16,14 @@
           <button type="button" class="lang-btn" data-lang="en">ENG</button>
         </div>
       </div>
-      <h1>CSKA EXPLORER</h1>
+      <h1 id="mainTitle">CSKA EXPLORER <span id="mainVersion" class="main-version"></span></h1>
     </section>
 
     <section class="grid">
       <article class="card">
         <h2 data-i18n="standingsTitle">Efbet Лига - Класиране</h2>
         <div class="table-wrap">
+          <button id="hardRefreshBtn" class="refresh-btn" type="button">🔄 Обнови данните</button>
           <table class="table" id="standingsTable">
             <thead>
               <tr>
@@ -69,7 +70,7 @@
     </section>
 
     <footer class="footer">
-      <p>CSKA EXPLORER</p>
+      <p>CSKA EXPLORER <span class="app-version" id="appVersion"></span></p>
       <p class="footer-note" data-i18n="footerDisclaimer">Този сайт е създаден с учебна цел. Данните са информативни и е възможно да има разминавания при автоматичното обновяване.</p>
     </footer>
   </div>

@@ -330,40 +330,40 @@ function buildTodayMatchesRows(cska) {
     return explicitTodayMatches;
   }
 
-  const key = todayKey();
-  const fromNext = (cska?.nextMatches || [])
-    .filter((m) => String(m?.date || "") === key)
-    .map((m) => ({ ...m, kind: "next" }));
-  const fromLast = (cska?.lastResults || [])
-    .filter((m) => String(m?.date || "") === key)
-    .map((m) => ({ ...m, kind: "last" }));
+  const now = Date.now();
+  const cachedRaw = localStorage.getItem(LOCAL_CACHE_KEY);
 
-  return [...fromNext, ...fromLast];
-}
+  if (!force && cachedRaw) {
+    try {
+      const cached = JSON.parse(cachedRaw);
+      if (cached.expiresAt > now && isValidPayload(cached.payload)) {
+        render(cached.payload, true);
+        return;
+      }
+    } catch (_) {
+      // Ignore broken local cache and refetch.
+    }
 
-function renderSquad(squad) {
-  const groups = [
-    { key: "groupGoalkeepers", players: squad.goalkeepers || [], isGoalkeeper: true },
-    { key: "groupDefenders", players: squad.defenders || [], isGoalkeeper: false },
-    { key: "groupMidfielders", players: squad.midfielders || [], isGoalkeeper: false },
-    { key: "groupForwards", players: squad.forwards || [], isGoalkeeper: false }
-  ];
+    localStorage.removeItem(LOCAL_CACHE_KEY);
+  }
 
-  const root = document.getElementById("squadGrid");
-  root.innerHTML = "";
-
-  groups.forEach((group) => {
-    const wrap = document.createElement("div");
-    wrap.className = "squad-group";
-
-    const heading = document.createElement("h3");
-    heading.textContent = t(group.key);
-    wrap.appendChild(heading);
-
-    const ul = document.createElement("ul");
-    ul.className = "list";
-    group.players.forEach((player) => {
-      const li = document.createElement("li");
+  const endpoint = force ? "/api/data?refresh=1" : "/api/data";
+  fetch(endpoint, { cache: "no-store" })
+    .then((res) => {
+      if (!res.ok) throw new Error(t("errLoadData"));
+      return res.json();
+    })
+    .then((payload) => {
+      if (!isValidPayload(payload)) throw new Error(t("errInvalidData"));
+      localStorage.setItem(
+        LOCAL_CACHE_KEY,
+        JSON.stringify({ payload, expiresAt: now + LOCAL_CACHE_TTL_MS })
+      );
+      render(payload, false);
+    })
+    .catch((err) => {
+      showError(err.message || t("errLoadData"));
+    });
       const name = typeof player === "object" ? player.name : player;
       const num  = typeof player === "object" ? player.number : null;
       const matches = Number(typeof player === "object" ? player.matches : NaN);

@@ -13,7 +13,7 @@
       "usedFallback": true
     }
   },
-  "updatedAt": "2026-04-03T21:17:20.917Z",
+  "updatedAt": "2026-04-05T06:49:13.547Z",
   "standings": [
     {
       "rank": 1,
@@ -54,17 +54,29 @@
     {
       "rank": 4,
       "team": "ЦСКА София",
-      "mp": 27,
-      "w": 14,
+      "mp": 28,
+      "w": 15,
       "d": 7,
       "l": 6,
-      "gf": 38,
+      "gf": 41,
       "ga": 22,
-      "gd": 16,
-      "pts": 49
+      "gd": 19,
+      "pts": 52
     },
     {
       "rank": 5,
+      "team": "Локомотив (Пловдив)",
+      "mp": 28,
+      "w": 11,
+      "d": 11,
+      "l": 6,
+      "gf": 29,
+      "ga": 32,
+      "gd": -3,
+      "pts": 44
+    },
+    {
+      "rank": 6,
       "team": "Черно море",
       "mp": 27,
       "w": 11,
@@ -76,31 +88,31 @@
       "pts": 43
     },
     {
-      "rank": 6,
-      "team": "Локомотив (Пловдив)",
-      "mp": 27,
-      "w": 10,
-      "d": 11,
-      "l": 6,
-      "gf": 28,
-      "ga": 32,
-      "gd": -4,
+      "rank": 7,
+      "team": "Арда (Кърджали)",
+      "mp": 28,
+      "w": 11,
+      "d": 8,
+      "l": 9,
+      "gf": 32,
+      "ga": 26,
+      "gd": 6,
       "pts": 41
     },
     {
-      "rank": 7,
-      "team": "Арда (Кърджали)",
-      "mp": 27,
+      "rank": 8,
+      "team": "Ботев (Пловдив)",
+      "mp": 28,
       "w": 10,
-      "d": 8,
-      "l": 9,
-      "gf": 30,
-      "ga": 25,
-      "gd": 5,
-      "pts": 38
+      "d": 6,
+      "l": 12,
+      "gf": 36,
+      "ga": 36,
+      "gd": 0,
+      "pts": 36
     },
     {
-      "rank": 8,
+      "rank": 9,
       "team": "Славия София",
       "mp": 27,
       "w": 9,
@@ -112,7 +124,7 @@
       "pts": 35
     },
     {
-      "rank": 9,
+      "rank": 10,
       "team": "Ботев (Враца)",
       "mp": 27,
       "w": 8,
@@ -124,28 +136,16 @@
       "pts": 34
     },
     {
-      "rank": 10,
+      "rank": 11,
       "team": "Локомотив (София)",
-      "mp": 27,
+      "mp": 28,
       "w": 8,
       "d": 10,
-      "l": 9,
+      "l": 10,
       "gf": 36,
-      "ga": 34,
-      "gd": 2,
+      "ga": 35,
+      "gd": 1,
       "pts": 34
-    },
-    {
-      "rank": 11,
-      "team": "Ботев (Пловдив)",
-      "mp": 27,
-      "w": 9,
-      "d": 6,
-      "l": 12,
-      "gf": 31,
-      "ga": 36,
-      "gd": -5,
-      "pts": 33
     },
     {
       "rank": 12,
@@ -162,25 +162,25 @@
     {
       "rank": 13,
       "team": "Спартак (Варна)",
-      "mp": 27,
+      "mp": 28,
       "w": 4,
       "d": 11,
-      "l": 12,
+      "l": 13,
       "gf": 24,
-      "ga": 45,
-      "gd": -21,
+      "ga": 50,
+      "gd": -26,
       "pts": 23
     },
     {
       "rank": 14,
       "team": "Берое",
-      "mp": 27,
+      "mp": 28,
       "w": 4,
       "d": 10,
-      "l": 13,
+      "l": 14,
       "gf": 18,
-      "ga": 39,
-      "gd": -21,
+      "ga": 42,
+      "gd": -24,
       "pts": 22
     },
     {
@@ -198,13 +198,13 @@
     {
       "rank": 16,
       "team": "Монтана",
-      "mp": 27,
+      "mp": 28,
       "w": 3,
       "d": 7,
-      "l": 17,
-      "gf": 14,
-      "ga": 42,
-      "gd": -28,
+      "l": 18,
+      "gf": 15,
+      "ga": 44,
+      "gd": -29,
       "pts": 16
     }
   ],
@@ -229,6 +229,26 @@
         "time": "16:00",
         "home": "ЦСКА София",
         "away": "Левски София"
+      }
+    ],
+    "todayMatches": [
+      {
+        "date": "05.04",
+        "time": "",
+        "home": "Черно море",
+        "away": "Славия София"
+      },
+      {
+        "date": "05.04",
+        "time": "",
+        "home": "Добруджа",
+        "away": "Левски София"
+      },
+      {
+        "date": "05.04",
+        "time": "",
+        "home": "Лудогорец",
+        "away": "ЦСКА 1948"
       }
     ],
     "lastResults": [
@@ -270,7 +290,7 @@
           "number": 21,
           "countryName": "Беларус",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/126-Belarus-flag.png",
-          "matches": 21,
+          "matches": 24,
           "goals": 0,
           "assists": 0,
           "savesPerMatch": null,
@@ -305,16 +325,16 @@
           "number": 2,
           "countryName": "Бразилия",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/16-Brazil-flag.png",
-          "matches": 0,
+          "matches": 25,
           "goals": 0,
-          "assists": 0
+          "assists": 4
         },
         {
           "name": "Андрей Йорданов",
           "number": 3,
           "countryName": "България",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
-          "matches": 3,
+          "matches": 4,
           "goals": 0,
           "assists": 0
         },
@@ -323,8 +343,8 @@
           "number": 4,
           "countryName": "Испания",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/17-Spain-flag.png",
-          "matches": 20,
-          "goals": 0,
+          "matches": 23,
+          "goals": 1,
           "assists": 0
         },
         {
@@ -332,7 +352,7 @@
           "number": 5,
           "countryName": "Косово",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/48-Kosovo-flag.png",
-          "matches": 23,
+          "matches": 25,
           "goals": 2,
           "assists": 0
         },
@@ -341,16 +361,7 @@
           "number": 14,
           "countryName": "България",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
-          "matches": 19,
-          "goals": 0,
-          "assists": 0
-        },
-        {
-          "name": "Алекс Тунчев",
-          "number": 15,
-          "countryName": "България",
-          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
-          "matches": 1,
+          "matches": 22,
           "goals": 0,
           "assists": 0
         },
@@ -368,7 +379,7 @@
           "number": 19,
           "countryName": "България",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
-          "matches": 16,
+          "matches": 17,
           "goals": 0,
           "assists": 1
         },
@@ -377,7 +388,16 @@
           "number": 32,
           "countryName": "Аржентина",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/55-Argentina-flag.png",
-          "matches": 3,
+          "matches": 4,
+          "goals": 0,
+          "assists": 0
+        },
+        {
+          "name": "Алекс Тунчев",
+          "number": 15,
+          "countryName": "България",
+          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
+          "matches": 1,
           "goals": 0,
           "assists": 0
         }
@@ -388,8 +408,8 @@
           "number": 6,
           "countryName": "Португалия",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/31-Portugal-flag.png",
-          "matches": 21,
-          "goals": 2,
+          "matches": 23,
+          "goals": 3,
           "assists": 0
         },
         {
@@ -397,9 +417,27 @@
           "number": 7,
           "countryName": "Норвегия",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/103-Norway-flag.png",
-          "matches": 13,
+          "matches": 14,
           "goals": 1,
           "assists": 0
+        },
+        {
+          "name": "Макс Ебонг",
+          "number": 10,
+          "countryName": "Беларус",
+          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/126-Belarus-flag.png",
+          "matches": 10,
+          "goals": 3,
+          "assists": 0
+        },
+        {
+          "name": "Мохамед Брахими",
+          "number": 11,
+          "countryName": "Франция",
+          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/28-France-flag.png",
+          "matches": 22,
+          "goals": 3,
+          "assists": 2
         },
         {
           "name": "Юлиан Илиев",
@@ -411,29 +449,11 @@
           "assists": 0
         },
         {
-          "name": "Макс Ебонг",
-          "number": 10,
-          "countryName": "Беларус",
-          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/126-Belarus-flag.png",
-          "matches": 8,
-          "goals": 2,
-          "assists": 0
-        },
-        {
-          "name": "Мохамед Брахими",
-          "number": 11,
-          "countryName": "Франция",
-          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/28-France-flag.png",
-          "matches": 18,
-          "goals": 1,
-          "assists": 2
-        },
-        {
           "name": "Петко Панайотов",
           "number": 30,
           "countryName": "България",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
-          "matches": 23,
+          "matches": 25,
           "goals": 2,
           "assists": 2
         },
@@ -442,7 +462,7 @@
           "number": 73,
           "countryName": "България",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
-          "matches": 20,
+          "matches": 23,
           "goals": 1,
           "assists": 2
         },
@@ -451,18 +471,18 @@
           "number": 94,
           "countryName": "ЦАР",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/64-Central-African-Rep-flag.png",
-          "matches": 7,
+          "matches": 9,
           "goals": 0,
-          "assists": 0
+          "assists": 1
         },
         {
           "name": "Джеймс Ето'о",
           "number": 99,
           "countryName": "Камерун",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/52-Cameroon-flag.png",
-          "matches": 25,
+          "matches": 28,
           "goals": 4,
-          "assists": 8
+          "assists": 9
         }
       ],
       "forwards": [
@@ -471,7 +491,7 @@
           "number": 9,
           "countryName": "Аржентина",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/55-Argentina-flag.png",
-          "matches": 22,
+          "matches": 25,
           "goals": 12,
           "assists": 1
         },
@@ -480,18 +500,9 @@
           "number": 28,
           "countryName": "Кипър",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/140-Cyprus-flag.png",
-          "matches": 27,
-          "goals": 7,
+          "matches": 30,
+          "goals": 9,
           "assists": 2
-        },
-        {
-          "name": "Лео Перейра",
-          "number": 38,
-          "countryName": "Бразилия",
-          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/16-Brazil-flag.png",
-          "matches": 8,
-          "goals": 2,
-          "assists": 1
         },
         {
           "name": "Иван Тасев",
@@ -503,24 +514,25 @@
           "assists": 1
         },
         {
+          "name": "Лео Перейра",
+          "number": 38,
+          "countryName": "Бразилия",
+          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/16-Brazil-flag.png",
+          "matches": 10,
+          "goals": 2,
+          "assists": 1
+        },
+        {
           "name": "Алехандро Пиедраита",
           "number": 77,
           "countryName": "Колумбия",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/22-Colombia-flag.png",
-          "matches": 7,
+          "matches": 8,
           "goals": 2,
           "assists": 0
         }
       ]
     },
-    "todayMatches": [
-      {
-        "date": "03.04",
-        "time": "16:45",
-        "home": "Локомотив Пловдив",
-        "away": "Локомотив София"
-      }
-    ],
     "teamInfo": {
       "stadium": "Vasil Levski National Stadium",
       "foundedYear": "1948",

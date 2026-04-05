@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <title>CSKA Explorer - Тестова версия</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg: #f4f1ea;
+      --bg-accent: #efe5d2;
+      --surface: #fffaf0;
+      --surface-2: #fff;
+      --ink: #1f1a17;
+      --muted: #6f655b;
+      --red: #b3131b;
+      --red-dark: #7f0f15;
+      --gold: #c8a551;
+      --line: #e2d6bf;
+      --ok: #0b7a42;
+    }
+    body {
+      margin: 0;
+      font-family: "Trebuchet MS", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 700px at -10% -10%, #fff7e8 0%, transparent 60%),
+        radial-gradient(900px 500px at 110% 10%, #f7e7c8 0%, transparent 55%),
+        linear-gradient(180deg, var(--bg) 0%, #f9f4ea 100%);
+      min-height: 100vh;
+    }
+    header, footer {
+      background: linear-gradient(90deg, var(--red) 60%, var(--red-dark) 100%);
+      color: #fff;
+      padding: 1.5em 0 1em 0;
+      text-align: center;
+      letter-spacing: 1px;
+      box-shadow: 0 2px 8px #0002;
+    }
+    main {
+      max-width: 1100px;
+      margin: 2.5em auto;
+      background: var(--surface-2);
+      border-radius: 20px;
+      box-shadow: 0 4px 24px #0002;
+      padding: 2.5em 2em 2em 2em;
+    }
+    h1, h2 {
+      color: var(--red);
+      margin-top: 0;
+      letter-spacing: 1px;
+    }
+    h2 {
+      border-bottom: 2px solid var(--red);
+      padding-bottom: 0.2em;
+      margin-bottom: 1em;
+      font-size: 1.3em;
+    }
+    section {
+      margin-bottom: 2.5em;
+    }
+    ul, table {
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    ul {
+      list-style: none;
+      background: #fffaf0;
+      border-radius: 12px;
+      box-shadow: 0 1px 4px #0001;
+      padding: 0.5em 0.5em 0.5em 0.5em;
+    }
+    li {
+      padding: 0.7em 0.5em;
+      border-bottom: 1px dashed var(--line);
+      font-size: 1.08em;
+      display: flex;
+      align-items: center;
+      gap: 0.5em;
+    }
+    li:last-child {
+      border-bottom: none;
+    }
+    table {
+      border-collapse: collapse;
+      background: #fffaf0;
+      border-radius: 12px;
+      box-shadow: 0 1px 4px #0001;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 0.6em 0.4em;
+      border: 1px solid var(--line);
+      text-align: center;
+      font-size: 1em;
+    }
+    th {
+      background: #f3f3f3;
+      color: var(--red);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .team {
+      text-align: left;
+      font-weight: 600;
+    }
+    .mini-cards {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 2.5em;
+    }
+    .mini-card {
+      background: rgba(255, 253, 247, 0.77);
+      border: 1px solid rgba(226, 214, 191, 0.72);
+      border-radius: 12px;
+      padding: 14px;
+      backdrop-filter: blur(2px);
+      text-align: center;
+    }
+    .mini-card h3 {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    .mini-card p {
+      margin: 8px 0 0;
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--red-dark);
+    }
+    .mini-card p.small-stat {
+      font-size: 0.88rem;
+      font-weight: 700;
+      line-height: 1.35;
+      color: #452917;
+    }
+    #squadGrid > div {
+      margin-bottom: 1em;
+      padding: 0.7em 1em;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 1px 3px #0001;
+    }
+    #squadGrid h4 {
+      margin: 0 0 0.5em 0;
+      color: var(--red-dark);
+      font-size: 1.05em;
+    }
+    #squadGrid div div {
+      margin: 0.2em 0 0.2em 0.5em;
+      font-size: 0.98em;
+    }
+    @media (max-width: 900px) {
+      main { padding: 1em; }
+      .mini-cards { grid-template-columns: 1fr 1fr; gap: 0.5em; }
+    }
+    @media (max-width: 700px) {
+      main { padding: 0.5em; }
+      .mini-cards { grid-template-columns: 1fr; gap: 0.5em; }
+      section { margin-bottom: 1.2em; }
+    }
+  </style>
+</head>
+  body {
+    min-height: 100vh;
+    background-image: url("../assets/cska-stadium-render.jpg");
+    background-size: cover;
+    background-position: center center;
+    background-attachment: fixed;
+    color: var(--main-fg);
+    font-family: var(--font-main);
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+      <div class="mini-card"><h3>Футболисти в списък</h3><p id="statPlayers">-</p></div>
+      <div class="mini-card"><h3>Последно обновяване</h3><p id="statAutoUpdated">-</p></div>
+    </div>
+    <section>
+      <h2>Мачове днес</h2>
+      <ul id="todayMatches"></ul>
+    </section>
+    <section>
+      <h2>Следващи мачове</h2>
+      <ul id="nextMatches"></ul>
+    </section>
+    <section>
+      <h2>Последни резултати</h2>
+      <ul id="lastResults"></ul>
+    </section>
+    <section>
+      <h2>Класиране</h2>
+      <table id="standingsTable">
+        <thead>
+          <tr>
+            <th>#</th><th>Отбор</th><th>М</th><th>П</th><th>Р</th><th>З</th><th>ГР</th><th>Т</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+    <section>
+      <h2>Състав на ЦСКА София</h2>
+      <div id="squadGrid"></div>
+    </section>
+    <section>
+      <h2>Източник и статус</h2>
+      <p id="sourceNote"></p>
+      <p id="statusLine"></p>
+    </section>
+  </main>
+  <footer>
+    <p>CSKA EXPLORER &copy; 2026 | Тестова версия</p>
+  </footer>
+  <script>
+    const CACHE_KEY = 'appTestCache';
+    const CACHE_TTL = 10 * 60 * 1000;
+    function render(data) {
+      // Мини карти
+      document.getElementById('statRows').textContent = Array.isArray(data.standings) ? data.standings.length : '-';
+      document.getElementById('statNext').textContent = data.cska?.nextMatches?.[0] ? `${data.cska.nextMatches[0].date} ${data.cska.nextMatches[0].time || ''} — ${data.cska.nextMatches[0].home} vs ${data.cska.nextMatches[0].away}` : '-';
+      document.getElementById('statPlayers').textContent = Array.isArray(data.cska?.squad?.goalkeepers) ? data.cska.squad.goalkeepers.length : '-';
+      document.getElementById('statAutoUpdated').textContent = data.updatedAt ? new Date(data.updatedAt).toLocaleString('bg-BG') : '-';
+      document.getElementById('appVersion').textContent = data.APP_VERSION || '';
+      // Мачове днес
+      const todayList = document.getElementById('todayMatches');
+      todayList.innerHTML = '';
+      (data.cska?.todayMatches || []).forEach(m => {
+        const li = document.createElement('li');
+        li.textContent = `${m.date} ${m.time || ''} — ${m.home} vs ${m.away}`;
+        todayList.appendChild(li);
+      });
+      if (!data.cska?.todayMatches?.length) todayList.innerHTML = '<li>Няма мачове днес</li>';
+      // Следващи мачове
+      const nextList = document.getElementById('nextMatches');
+      nextList.innerHTML = '';
+      (data.cska?.nextMatches || []).forEach(m => {
+        const li = document.createElement('li');
+        li.textContent = `${m.date} ${m.time || ''} — ${m.home} vs ${m.away}`;
+        nextList.appendChild(li);
+      });
+      if (!data.cska?.nextMatches?.length) nextList.innerHTML = '<li>Няма предстоящи мачове</li>';
+      // Последни резултати
+      const lastList = document.getElementById('lastResults');
+      lastList.innerHTML = '';
+      (data.cska?.lastResults || []).forEach(m => {
+        const li = document.createElement('li');
+        li.textContent = `${m.date} — ${m.home} ${m.score ? m.score : ''} ${m.away}`;
+        lastList.appendChild(li);
+      });
+      if (!data.cska?.lastResults?.length) lastList.innerHTML = '<li>Няма резултати</li>';
+      // Класиране
+      const tbody = document.querySelector('#standingsTable tbody');
+      tbody.innerHTML = '';
+      (data.standings || []).forEach(row => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${row.rank ?? '-'}</td>
+          <td class="team">${row.team ?? '-'}</td>
+          <td>${row.mp ?? '-'}</td>
+          <td>${row.w ?? '-'}</td>
+          <td>${row.d ?? '-'}</td>
+          <td>${row.l ?? '-'}</td>
+          <td>${row.gf ?? '-'}:${row.ga ?? '-'}</td>
+          <td>${row.pts ?? '-'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+      if (!data.standings?.length) tbody.innerHTML = '<tr><td colspan="8">Няма класиране</td></tr>';
+      // Състав
+      const squadGrid = document.getElementById('squadGrid');
+      squadGrid.innerHTML = '';
+      if (data.cska?.squad) {
+        ['goalkeepers','defenders','midfielders','forwards'].forEach(pos => {
+          if (Array.isArray(data.cska.squad[pos]) && data.cska.squad[pos].length) {
+            const group = document.createElement('div');
+            group.innerHTML = `<h4>${pos.charAt(0).toUpperCase() + pos.slice(1)}</h4>`;
+            data.cska.squad[pos].forEach(player => {
+              const p = document.createElement('div');
+              p.textContent = `${player.number ? '#' + player.number + ' ' : ''}${player.name} (${player.countryName || ''})`;
+              group.appendChild(p);
+            });
+            squadGrid.appendChild(group);
+          }
+        });
+      } else {
+        squadGrid.textContent = 'Няма информация за състава.';
+      }
+      // Източник и статус
+      document.getElementById('sourceNote').textContent = data.source?.name ? `Източник: ${data.source.name}` : '';
+      document.getElementById('statusLine').textContent = data.updatedAt ? `Последно обновяване: ${new Date(data.updatedAt).toLocaleString('bg-BG')}` : '';
+    }
+    function saveCache(data) {
+      localStorage.setItem(CACHE_KEY, JSON.stringify({ data, expires: Date.now() + CACHE_TTL }));
+    }
+    function loadCache() {
+      try {
+        const raw = localStorage.getItem(CACHE_KEY);
+        if (!raw) return null;
+        const obj = JSON.parse(raw);
+        if (obj.expires > Date.now()) return obj.data;
+        return null;
+      } catch { return null; }
+    }
+    const cached = loadCache();
+    if (cached) {
+      render(cached);
+    } else {
+      fetch('/api/data')
+        .then(r => r.json())
+        .then(data => {
+          saveCache(data);
+          render(data);
+        })
+        .catch(err => {
+          document.body.innerHTML += '<p style="color:red">Грешка при зареждане на API</p>';
+        });
+    }
+  </script>
+</body>
+</html>
