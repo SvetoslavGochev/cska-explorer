@@ -279,7 +279,14 @@
             group.innerHTML = `<h4>${pos.charAt(0).toUpperCase() + pos.slice(1)}</h4>`;
             data.cska.squad[pos].forEach(player => {
               const p = document.createElement('div');
-              p.textContent = `${player.number ? '#' + player.number + ' ' : ''}${player.name} (${player.countryName || ''})`;
+              // Сглобяване на статистика
+              let stats = [];
+              if (typeof player.matches === 'number') stats.push(`Мачове: ${player.matches}`);
+              if (typeof player.goals === 'number') stats.push(`Голове: ${player.goals}`);
+              if (typeof player.assists === 'number') stats.push(`Асистенции: ${player.assists}`);
+              if (typeof player.savesPerMatch === 'number') stats.push(`Спасявания/мач: ${player.savesPerMatch}`);
+              if (typeof player.penaltiesSaved === 'number') stats.push(`Спасени дузпи: ${player.penaltiesSaved}`);
+              p.innerHTML = `${player.number ? '#' + player.number + ' ' : ''}${player.name} (${player.countryName || ''})` + (stats.length ? `<br><span style='color:#7f0f15;font-size:0.97em'>${stats.join(', ')}</span>` : '');
               group.appendChild(p);
             });
             squadGrid.appendChild(group);
