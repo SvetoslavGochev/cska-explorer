@@ -13,7 +13,7 @@ function renderSquad(squad) {
     return;
   }
   squadGridEl.innerHTML = allPlayers.map(p =>
-    `<div class="squad-player">${p.name} <span class="squad-pos">${p.position || ''}</span></div>`
+     `<div class="squad-player">${p.number ? '#' + p.number + ' ' : ''}${p.name}${p.countryName ? ' (' + p.countryName + ')' : ''}</div>`
   ).join("\n");
 }
 const LOCAL_CACHE_KEY = "cska_explorer_root_cache_v10";

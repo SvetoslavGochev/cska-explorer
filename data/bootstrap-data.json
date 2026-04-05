@@ -30,7 +30,7 @@
     {
       "rank": 2,
       "team": "Лудогорец",
-      "mp": 27,
+          "team": "ЦСКА",
       "w": 16,
       "d": 8,
       "l": 3,
@@ -292,7 +292,7 @@
           "name": "Фьодор Лапоухов",
           "number": 21,
           "countryName": "Беларус",
-          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/126-Belarus-flag.png",
+        "team": "ЦСКА",
           "matches": 24,
           "kpd": 87,
           "goals": 0,
