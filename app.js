@@ -1,4 +1,4 @@
-// Визуализира състава на ЦСКА София в елемент с id "squadGrid"
+// Визуализира състава на ЦСКА в елемент с id "squadGrid"
 function renderSquad(squad) {
   const squadGridEl = document.getElementById("squadGrid");
   if (!squadGridEl) return;
@@ -40,7 +40,7 @@ const I18N = {
     nextMatchesTitle: "Следващи мачове на ЦСКА",
     todayMatchesTitle: "Мачове днес",
     lastResultsTitle: "Последни резултати",
-    squadTitle: "Състав на ЦСКА София",
+    squadTitle: "Състав на ЦСКА",
     groupGoalkeepers: "Вратари",
     groupDefenders: "Защитници",
     groupMidfielders: "Халфове",

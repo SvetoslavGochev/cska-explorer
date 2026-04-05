@@ -31,7 +31,7 @@ export const I18N = {
     nextMatchesTitle: "Следващи мачове на ЦСКА",
     todayMatchesTitle: "Мачове днес",
     lastResultsTitle: "Последни резултати",
-    squadTitle: "Състав на ЦСКА София",
+    squadTitle: "Състав на ЦСКА",
     groupGoalkeepers: "Вратари",
     groupDefenders: "Защитници",
     groupMidfielders: "Халфове",

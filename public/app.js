@@ -1,4 +1,4 @@
-// Визуализира състава на ЦСКА София в елемент с id "squadGrid"
+// Визуализира състава на ЦСКА в елемент с id "squadGrid"
 function renderSquad(squad) {
   const squadGridEl = document.getElementById("squadGrid");
   if (!squadGridEl) return;
