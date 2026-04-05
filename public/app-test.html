@@ -266,7 +266,7 @@
           <td>${row.gf ?? '-'}:${row.ga ?? '-'}</td>
           <td>${row.pts ?? '-'}</td>
         `;
-              tbody.appendChild(tr);
+        tbody.appendChild(tr);
       });
       if (!data.standings?.length) tbody.innerHTML = '<tr><td colspan="8">Няма класиране</td></tr>';
       // Състав
@@ -288,7 +288,7 @@
                 if (typeof player.goals === 'number') stats.push(`Голове: ${player.goals}`);
                 if (typeof player.assists === 'number') stats.push(`Асистенции: ${player.assists}`);
               }
-              p.innerHTML = `${player.number ? '#' + player.number + ' ' : ''}${player.name}${player.countryName ? ' (' + player.countryName + ')' : ''}`;
+              p.innerHTML = `${player.number ? '#' + player.number + ' ' : ''}${player.name} (${player.countryName || ''})` + (stats.length ? `<br><span style='color:#7f0f15;font-size:0.97em'>${stats.join(', ')}</span>` : '');
               group.appendChild(p);
             });
             squadGrid.appendChild(group);
