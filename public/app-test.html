@@ -258,7 +258,7 @@
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${row.rank ?? '-'}</td>
-          <td class="team">${row.team ?? '-'}</td>
+          <td class="team">${row.team === 'ЦСКА' ? '<img src="https://upload.wikimedia.org/wikipedia/commons/6/6e/CSKA_Sofia_logo.png" alt="ЦСКА" style="height:1em;vertical-align:middle;margin-right:0.3em">ЦСКА' : row.team ?? '-'}</td>
           <td>${row.mp ?? '-'}</td>
           <td>${row.w ?? '-'}</td>
           <td>${row.d ?? '-'}</td>

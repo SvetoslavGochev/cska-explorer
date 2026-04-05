@@ -53,7 +53,7 @@
     },
     {
       "rank": 4,
-      "team": "<img src=\"https://upload.wikimedia.org/wikipedia/commons/6/6e/CSKA_Sofia_logo.png\" alt=\"ЦСКА\" style=\"height:1em;vertical-align:middle;margin-right:0.3em\">ЦСКА",
+      "team": "ЦСКА",
       "mp": 28,
       "w": 15,
       "d": 7,
@@ -217,12 +217,12 @@
         "date": "08.04",
         "time": "18:00",
         "home": "Монтана",
-        "away": "<img src=\"https://upload.wikimedia.org/wikipedia/commons/6/6e/CSKA_Sofia_logo.png\" alt=\"ЦСКА\" style=\"height:1em;vertical-align:middle;margin-right:0.3em\">ЦСКА"
+        "away": "ЦСКА"
       },
       {
         "date": "13.04",
         "time": "16:00",
-        "home": "<img src=\"https://upload.wikimedia.org/wikipedia/commons/6/6e/CSKA_Sofia_logo.png\" alt=\"ЦСКА\" style=\"height:1em;vertical-align:middle;margin-right:0.3em\">ЦСКА",
+        "home": "ЦСКА",
         "away": "Левски София"
       }
     ],

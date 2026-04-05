@@ -259,6 +259,9 @@ function normalizeTeamName(team) {
 }
 
 function formatTeamDisplayName(team) {
+  if (normalizeTeamName(team) === 'ЦСКА София' || team === 'ЦСКА') {
+    return `<img src="https://upload.wikimedia.org/wikipedia/commons/6/6e/CSKA_Sofia_logo.png" alt="ЦСКА" style="height:1em;vertical-align:middle;margin-right:0.3em">ЦСКА`;
+  }
   return team;
 }
 
@@ -292,7 +295,6 @@ function renderStandings(standings) {
       <td>${row.rank ?? "-"}</td>
       <td>
         <div class="team-cell">
-          ${logo ? `<img class="team-logo" src="${logo}" alt="${row.team}" loading="lazy" />` : ""}
           <span class="standings-team-bubble" title="${row.team ?? "-"}">${formatTeamDisplayName(row.team ?? "-")}</span>
         </div>
       </td>
