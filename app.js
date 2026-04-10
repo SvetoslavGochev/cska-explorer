@@ -354,6 +354,8 @@ function buildTodayMatchesRows(cska) {
     return explicitTodayMatches;
   }
 
+  // Fix: define force as false (was undefined)
+  const force = false;
   const now = Date.now();
   const cachedRaw = localStorage.getItem(LOCAL_CACHE_KEY);
 
