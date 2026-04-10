@@ -304,11 +304,10 @@ function renderStandings(standings) {
         </div>
       </td>
       <td><span class="standings-stat-bubble">${row.mp ?? "-"}</span></td>
+      <td><span class="standings-stat-bubble standings-stat-bubble-strong">${row.pts ?? "-"}</span></td>
       <td><span class="standings-stat-bubble">${row.w ?? "-"}</span></td>
-      <td><span class="standings-stat-bubble">${row.d ?? "-"}</span></td>
       <td><span class="standings-stat-bubble">${row.l ?? "-"}</span></td>
       <td><span class="standings-stat-bubble">${row.gf ?? "-"}:${row.ga ?? "-"}</span></td>
-      <td><span class="standings-stat-bubble standings-stat-bubble-strong">${row.pts ?? "-"}</span></td>
     `;
     body.appendChild(tr);
   });
