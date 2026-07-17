@@ -242,56 +242,6 @@ function render(data, fromLocalCache) {
     standingsBody.appendChild(tr);
     });
 
-  const nextMatches = document.getElementById("nextMatches");
-  nextMatches.innerHTML = "";
-  (data.cska?.nextMatches || []).forEach((m) => {
-    const li = document.createElement("li");
-    const extra = [m.round, m.venue].filter(Boolean).join(" · ");
-    li.innerHTML = `<span class="match-line-date">${m.date}${m.time ? ` ${m.time}` : ""}</span>${extra ? `<span class="match-sub">${extra}</span>` : ""}<span class="match-line-teams">${m.home} – ${m.away}</span>`;
-    nextMatches.appendChild(li);
-  });
-
-  const todayKey = new Date().toLocaleDateString("bg-BG", {
-    day: "2-digit",
-    month: "2-digit"
-  }).replace(/\//g, ".");
-
-
-    const todayMatches = document.getElementById("todayMatches");
-    todayMatches.innerHTML = '';
-    (data.cska?.todayMatches || []).forEach(m => {
-      const li = document.createElement('li');
-      li.textContent = `${m.date} ${m.time || ''} — ${m.home} vs ${m.away}`;
-      todayMatches.appendChild(li);
-    });
-    if (!data.cska?.todayMatches?.length) todayMatches.innerHTML = '<li>Няма мачове днес</li>';
-
-  const lastResults = document.getElementById("lastResults");
-  lastResults.innerHTML = "";
-  (data.cska?.lastResults || []).forEach((m) => {
-    const li = document.createElement("li");
-    const extra = [m.round, m.venue].filter(Boolean).join(" · ");
-    li.innerHTML = `<span class="match-line-date">${m.date}</span>${extra ? `<span class="match-sub">${extra}</span>` : ""}<span class="match-line-teams">${m.home} <strong>${m.score}</strong> ${m.away}</span>`;
-    lastResults.appendChild(li);
-  });
-
-  const formStripEl = document.getElementById("formStrip");
-  if (formStripEl) {
-    const lastR = (data.cska?.lastResults || []).slice(0, 5);
-    const dots = lastR.map((m) => {
-      const parts = String(m.score || "").split(":");
-      const hs = parseInt(parts[0]);
-      const as = parseInt(parts[1]);
-      if (isNaN(hs) || isNaN(as)) return "?";
-      const isHome = /ЦСКА|CSKA/i.test(String(m.home || ""));
-      const diff = isHome ? hs - as : as - hs;
-      return diff > 0 ? "W" : diff === 0 ? "D" : "L";
-    });
-    formStripEl.innerHTML = dots.length
-      ? `<span class="form-label">${t("cskaNotes")}</span>` + dots.map((r) => `<span class="form-dot form-${r}">${r}</span>`).join("")
-      : "";
-  }
-
   const squadGrid = document.getElementById("squadGrid");
   squadGrid.innerHTML = "";
   const squad = data.cska?.squad || {};
