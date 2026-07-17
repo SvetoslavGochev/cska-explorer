@@ -220,6 +220,14 @@ function renderSourceNote(baseNote) {
   });
 }
 
+function showError(message) {
+  const statusLine = document.getElementById("statusLine");
+  if (!statusLine) return;
+  statusLine.textContent = message || t("errLoadData");
+  statusLine.classList.add("status-error");
+  statusLine.classList.remove("status-ok");
+}
+
 const FALLBACK_DATA = {
   source: { note: "Fallback data loaded." },
   standings: [],
@@ -368,46 +376,7 @@ function todayKey() {
 
 function buildTodayMatchesRows(cska) {
   const explicitTodayMatches = Array.isArray(cska?.todayMatches) ? cska.todayMatches : [];
-  if (explicitTodayMatches.length > 0) {
-    return explicitTodayMatches;
-  }
-
-  // Fix: define force as false (was undefined)
-  const force = false;
-  const now = Date.now();
-  const cachedRaw = localStorage.getItem(LOCAL_CACHE_KEY);
-
-  if (!force && cachedRaw) {
-    try {
-      const cached = JSON.parse(cachedRaw);
-      if (cached.expiresAt > now && isValidPayload(cached.payload)) {
-        render(cached.payload, true);
-        return;
-      }
-    } catch (_) {
-      // Ignore broken local cache and refetch.
-    }
-
-    localStorage.removeItem(LOCAL_CACHE_KEY);
-  }
-
-  const endpoint = force ? "/api/data?refresh=1" : "/api/data";
-  fetch(endpoint, { cache: "no-store" })
-    .then((res) => {
-      if (!res.ok) throw new Error(t("errLoadData"));
-      return res.json();
-    })
-    .then((payload) => {
-      if (!isValidPayload(payload)) throw new Error(t("errInvalidData"));
-      localStorage.setItem(
-        LOCAL_CACHE_KEY,
-        JSON.stringify({ payload, expiresAt: now + LOCAL_CACHE_TTL_MS })
-      );
-      render(payload, false);
-    })
-    .catch((err) => {
-      showError(err.message || t("errLoadData"));
-    });
+  return explicitTodayMatches;
 }
 
 function render(payload, fromCache) {
@@ -415,47 +384,6 @@ function render(payload, fromCache) {
   lastFromCache = fromCache;
 
   renderStandings(payload.standings || []);
-
-  renderMatches(
-    "nextMatches",
-    payload.cska?.nextMatches || [],
-    (m) => matchMarkup(m, false)
-  );
-
-  const todayRows = buildTodayMatchesRows(payload.cska || {});
-  renderMatches(
-    "todayMatches",
-    todayRows.length > 0 ? todayRows : [{ empty: true }],
-    (m) => {
-      if (m.empty) {
-        return `<div class="match-item"><div class="match-meta">${t("noMatchesToday")}</div></div>`;
-      }
-      return matchMarkup(m, Boolean(m?.score) || m?.kind === "last");
-    }
-  );
-
-  renderMatches(
-    "lastResults",
-    payload.cska?.lastResults || [],
-    (m) => matchMarkup(m, true)
-  );
-
-  const formStripEl = document.getElementById("formStrip");
-  if (formStripEl) {
-    const lastR = (payload.cska?.lastResults || []).slice(0, 5);
-    const dots = lastR.map((m) => {
-      const parts = String(m.score || "").split(":");
-      const hs = parseInt(parts[0]);
-      const as = parseInt(parts[1]);
-      if (isNaN(hs) || isNaN(as)) return "?";
-      const isHome = /ЦСКА|CSKA/i.test(String(m.home || ""));
-      const diff = isHome ? hs - as : as - hs;
-      return diff > 0 ? "W" : diff === 0 ? "D" : "L";
-    });
-    formStripEl.innerHTML = dots.length
-      ? `<span class="form-label">${t("cskaNotes")}</span>` + dots.map((r) => `<span class="form-dot form-${r}">${r}</span>`).join("")
-      : "";
-  }
 
   renderSquad(payload.cska?.squad || FALLBACK_DATA.cska.squad);
 
@@ -476,6 +404,7 @@ function render(payload, fromCache) {
 
   const baseNote = payload.source?.note || "";
   renderSourceNote(baseNote);
+  statusLine.classList.remove("status-error");
   statusLine.textContent = fromCache
     ? t("statusFromCache")
     : t("statusLatest");
