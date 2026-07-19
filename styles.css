@@ -555,6 +555,42 @@ body {
   gap: 12px;
 }
 
+.squad-player {
+  background: rgba(255, 248, 232, 0.84);
+  border: 1px solid rgba(200, 178, 148, 0.64);
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 3px 10px rgba(20, 7, 5, 0.12);
+}
+
+.squad-player-name {
+  margin: 0 0 8px;
+  font-size: 0.93rem;
+  color: #2a160f;
+}
+
+.squad-player-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.squad-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(199, 176, 144, 0.6);
+  font-size: 0.77rem;
+  color: #3a2719;
+}
+
+.squad-stat b {
+  font-weight: 800;
+}
+
 .squad-group {
   background: rgb(255 255 255 / 25%);
   border: 1px solid rgba(200, 178, 148, 0.65);

@@ -12,9 +12,22 @@ function renderSquad(squad) {
     squadGridEl.innerHTML = "";
     return;
   }
-  squadGridEl.innerHTML = allPlayers.map(p =>
-    `<div class="squad-player">${p.name} <span class="squad-pos">${p.position || ''}</span></div>`
-  ).join("\n");
+  squadGridEl.innerHTML = allPlayers.map((p) => {
+    const matches = Number.isFinite(Number(p.matches)) ? Number(p.matches) : 0;
+    const goals = Number.isFinite(Number(p.goals)) ? Number(p.goals) : 0;
+    const assists = Number.isFinite(Number(p.assists)) ? Number(p.assists) : 0;
+
+    return `
+      <article class="squad-player">
+        <h3 class="squad-player-name">${p.name || "-"}</h3>
+        <div class="squad-player-stats">
+          <span class="squad-stat"><b>${t("statMatches")}</b> ${matches}</span>
+          <span class="squad-stat"><b>${t("statGoals")}</b> ${goals}</span>
+          <span class="squad-stat"><b>${t("statAssists")}</b> ${assists}</span>
+        </div>
+      </article>
+    `;
+  }).join("\n");
 }
 const LOCAL_CACHE_KEY = "cska_explorer_root_cache_v10";
 const LOCAL_CACHE_TTL_MS = 10 * 60 * 1000;
