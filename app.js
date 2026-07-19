@@ -79,14 +79,6 @@ const I18N = {
     projectIndonesiaTitle: "🇮🇩 Indonesia Explorer",
     projectIndonesiaDesc: "Интерактивен сайт за градове, природа, животни и полезни статии.",
     projectVisitBtn: "Посети",
-    metricDataModeLabel: "Data режим",
-    metricUpdatedAtLabel: "Последно обновяване",
-    metricCacheLabel: "Кеш",
-    metricModeApi: "Live API",
-    metricModeSnapshot: "Snapshot",
-    metricModeFallback: "Fallback",
-    metricCacheOn: "Локален кеш",
-    metricCacheOff: "Без кеш",
     sourceMissingStats: "В таблицата липсващите статистики се допълват с \"-\".",
     statusFromCache: "Показани са данни от локалния кеш (без нова заявка).",
     statusLatest: "Показани са последните данни.",
@@ -147,14 +139,6 @@ const I18N = {
     projectIndonesiaTitle: "🇮🇩 Indonesia Explorer",
     projectIndonesiaDesc: "An interactive site about cities, nature, wildlife, and useful articles.",
     projectVisitBtn: "Visit",
-    metricDataModeLabel: "Data mode",
-    metricUpdatedAtLabel: "Last update",
-    metricCacheLabel: "Cache",
-    metricModeApi: "Live API",
-    metricModeSnapshot: "Snapshot",
-    metricModeFallback: "Fallback",
-    metricCacheOn: "Local cache",
-    metricCacheOff: "No cache",
     sourceMissingStats: "Missing statistics are shown as \"-\" in the table.",
     statusFromCache: "Showing data from local cache (without a new request).",
     statusLatest: "Showing the latest data.",
@@ -168,7 +152,6 @@ const I18N = {
 let currentLanguage = localStorage.getItem(LANGUAGE_KEY) === "en" ? "en" : "bg";
 let lastPayload = null;
 let lastFromCache = false;
-let lastDataSource = "fallback";
 
 function t(key) {
   return I18N[currentLanguage]?.[key] || I18N.bg[key] || key;
@@ -386,32 +369,6 @@ function matchMarkup(match, withScore) {
   `;
 }
 
-function updateHeroMetrics(payload, fromCache) {
-  const modeEl = document.getElementById("metricDataMode");
-  const updatedEl = document.getElementById("metricUpdatedAt");
-  const cacheEl = document.getElementById("metricCache");
-  if (!modeEl || !updatedEl || !cacheEl) return;
-
-  const metricModeBySource = {
-    api: t("metricModeApi"),
-    snapshot: t("metricModeSnapshot"),
-    fallback: t("metricModeFallback")
-  };
-
-  const nextMode = metricModeBySource[lastDataSource] || t("metricModeFallback");
-  const updatedAt = payload?.updatedAt ? new Date(payload.updatedAt) : null;
-
-  modeEl.textContent = nextMode;
-  modeEl.classList.toggle("is-live", lastDataSource === "api");
-  modeEl.classList.toggle("is-snapshot", lastDataSource !== "api");
-
-  updatedEl.textContent = updatedAt && !Number.isNaN(updatedAt.getTime())
-    ? updatedAt.toLocaleString(currentLanguage === "en" ? "en-GB" : "bg-BG")
-    : "-";
-
-  cacheEl.textContent = fromCache ? t("metricCacheOn") : t("metricCacheOff");
-}
-
 function todayKey() {
   return new Date().toLocaleDateString("bg-BG", {
     day: "2-digit",
@@ -453,8 +410,6 @@ function render(payload, fromCache) {
   statusLine.textContent = fromCache
     ? t("statusFromCache")
     : t("statusLatest");
-
-  updateHeroMetrics(payload, fromCache);
 }
 
 async function fetchFreshData() {
@@ -466,7 +421,6 @@ async function fetchFreshData() {
       if (!res.ok) throw new Error("No live API data");
       const payload = await res.json();
       if (!payload || typeof payload !== "object") throw new Error("Invalid live API payload");
-      lastDataSource = "api";
       return payload;
     });
   }
@@ -476,7 +430,6 @@ async function fetchFreshData() {
     if (!res.ok) throw new Error("No bootstrap data");
     const payload = await res.json();
     if (!payload || typeof payload !== "object") throw new Error("Invalid bootstrap payload");
-    lastDataSource = "snapshot";
     return payload;
   });
 
@@ -488,7 +441,6 @@ async function fetchFreshData() {
     }
   }
 
-  lastDataSource = "fallback";
   return FALLBACK_DATA;
 }
 
@@ -517,7 +469,6 @@ async function loadAndRender({ forceRefresh = false } = {}) {
       if (res.ok) {
         const payload = await res.json();
         if (payload && typeof payload === "object") {
-          lastDataSource = "api";
           fresh = payload;
         }
       }
