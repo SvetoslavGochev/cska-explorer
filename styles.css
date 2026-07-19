@@ -589,8 +589,14 @@ body {
 }
 
 .squad-player-flag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.2em;
   font-size: 1.05rem;
   line-height: 1;
+  font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", "Twemoji Mozilla", sans-serif;
+  font-variant-emoji: emoji;
 }
 
 .squad-player-stats {
