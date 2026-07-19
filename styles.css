@@ -583,6 +583,14 @@ body {
   margin: 0 0 8px;
   font-size: 0.93rem;
   color: #2a160f;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.squad-player-flag {
+  font-size: 1.05rem;
+  line-height: 1;
 }
 
 .squad-player-stats {

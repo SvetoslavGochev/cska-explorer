@@ -1,4 +1,38 @@
 // Визуализира състава на ЦСКА в елемент с id "squadGrid"
+const PLAYER_FLAG_BY_NAME = {
+  "Евтимов Димитър": "🇧🇬",
+  "Лапоухов Фьодор": "🇧🇾",
+  "Николов Даниел": "🇧🇬",
+  "Гбамен Жан-Филип": "🇨🇮",
+  "Иванов Теодор": "🇧🇬",
+  "Йорданов Андрей": "🇧🇬",
+  "Лапеня Адриан": "🇪🇸",
+  "Мартино Анхело": "🇦🇷",
+  "Пастор": "🇧🇷",
+  "Родригес Факундо": "🇦🇷",
+  "Тунчев Алекс": "🇧🇬",
+  "Ебонг Макс": "🇧🇾",
+  "Ето'о Джеймс": "🇨🇲",
+  "Жордао Бруно": "🇵🇹",
+  "Илиев Yulian": "🇧🇬",
+  "Каймаканов Васил": "🇧🇬",
+  "Николов Алесандро": "🇧🇬",
+  "Панайотов Петко": "🇧🇬",
+  "Сенси Стефано": "🇮🇹",
+  "Соле Исак": "🇨🇫",
+  "Уору Тамиму": "🌍",
+  "Чорбаджийски Георги Бранков": "🇧🇬",
+  "Брахими Мохамед": "🇫🇷",
+  "Годой Леандро": "🇦🇷",
+  "Додай Кевин": "🇦🇱",
+  "Живков Радослав": "🇧🇬",
+  "Лео Перейра": "🇧🇷",
+  "Пиедраита Алехандро": "🇨🇴",
+  "Питас Йоанис": "🇨🇾",
+  "Фаетон Матиас": "🇫🇷",
+  "Цварц Жоел": "🇨🇭"
+};
+
 function renderSquad(squad) {
   const squadGridEl = document.getElementById("squadGrid");
   if (!squadGridEl) return;
@@ -16,14 +50,19 @@ function renderSquad(squad) {
     const matches = Number.isFinite(Number(p.matches)) ? Number(p.matches) : 0;
     const goals = Number.isFinite(Number(p.goals)) ? Number(p.goals) : 0;
     const assists = Number.isFinite(Number(p.assists)) ? Number(p.assists) : 0;
+    const hattricks = Number.isFinite(Number(p.hattricks)) ? Number(p.hattricks) : 0;
+    const impactRaw = (matches * 0.25) + (assists * 0.5) + (goals * 1) + (hattricks * 2);
+    const impact = Number.isInteger(impactRaw) ? String(impactRaw) : impactRaw.toFixed(2);
+    const flag = PLAYER_FLAG_BY_NAME[p.name] || "🌍";
 
     return `
       <article class="squad-player">
-        <h3 class="squad-player-name">${p.name || "-"}</h3>
+        <h3 class="squad-player-name"><span class="squad-player-flag" aria-hidden="true">${flag}</span>${p.name || "-"}</h3>
         <div class="squad-player-stats">
           <span class="squad-stat"><b>${t("statMatches")}</b> ${matches}</span>
           <span class="squad-stat"><b>${t("statGoals")}</b> ${goals}</span>
           <span class="squad-stat"><b>${t("statAssists")}</b> ${assists}</span>
+          <span class="squad-stat"><b>${t("statImpact")}</b> ${impact}</span>
         </div>
       </article>
     `;
