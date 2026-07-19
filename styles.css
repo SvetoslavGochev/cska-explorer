@@ -241,6 +241,14 @@ body {
   border-color: rgba(255, 233, 203, 0.75);
 }
 
+.hero-partner-label {
+  margin: 10px 2px 0;
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: rgba(255, 238, 211, 0.9);
+}
+
 .grid {
   margin-top: 22px;
   display: grid;
@@ -530,6 +538,14 @@ body {
 .small {
   color: var(--muted);
   font-size: 0.9rem;
+}
+
+.standings-partner-label {
+  margin-top: 4px;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #6b4a2e;
 }
 
 #sourceNote {
