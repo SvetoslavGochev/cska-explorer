@@ -33,6 +33,49 @@ const PLAYER_FLAG_BY_NAME = {
   "Цварц Жоел": "🇨🇭"
 };
 
+const PLAYER_NAME_EN_BY_BG = {
+  "Евтимов Димитър": "Dimitar Evtimov",
+  "Лапоухов Фьодор": "Fyodor Lapoukhov",
+  "Николов Даниел": "Daniel Nikolov",
+  "Гбамен Жан-Филип": "Jean-Philippe Gbamin",
+  "Иванов Теодор": "Teodor Ivanov",
+  "Йорданов Андрей": "Andrey Yordanov",
+  "Лапеня Адриан": "Adrian Lapeña",
+  "Мартино Анхело": "Angelo Martino",
+  "Пастор": "David Pastor",
+  "Родригес Факундо": "Facundo Rodriguez",
+  "Тунчев Алекс": "Alex Tunchev",
+  "Ебонг Макс": "Max Ebong",
+  "Ето'о Джеймс": "James Eto'o",
+  "Жордао Бруно": "Bruno Jordao",
+  "Илиев Yulian": "Yulian Iliev",
+  "Каймаканов Васил": "Vasil Kaymakanov",
+  "Николов Алесандро": "Alessandro Nikolov",
+  "Панайотов Петко": "Petko Panayotov",
+  "Сенси Стефано": "Stefano Sensi",
+  "Соле Исак": "Isaac Solet",
+  "Уору Тамиму": "Tamimu Owaru",
+  "Чорбаджийски Георги Бранков": "Georgi Brankov Chorbadzhiyski",
+  "Брахими Мохамед": "Mohamed Brahimi",
+  "Годой Леандро": "Leandro Godoy",
+  "Додай Кевин": "Kevin Dodaj",
+  "Живков Радослав": "Radoslav Zhivkov",
+  "Лео Перейра": "Leo Pereira",
+  "Пиедраита Алехандро": "Alejandro Piedrahita",
+  "Питас Йоанис": "Ioannis Pittas",
+  "Фаетон Матиас": "Mathias Phaeton",
+  "Цварц Жоел": "Joel Cwarz"
+};
+
+function getPlayerDisplayName(name) {
+  const safeName = String(name || "").trim();
+  if (!safeName) return "-";
+  if (currentLanguage === "en") {
+    return PLAYER_NAME_EN_BY_BG[safeName] || safeName;
+  }
+  return safeName;
+}
+
 function renderSquad(squad) {
   const squadGridEl = document.getElementById("squadGrid");
   if (!squadGridEl) return;
@@ -53,11 +96,13 @@ function renderSquad(squad) {
     const hattricks = Number.isFinite(Number(p.hattricks)) ? Number(p.hattricks) : 0;
     const impactRaw = (matches * 0.25) + (assists * 0.5) + (goals * 1) + (hattricks * 2);
     const impact = Number.isInteger(impactRaw) ? String(impactRaw) : impactRaw.toFixed(2);
-    const flag = PLAYER_FLAG_BY_NAME[p.name] || "🌍";
+    const rawName = String(p.name || "").trim();
+    const displayName = getPlayerDisplayName(rawName);
+    const flag = PLAYER_FLAG_BY_NAME[rawName] || "🌍";
 
     return `
       <article class="squad-player">
-        <h3 class="squad-player-name"><span class="squad-player-flag" aria-hidden="true">${flag}</span>${p.name || "-"}</h3>
+        <h3 class="squad-player-name"><span class="squad-player-flag" aria-hidden="true">${flag}</span>${displayName}</h3>
         <div class="squad-player-stats">
           <span class="squad-stat"><b>${t("statMatches")}</b> ${matches}</span>
           <span class="squad-stat"><b>${t("statGoals")}</b> ${goals}</span>
