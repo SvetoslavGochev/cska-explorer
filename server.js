@@ -5,8 +5,9 @@ const path = require("path");
 const PORT = process.env.PORT || 3000;
 const CACHE_TTL_MS = 30 * 60 * 1000;
 const DAILY_REFRESH_LIMIT = Number(process.env.DAILY_REFRESH_LIMIT || 15);
-const AUTO_REFRESH_MINUTES = Number(process.env.AUTO_REFRESH_MINUTES || 45);
+const AUTO_REFRESH_MINUTES = Number(process.env.AUTO_REFRESH_MINUTES || 120);
 const REQUEST_TIMEOUT_MS = Number(process.env.REQUEST_TIMEOUT_MS || 12000);
+const CORS_ALLOW_ORIGIN = String(process.env.CORS_ALLOW_ORIGIN || "*").trim() || "*";
 const SPORTSDB_BASE = "https://www.thesportsdb.com/api/v1/json/3";
 const BULGARIAN_LEAGUE_ID = "4626";
 const CSKA_TEAM_ID = "134088";
@@ -1149,7 +1150,10 @@ function sendJson(res, code, obj) {
   const body = JSON.stringify(obj);
   res.writeHead(code, {
     "Content-Type": "application/json; charset=utf-8",
-    "Cache-Control": "no-store"
+    "Cache-Control": "no-store",
+    "Access-Control-Allow-Origin": CORS_ALLOW_ORIGIN,
+    "Access-Control-Allow-Methods": "GET, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type"
   });
   res.end(body);
 }
@@ -1173,6 +1177,17 @@ function serveStatic(req, res) {
 
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
+
+  if (req.method === "OPTIONS" && url.pathname.startsWith("/api/")) {
+    res.writeHead(204, {
+      "Access-Control-Allow-Origin": CORS_ALLOW_ORIGIN,
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
+      "Cache-Control": "no-store"
+    });
+    res.end();
+    return;
+  }
 
   if (url.pathname === "/api/data") {
     (async () => {

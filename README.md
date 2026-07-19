@@ -71,3 +71,10 @@ https://svetoslavgochev.github.io/cska-explorer/
 Лог файл:
 
 - `data/refresh-log.ndjson` съдържа по един JSON ред за всяко обновяване (timestamp, брой играчи, флагове, мачове, source).
+
+## Backend Auto-Refresh (класиране и точки)
+
+- Backend refresh цикълът е автоматичен и по подразбиране е на `120` минути.
+- Може да се промени с env променливата `AUTO_REFRESH_MINUTES` (например `90` или `120`).
+- При временен проблем с външен източник се пази и подава fallback snapshot от `data/bootstrap-data.json`.
+- API endpoint: `/api/data` (по желание с `?refresh=1` за принудително обновяване от бекенда).

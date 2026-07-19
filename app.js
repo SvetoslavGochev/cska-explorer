@@ -19,6 +19,12 @@ function renderSquad(squad) {
 const LOCAL_CACHE_KEY = "cska_explorer_root_cache_v10";
 const LOCAL_CACHE_TTL_MS = 10 * 60 * 1000;
 const LANGUAGE_KEY = "cska_site_language";
+const DATA_API_URL = (() => {
+  const explicit = String(window.CSKA_DATA_API_URL || "").trim();
+  if (!explicit) return "";
+  if (/\/api\/data\/?$/i.test(explicit)) return explicit.replace(/\/$/, "");
+  return `${explicit.replace(/\/$/, "")}/api/data`;
+})();
 
 const I18N = {
   bg: {
@@ -329,11 +335,7 @@ function renderStandings(standings) {
           <span class="standings-team-bubble" title="${row.team ?? "-"}">${formatTeamDisplayName(row.team ?? "-")}</span>
         </div>
       </td>
-      <td><span class="standings-stat-bubble">${row.mp ?? "-"}</span></td>
       <td><span class="standings-stat-bubble standings-stat-bubble-strong">${row.pts ?? "-"}</span></td>
-      <td><span class="standings-stat-bubble">${row.w ?? "-"}</span></td>
-      <td><span class="standings-stat-bubble">${row.l ?? "-"}</span></td>
-      <td><span class="standings-stat-bubble">${row.gf ?? "-"}:${row.ga ?? "-"}</span></td>
     `;
     body.appendChild(tr);
   });
@@ -411,25 +413,42 @@ function render(payload, fromCache) {
 }
 
 async function fetchFreshData() {
-  try {
+  const candidates = [];
+
+  if (DATA_API_URL) {
+    candidates.push(async () => {
+      const res = await fetch(DATA_API_URL, { cache: "no-store" });
+      if (!res.ok) throw new Error("No live API data");
+      const payload = await res.json();
+      if (!payload || typeof payload !== "object") throw new Error("Invalid live API payload");
+      return payload;
+    });
+  }
+
+  candidates.push(async () => {
     const res = await fetch("data/bootstrap-data.json", { cache: "no-store" });
     if (!res.ok) throw new Error("No bootstrap data");
     const payload = await res.json();
-    if (!payload || typeof payload !== "object") throw new Error("Invalid payload");
+    if (!payload || typeof payload !== "object") throw new Error("Invalid bootstrap payload");
     return payload;
-  } catch {
-    return FALLBACK_DATA;
+  });
+
+  for (const getPayload of candidates) {
+    try {
+      return await getPayload();
+    } catch (_) {
+      // Try next source in chain.
+    }
   }
+
+  return FALLBACK_DATA;
 }
 
-async function init() {
-  applyLanguageUI();
-  setupLanguageSwitch();
-
+async function loadAndRender({ forceRefresh = false } = {}) {
   const now = Date.now();
   const cachedRaw = localStorage.getItem(LOCAL_CACHE_KEY);
 
-  if (cachedRaw) {
+  if (!forceRefresh && cachedRaw) {
     try {
       const cached = JSON.parse(cachedRaw);
       if (cached.expiresAt > now && isValidPayload(cached.payload)) {
@@ -440,7 +459,28 @@ async function init() {
     }
   }
 
-  const fresh = await fetchFreshData();
+  let fresh = null;
+
+  if (forceRefresh && DATA_API_URL) {
+    try {
+      const sep = DATA_API_URL.includes("?") ? "&" : "?";
+      const refreshUrl = `${DATA_API_URL}${sep}refresh=1`;
+      const res = await fetch(refreshUrl, { cache: "no-store" });
+      if (res.ok) {
+        const payload = await res.json();
+        if (payload && typeof payload === "object") {
+          fresh = payload;
+        }
+      }
+    } catch (_) {
+      // Fall back to normal chain below.
+    }
+  }
+
+  if (!fresh) {
+    fresh = await fetchFreshData();
+  }
+
   if (isValidPayload(fresh)) {
     localStorage.setItem(
       LOCAL_CACHE_KEY,
@@ -449,6 +489,12 @@ async function init() {
   }
 
   render(fresh, false);
+}
+
+async function init() {
+  applyLanguageUI();
+  setupLanguageSwitch();
+  await loadAndRender({ forceRefresh: false });
 }
 
 init();
