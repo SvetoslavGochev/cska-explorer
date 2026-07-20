@@ -181,6 +181,10 @@ const I18N = {
     heroLinkStadium: "Стадион",
     heroLinkFanRegistration: "Фен регистрация",
     partnerLinksLabel: "Партньорски линкове",
+    cskaPartnerTitle: "Партньорство с CSKA Explorer",
+    cskaPartnerText: "Представете вашите спортни услуги пред аудитория от 20,000+ преданни фенове. Ние ще включим вашата оферта в нашите експертни анализи и специализирани статии. За успешни партньорства предлагаме комисионен модел от 10% за всяка регистрация или покупка, направена чрез нашите линкове.",
+    cskaPartnerCta: "Изпрати запитване",
+    cskaPartnerEmailHint: "Или пиши директно на:",
     sourceMissingStats: "В таблицата липсващите статистики се допълват с \"-\".",
     statusFromCache: "Показани са данни от локалния кеш (без нова заявка).",
     statusLatest: "Показани са последните данни.",
@@ -246,6 +250,10 @@ const I18N = {
     heroLinkStadium: "Stadium",
     heroLinkFanRegistration: "Fan Registration",
     partnerLinksLabel: "Partner Links",
+    cskaPartnerTitle: "Partnership with CSKA Explorer",
+    cskaPartnerText: "Present your sports services to an audience of 20,000+ dedicated fans. We will include your offer in our expert analyses and specialized articles. For successful partnerships, we offer a commission model of 10% for each registration or purchase made through our links.",
+    cskaPartnerCta: "Send inquiry",
+    cskaPartnerEmailHint: "Or email directly at:",
     sourceMissingStats: "Missing statistics are shown as \"-\" in the table.",
     statusFromCache: "Showing data from local cache (without a new request).",
     statusLatest: "Showing the latest data.",
@@ -291,6 +299,15 @@ function setupLanguageSwitch() {
       }
     });
   });
+}
+
+function setupPartnershipButton() {
+  const partnershipBtn = document.getElementById("cskaPartnershipBtn");
+  if (partnershipBtn) {
+    partnershipBtn.addEventListener("click", () => {
+      window.location.href = "mailto:svetoslav.gochev@gmail.com?subject=CSKA%20Explorer%20Partnership";
+    });
+  }
 }
 
 function localizeValidationWarning(rawWarning) {
@@ -601,6 +618,7 @@ async function loadAndRender({ forceRefresh = false } = {}) {
 async function init() {
   applyLanguageUI();
   setupLanguageSwitch();
+  setupPartnershipButton();
   await loadAndRender({ forceRefresh: false });
 }
 
