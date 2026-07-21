@@ -339,6 +339,57 @@ body {
   filter: brightness(1.05);
 }
 
+.cska-analysis-card .analysis-content h3 {
+  margin: 18px 0 8px;
+  color: #1a0d06;
+  font-size: 1.05rem;
+  border-bottom: 1px solid rgba(200, 178, 148, 0.6);
+  padding-bottom: 6px;
+}
+
+.cska-analysis-card .analysis-content h3:first-of-type {
+  margin-top: 6px;
+}
+
+.cska-analysis-card .analysis-content h4 {
+  margin: 12px 0 6px;
+  color: #2d1e12;
+  font-size: 0.96rem;
+}
+
+.cska-analysis-card .analysis-content h4.analysis-strength {
+  color: #1f7a3d;
+}
+
+.cska-analysis-card .analysis-content h4.analysis-weakness {
+  color: #a50f17;
+}
+
+.cska-analysis-card .analysis-content p {
+  margin: 0 0 10px;
+  color: #3e2b1f;
+  line-height: 1.5;
+}
+
+.cska-analysis-card .analysis-content ul {
+  margin: 0 0 10px;
+  padding-left: 20px;
+  color: #3e2b1f;
+  line-height: 1.5;
+}
+
+.cska-analysis-card .analysis-content li {
+  margin-bottom: 4px;
+}
+
+.cska-analysis-card .analysis-content .table-wrap {
+  margin-bottom: 14px;
+}
+
+.cska-analysis-card .analysis-content .analysis-verdict {
+  margin-bottom: 4px;
+}
+
 .table-wrap { overflow: auto; }
 
 .table {
