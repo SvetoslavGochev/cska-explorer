@@ -116,6 +116,7 @@ function renderSquad(squad) {
 const LOCAL_CACHE_KEY = "cska_explorer_root_cache_v10";
 const LOCAL_CACHE_TTL_MS = 10 * 60 * 1000;
 const LANGUAGE_KEY = "cska_site_language";
+const CSKA_SUPPORT_WALLET = "0xfca710eC5eB0FB036157Bb1E114BADc2310efE37";
 const CSKA_PARTNER_FORM_ENDPOINT = (window.CSKA_PARTNER_FORM_ENDPOINT || "https://formspree.io/f/yourFormId").trim();
 const CSKA_PARTNER_FORM_MIN_SUBMIT_MS = 3000;
 const DATA_API_URL = (() => {
@@ -187,6 +188,10 @@ const I18N = {
     cskaPartnerTitle: "Партньорство с CSKA Explorer",
     cskaPartnerText: "Представете вашите спортни услуги пред аудитория от 20,000+ преданни фенове. Ние ще включим вашата оферта в нашите експертни анализи и специализирани статии. За успешни партньорства предлагаме комисионен модел от 10% за всяка регистрация или покупка, направена чрез нашите линкове.",
     cskaPartnerCta: "Изпрати запитване",
+    cskaPartnerWalletLabel: "MetaMask адрес за подкрепа:",
+    cskaPartnerWalletCopy: "Копирай адрес",
+    cskaPartnerWalletCopied: "Копирано",
+    cskaPartnerWalletHint: "Изпращай само през съвместима EVM мрежа.",
     cskaPartnerContactHint: "Използвай формата по-долу за партньорско запитване.",
     cskaPartnerFormTitle: "Форма за партньорство",
     cskaPartnerFormNameLabel: "Име / Бранд",
@@ -273,6 +278,10 @@ const I18N = {
     cskaPartnerTitle: "Partnership with CSKA Explorer",
     cskaPartnerText: "Present your sports services to an audience of 20,000+ dedicated fans. We will include your offer in our expert analyses and specialized articles. For successful partnerships, we offer a commission model of 10% for each registration or purchase made through our links.",
     cskaPartnerCta: "Send inquiry",
+    cskaPartnerWalletLabel: "MetaMask support address:",
+    cskaPartnerWalletCopy: "Copy address",
+    cskaPartnerWalletCopied: "Copied",
+    cskaPartnerWalletHint: "Send only on a compatible EVM network.",
     cskaPartnerContactHint: "Use the form below for partnership inquiries.",
     cskaPartnerFormTitle: "Partnership form",
     cskaPartnerFormNameLabel: "Name / Brand",
@@ -328,6 +337,19 @@ function applyLanguageUI() {
     btn.classList.toggle("is-active", selected);
     btn.setAttribute("aria-pressed", selected ? "true" : "false");
   });
+
+  const walletLabel = document.getElementById("cskaPartnerWalletLabel");
+  const walletAddress = document.getElementById("cskaPartnerWalletAddress");
+  const walletCopy = document.getElementById("cskaPartnerWalletCopy");
+  const walletHint = document.getElementById("cskaPartnerWalletHint");
+
+  if (walletLabel) walletLabel.textContent = t("cskaPartnerWalletLabel");
+  if (walletAddress) walletAddress.textContent = CSKA_SUPPORT_WALLET;
+  if (walletCopy) {
+    walletCopy.textContent = t("cskaPartnerWalletCopy");
+    walletCopy.dataset.defaultLabel = t("cskaPartnerWalletCopy");
+  }
+  if (walletHint) walletHint.textContent = t("cskaPartnerWalletHint");
 }
 
 function setupLanguageSwitch() {
@@ -375,13 +397,63 @@ function isCskaPartnerEndpointConfigured() {
 
 function setupPartnershipForm() {
   const formElements = getCskaPartnerFormElements();
+  const walletCopy = document.getElementById("cskaPartnerWalletCopy");
   if (!formElements.form || !formElements.status) {
     return;
   }
 
   formElements.form.addEventListener("submit", handleCskaPartnerFormSubmit);
+  if (walletCopy) {
+    walletCopy.addEventListener("click", copyCskaPartnerWalletAddress);
+  }
   partnerFormReadyAt = Date.now();
   formElements.status.textContent = "";
+}
+
+function copyCskaPartnerWalletAddress() {
+  const walletCopy = document.getElementById("cskaPartnerWalletCopy");
+  if (!walletCopy) {
+    return;
+  }
+
+  const defaultLabel = walletCopy.dataset.defaultLabel || t("cskaPartnerWalletCopy");
+  const copiedLabel = t("cskaPartnerWalletCopied");
+
+  function onSuccess() {
+    walletCopy.textContent = copiedLabel;
+    setTimeout(() => {
+      walletCopy.textContent = defaultLabel;
+    }, 1400);
+  }
+
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(CSKA_SUPPORT_WALLET).then(onSuccess).catch(() => {
+      copyCskaWalletFallback(onSuccess);
+    });
+    return;
+  }
+
+  copyCskaWalletFallback(onSuccess);
+}
+
+function copyCskaWalletFallback(onSuccess) {
+  const textArea = document.createElement("textarea");
+  textArea.value = CSKA_SUPPORT_WALLET;
+  textArea.setAttribute("readonly", "");
+  textArea.style.position = "absolute";
+  textArea.style.left = "-9999px";
+  document.body.appendChild(textArea);
+  textArea.select();
+
+  try {
+    const copied = document.execCommand("copy");
+    if (copied) {
+      onSuccess();
+    }
+  } catch (_) {
+  }
+
+  document.body.removeChild(textArea);
 }
 
 async function handleCskaPartnerFormSubmit(event) {
