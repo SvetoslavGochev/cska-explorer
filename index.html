@@ -6,6 +6,9 @@
   <title>CSKA EXPLORER</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css" />
+  <script>
+    window.CSKA_PARTNER_FORM_ENDPOINT = "https://formspree.io/f/yourFormId";
+  </script>
 </head>
 <body>
   <div class="container">
@@ -175,12 +178,27 @@
       <p class="partnership-text" data-i18n="cskaPartnerText">Представете вашите спортни услуги пред аудитория от 20,000+ преданни фенове. Ние ще включим вашата оферта в нашите експертни анализи и специализирани статии. За успешни партньорства предлагаме комисионен модел от 10% за всяка регистрация или покупка, направена чрез нашите линкове.</p>
       <div class="partnership-actions">
         <button class="partnership-btn" id="cskaPartnershipBtn" data-i18n="cskaPartnerCta">Изпрати запитване</button>
-        <div class="partnership-email-row">
-          <span class="partnership-email-icon">✉</span>
-          <span class="partnership-email-hint" data-i18n="cskaPartnerEmailHint">Или пиши директно на:</span>
-          <a class="partnership-email-link" href="mailto:svetoslav.gochev@gmail.com?subject=CSKA%20Explorer%20Partnership">svetoslav.gochev@gmail.com</a>
-        </div>
+        <p class="partnership-neutral-row"><span class="partnership-email-icon">🛡</span><span data-i18n="cskaPartnerContactHint">Използвай формата по-долу за партньорско запитване.</span></p>
       </div>
+      <section id="cskaPartnerInquiryForm" class="partner-inquiry-form" aria-labelledby="cskaPartnerFormTitle">
+        <h3 id="cskaPartnerFormTitle" data-i18n="cskaPartnerFormTitle">Форма за партньорство</h3>
+        <form id="cskaPartnerInquiryFormInner" class="partner-inquiry-form-inner" novalidate>
+          <label for="cskaPartnerFormWebsite" class="partner-honeypot-field" aria-hidden="true">Website</label>
+          <input id="cskaPartnerFormWebsite" class="partner-honeypot-field" name="website" type="text" tabindex="-1" autocomplete="off">
+
+          <label for="cskaPartnerFormName" data-i18n="cskaPartnerFormNameLabel">Име / Бранд</label>
+          <input id="cskaPartnerFormName" name="name" type="text" required data-i18n-placeholder="cskaPartnerFormNamePlaceholder" placeholder="Например: Red Sports Hub">
+
+          <label for="cskaPartnerFormEmail" data-i18n="cskaPartnerFormEmailLabel">Имейл за обратна връзка</label>
+          <input id="cskaPartnerFormEmail" name="email" type="email" required data-i18n-placeholder="cskaPartnerFormEmailPlaceholder" placeholder="Например: contact@brand.com">
+
+          <label for="cskaPartnerFormMessage" data-i18n="cskaPartnerFormMessageLabel">Кратко описание на услугата</label>
+          <textarea id="cskaPartnerFormMessage" name="message" rows="5" required data-i18n-placeholder="cskaPartnerFormMessagePlaceholder" placeholder="Напиши какво предлагате и как можем да си партнираме."></textarea>
+
+          <button id="cskaPartnerFormSubmit" class="partnership-btn partner-inquiry-submit" type="submit" data-i18n="cskaPartnerFormSubmit">Изпрати формата</button>
+          <p id="cskaPartnerFormStatus" class="partner-inquiry-status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
     </section>
 
     <footer class="footer">

@@ -878,6 +878,76 @@ body {
   text-decoration: underline;
 }
 
+.partnership-neutral-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+}
+
+.partner-inquiry-form {
+  margin-top: 6px;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(25, 9, 9, 0.34);
+}
+
+.partner-inquiry-form h3 {
+  margin: 0 0 12px;
+  font-size: 1.05rem;
+  color: #fff6ea;
+}
+
+.partner-inquiry-form-inner {
+  display: grid;
+  gap: 8px;
+}
+
+.partner-inquiry-form-inner label {
+  color: rgba(255, 244, 226, 0.92);
+  font-size: 0.88rem;
+}
+
+.partner-inquiry-form-inner input,
+.partner-inquiry-form-inner textarea {
+  width: 100%;
+  border: 1px solid rgba(255, 230, 198, 0.45);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.96);
+  color: #2d1910;
+  padding: 10px 12px;
+  font-size: 0.92rem;
+  font-family: inherit;
+}
+
+.partner-inquiry-form-inner textarea {
+  resize: vertical;
+  min-height: 110px;
+}
+
+.partner-inquiry-submit {
+  margin-top: 4px;
+  min-width: 220px;
+}
+
+.partner-inquiry-status {
+  margin: 2px 0 0;
+  min-height: 1.2em;
+  color: #fff0d9;
+  font-size: 0.88rem;
+}
+
+.partner-honeypot-field {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
 @media (max-width: 768px) {
   .cska-partnership-card h2 {
     font-size: 1.2rem;
@@ -911,6 +981,20 @@ body {
 
   .partnership-email-row {
     font-size: 0.84rem;
+  }
+
+  .partnership-neutral-row {
+    font-size: 0.84rem;
+    align-items: flex-start;
+  }
+
+  .partner-inquiry-form {
+    padding: 12px;
+  }
+
+  .partner-inquiry-submit {
+    width: 100%;
+    min-width: 0;
   }
 }
   letter-spacing: 0.01em;
