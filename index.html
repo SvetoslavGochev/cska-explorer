@@ -6,9 +6,9 @@
   <title>CSKA EXPLORER</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; img-src 'self' data: https://static.flashscore.com https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' https:; form-action 'self' https://formspree.io; upgrade-insecure-requests; block-all-mixed-content;">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; img-src 'self' data: https://static.flashscore.com https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' https:; form-action 'self' https://formspree.io https://dashboard.mailerlite.com https://assets.mailerlite.com; upgrade-insecure-requests; block-all-mixed-content;">
   <script>
-    window.CSKA_PARTNER_FORM_ENDPOINT = "https://formspree.io/f/yourFormId";
+    window.CSKA_PARTNER_FORM_ENDPOINT = "https://dashboard.mailerlite.com/jsonp/2530470/forms/193859703235675441/subscribe";
   </script>
 </head>
 <body>
@@ -187,6 +187,7 @@
       </div>
       <div class="partnership-actions">
         <button class="partnership-btn" id="cskaPartnershipBtn" data-i18n="cskaPartnerCta">Изпрати запитване</button>
+        <a class="partnership-btn" data-i18n="cskaPartnerPaypalCta" href="https://paypal.me/SvetoslavGochev" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">PayPal плащане</a>
         <p class="partnership-neutral-row"><span class="partnership-email-icon">🛡</span><span data-i18n="cskaPartnerContactHint">Използвай формата по-долу за партньорско запитване.</span></p>
       </div>
       <section id="cskaPartnerInquiryForm" class="partner-inquiry-form" aria-labelledby="cskaPartnerFormTitle">

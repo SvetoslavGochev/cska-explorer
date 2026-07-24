@@ -117,7 +117,7 @@ const LOCAL_CACHE_KEY = "cska_explorer_root_cache_v10";
 const LOCAL_CACHE_TTL_MS = 10 * 60 * 1000;
 const LANGUAGE_KEY = "cska_site_language";
 const CSKA_SUPPORT_WALLET = "0xfca710eC5eB0FB036157Bb1E114BADc2310efE37";
-const CSKA_PARTNER_FORM_ENDPOINT = (window.CSKA_PARTNER_FORM_ENDPOINT || "https://formspree.io/f/yourFormId").trim();
+const CSKA_PARTNER_FORM_ENDPOINT = (window.CSKA_PARTNER_FORM_ENDPOINT || "https://dashboard.mailerlite.com/jsonp/2530470/forms/193859703235675441/subscribe").trim();
 const CSKA_PARTNER_FORM_MIN_SUBMIT_MS = 3000;
 const DATA_API_URL = (() => {
   const explicit = String(window.CSKA_DATA_API_URL || "").trim();
@@ -188,6 +188,7 @@ const I18N = {
     cskaPartnerTitle: "Партньорство с CSKA Explorer",
     cskaPartnerText: "Представете вашите спортни услуги пред аудитория от 20,000+ преданни фенове. Ние ще включим вашата оферта в нашите експертни анализи и специализирани статии. За успешни партньорства предлагаме комисионен модел от 10% за всяка регистрация или покупка, направена чрез нашите линкове.",
     cskaPartnerCta: "Изпрати запитване",
+    cskaPartnerPaypalCta: "PayPal плащане",
     cskaPartnerWalletLabel: "MetaMask адрес за подкрепа:",
     cskaPartnerWalletCopy: "Копирай адрес",
     cskaPartnerWalletCopied: "Копирано",
@@ -278,6 +279,7 @@ const I18N = {
     cskaPartnerTitle: "Partnership with CSKA Explorer",
     cskaPartnerText: "Present your sports services to an audience of 20,000+ dedicated fans. We will include your offer in our expert analyses and specialized articles. For successful partnerships, we offer a commission model of 10% for each registration or purchase made through our links.",
     cskaPartnerCta: "Send inquiry",
+    cskaPartnerPaypalCta: "Pay with PayPal",
     cskaPartnerWalletLabel: "MetaMask support address:",
     cskaPartnerWalletCopy: "Copy address",
     cskaPartnerWalletCopied: "Copied",
@@ -395,6 +397,30 @@ function isCskaPartnerEndpointConfigured() {
   return !/yourFormId$/i.test(CSKA_PARTNER_FORM_ENDPOINT);
 }
 
+function isMailerLiteJsonpEndpoint(endpoint) {
+  return /dashboard\.mailerlite\.com\/jsonp\//i.test(endpoint);
+}
+
+async function submitCskaPartnerFormToMailerLite(payload) {
+  const formData = new URLSearchParams({
+    "fields[email]": payload.email,
+    "fields[name]": payload.name,
+    "fields[message]": payload.message,
+    "fields[source]": payload.source,
+    "ml-submit": "1",
+    anticsrf: "true"
+  });
+
+  await fetch(CSKA_PARTNER_FORM_ENDPOINT, {
+    method: "POST",
+    mode: "no-cors",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+    },
+    body: formData.toString()
+  });
+}
+
 function setupPartnershipForm() {
   const formElements = getCskaPartnerFormElements();
   const walletCopy = document.getElementById("cskaPartnerWalletCopy");
@@ -501,6 +527,13 @@ async function handleCskaPartnerFormSubmit(event) {
   submit.disabled = true;
 
   try {
+    if (isMailerLiteJsonpEndpoint(CSKA_PARTNER_FORM_ENDPOINT)) {
+      await submitCskaPartnerFormToMailerLite(payload);
+      status.textContent = t("cskaPartnerFormSuccess");
+      form.reset();
+      return;
+    }
+
     const response = await fetch(CSKA_PARTNER_FORM_ENDPOINT, {
       method: "POST",
       headers: {
