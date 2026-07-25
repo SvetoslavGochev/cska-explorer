@@ -801,18 +801,24 @@ body {
 .cska-partnership-card {
   background: linear-gradient(135deg, var(--red-dark) 0%, var(--red) 100%);
   color: #fff;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-areas:
+    "title title"
+    "copy copy"
+    "wallet actions";
   gap: 16px;
 }
 
 .cska-partnership-card h2 {
+  grid-area: title;
   margin: 0;
   font-size: 1.4rem;
   letter-spacing: 0.04em;
 }
 
 .partnership-text {
+  grid-area: copy;
   margin: 0;
   color: rgba(255, 255, 255, 0.95);
   font-size: 0.95rem;
@@ -821,10 +827,15 @@ body {
 }
 
 .partnership-actions {
+  grid-area: actions;
   display: flex;
   flex-direction: column;
   gap: 14px;
-  align-items: flex-start;
+  align-items: stretch;
+  border: 1px solid rgba(255, 255, 255, 0.46);
+  border-radius: 12px;
+  background: rgba(60, 12, 12, 0.34);
+  padding: 14px;
 }
 
 .partnership-btn {
@@ -887,11 +898,59 @@ body {
   font-size: 0.9rem;
 }
 
+.partnership-social-title {
+  margin: 0;
+  color: #fff8e9;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.partnership-social-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+}
+
+.partnership-social-btn {
+  min-width: 0;
+  width: 100%;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.partnership-paypal-btn {
+  width: 100%;
+  min-width: 0;
+  margin-top: 12px;
+  background: linear-gradient(135deg, #0b5bd3 0%, #1296ff 100%);
+  color: #f3f8ff;
+  box-shadow: 0 12px 24px rgba(7, 63, 165, 0.3);
+  text-decoration: none;
+}
+
+.partnership-instagram-btn {
+  background: linear-gradient(135deg, #f9b93e 0%, #ef4d7a 52%, #8b41c2 100%);
+  color: #fff;
+}
+
+.partnership-facebook-btn {
+  background: linear-gradient(135deg, #2178ff 0%, #0f53d7 100%);
+  color: #f2f8ff;
+}
+
+.partnership-x-btn {
+  background: linear-gradient(135deg, #161b24 0%, #2f3948 100%);
+  color: #f7fbff;
+}
+
 .partnership-wallet {
+  grid-area: wallet;
   padding: 14px;
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  background: rgba(45, 12, 12, 0.26);
+  border: 1px solid rgba(255, 255, 255, 0.52);
+  background: rgba(45, 12, 12, 0.42);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .partnership-wallet-label {
@@ -936,68 +995,17 @@ body {
   line-height: 1.4;
 }
 
-.partner-inquiry-form {
-  margin-top: 6px;
-  padding: 16px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  background: rgba(25, 9, 9, 0.34);
-}
-
-.partner-inquiry-form h3 {
-  margin: 0 0 12px;
-  font-size: 1.05rem;
-  color: #fff6ea;
-}
-
-.partner-inquiry-form-inner {
-  display: grid;
-  gap: 8px;
-}
-
-.partner-inquiry-form-inner label {
-  color: rgba(255, 244, 226, 0.92);
-  font-size: 0.88rem;
-}
-
-.partner-inquiry-form-inner input,
-.partner-inquiry-form-inner textarea {
-  width: 100%;
-  border: 1px solid rgba(255, 230, 198, 0.45);
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.96);
-  color: #2d1910;
-  padding: 10px 12px;
-  font-size: 0.92rem;
-  font-family: inherit;
-}
-
-.partner-inquiry-form-inner textarea {
-  resize: vertical;
-  min-height: 110px;
-}
-
-.partner-inquiry-submit {
-  margin-top: 4px;
-  min-width: 220px;
-}
-
-.partner-inquiry-status {
-  margin: 2px 0 0;
-  min-height: 1.2em;
-  color: #fff0d9;
-  font-size: 0.88rem;
-}
-
-.partner-honeypot-field {
-  position: absolute;
-  left: -10000px;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-}
 
 @media (max-width: 768px) {
+  .cska-partnership-card {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "title"
+      "copy"
+      "wallet"
+      "actions";
+  }
+
   .cska-partnership-card h2 {
     font-size: 1.2rem;
   }
@@ -1037,17 +1045,12 @@ body {
     align-items: flex-start;
   }
 
-  .partner-inquiry-form {
-    padding: 12px;
+  .partnership-social-grid {
+    grid-template-columns: 1fr;
   }
 
   .partnership-wallet {
     padding: 12px;
-  }
-
-  .partner-inquiry-submit {
-    width: 100%;
-    min-width: 0;
   }
 }
   letter-spacing: 0.01em;
