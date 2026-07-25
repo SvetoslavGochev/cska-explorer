@@ -920,9 +920,14 @@ body {
 }
 
 .partnership-paypal-btn {
-  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  order: 3;
+  width: fit-content;
   min-width: 0;
-  margin-top: 12px;
+  margin-top: 0;
   background: linear-gradient(135deg, #0b5bd3 0%, #1296ff 100%);
   color: #f3f8ff;
   box-shadow: 0 12px 24px rgba(7, 63, 165, 0.3);
@@ -946,6 +951,9 @@ body {
 
 .partnership-wallet {
   grid-area: wallet;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   padding: 14px;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.52);
@@ -989,7 +997,8 @@ body {
 }
 
 .partnership-wallet-hint {
-  margin: 8px 0 0;
+  order: 4;
+  margin: 0;
   color: rgba(255, 240, 218, 0.88);
   font-size: 0.83rem;
   line-height: 1.4;
@@ -1004,6 +1013,7 @@ body {
       "copy"
       "wallet"
       "actions";
+    gap: 18px;
   }
 
   .cska-partnership-card h2 {
@@ -1019,9 +1029,22 @@ body {
     font-size: 0.95rem;
     min-width: 180px;
   }
+
+  .partnership-wallet,
+  .partnership-actions {
+    padding: 16px;
+  }
+
+  .partnership-wallet-row {
+    align-items: flex-start;
+  }
 }
 
 @media (max-width: 480px) {
+  .cska-partnership-card {
+    gap: 14px;
+  }
+
   .cska-partnership-card h2 {
     font-size: 1.1rem;
   }
@@ -1049,11 +1072,91 @@ body {
     grid-template-columns: 1fr;
   }
 
+  .partnership-paypal-btn {
+    display: inline-flex;
+    width: 100%;
+    justify-content: center;
+    align-self: stretch;
+  }
+
   .partnership-wallet {
     padding: 12px;
+    gap: 12px;
+  }
+
+  .partnership-actions {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .partnership-wallet-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .partnership-wallet-address,
+  .partnership-wallet-copy {
+    width: 100%;
+  }
+
+  .partnership-wallet-copy {
+    text-align: center;
   }
 }
-  letter-spacing: 0.01em;
+
+@media (max-width: 320px) {
+  .cska-partnership-card {
+    gap: 12px;
+  }
+
+  .cska-partnership-card h2 {
+    font-size: 1.02rem;
+    letter-spacing: 0.02em;
+  }
+
+  .partnership-text {
+    font-size: 0.84rem;
+    line-height: 1.45;
+  }
+
+  .partnership-wallet,
+  .partnership-actions {
+    padding: 10px;
+    border-radius: 10px;
+  }
+
+  .partnership-btn {
+    width: 100%;
+    min-width: 0;
+    padding: 9px 12px;
+    font-size: 0.86rem;
+    border-radius: 10px;
+  }
+
+  .partnership-social-grid {
+    gap: 8px;
+  }
+
+  .partnership-wallet-label {
+    margin: 0;
+    font-size: 0.82rem;
+  }
+
+  .partnership-wallet-address {
+    font-size: 0.8rem;
+    padding: 7px 9px;
+  }
+
+  .partnership-wallet-copy {
+    padding: 7px 10px;
+    font-size: 0.82rem;
+  }
+
+  .partnership-wallet-hint {
+    font-size: 0.78rem;
+    line-height: 1.35;
+  }
 }
 
 .form-strip {
