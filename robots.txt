@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://cska.vercel.app/sitemap.xml
