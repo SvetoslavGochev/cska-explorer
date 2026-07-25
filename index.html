@@ -29,9 +29,6 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; img-src 'self' data: https://static.flashscore.com https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' https:; form-action 'self' https://formspree.io https://dashboard.mailerlite.com https://assets.mailerlite.com; upgrade-insecure-requests; block-all-mixed-content;">
-  <script>
-    window.CSKA_PARTNER_FORM_ENDPOINT = "https://dashboard.mailerlite.com/jsonp/2530470/forms/193859703235675441/subscribe";
-  </script>
 </head>
 <body>
   <div class="container">
@@ -208,29 +205,15 @@
         <p id="cskaPartnerWalletHint" class="partnership-wallet-hint"></p>
       </div>
       <div class="partnership-actions">
-        <button class="partnership-btn" id="cskaPartnershipBtn" data-i18n="cskaPartnerCta">Изпрати запитване</button>
+        <p class="partnership-social-title" data-i18n="cskaPartnerCta">Свържи се с нас</p>
+        <div class="partnership-social-grid" aria-label="Social contacts">
+          <a id="cskaPartnerInstagram" class="partnership-btn partnership-social-btn partnership-instagram-btn" href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer">Instagram</a>
+          <a id="cskaPartnerFacebook" class="partnership-btn partnership-social-btn partnership-facebook-btn" href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer">Facebook</a>
+          <a id="cskaPartnerX" class="partnership-btn partnership-social-btn partnership-x-btn" href="https://x.com/" target="_blank" rel="noopener noreferrer">X</a>
+        </div>
         <a class="partnership-btn" data-i18n="cskaPartnerPaypalCta" href="https://paypal.me/SvetoslavGochev" target="_blank" rel="noopener noreferrer" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">PayPal плащане</a>
-        <p class="partnership-neutral-row"><span class="partnership-email-icon">🛡</span><span data-i18n="cskaPartnerContactHint">Използвай формата по-долу за партньорско запитване.</span></p>
+        <p class="partnership-neutral-row"><span class="partnership-email-icon">🛡</span><span data-i18n="cskaPartnerContactHint">Пиши ни директно през социалните мрежи за партньорства.</span></p>
       </div>
-      <section id="cskaPartnerInquiryForm" class="partner-inquiry-form" aria-labelledby="cskaPartnerFormTitle">
-        <h3 id="cskaPartnerFormTitle" data-i18n="cskaPartnerFormTitle">Форма за партньорство</h3>
-        <form id="cskaPartnerInquiryFormInner" class="partner-inquiry-form-inner" novalidate>
-          <label for="cskaPartnerFormWebsite" class="partner-honeypot-field" aria-hidden="true">Website</label>
-          <input id="cskaPartnerFormWebsite" class="partner-honeypot-field" name="website" type="text" tabindex="-1" autocomplete="off">
-
-          <label for="cskaPartnerFormName" data-i18n="cskaPartnerFormNameLabel">Име / Бранд</label>
-          <input id="cskaPartnerFormName" name="name" type="text" required data-i18n-placeholder="cskaPartnerFormNamePlaceholder" placeholder="Например: Red Sports Hub">
-
-          <label for="cskaPartnerFormEmail" data-i18n="cskaPartnerFormEmailLabel">Имейл за обратна връзка</label>
-          <input id="cskaPartnerFormEmail" name="email" type="email" required data-i18n-placeholder="cskaPartnerFormEmailPlaceholder" placeholder="Например: contact@brand.com">
-
-          <label for="cskaPartnerFormMessage" data-i18n="cskaPartnerFormMessageLabel">Кратко описание на услугата</label>
-          <textarea id="cskaPartnerFormMessage" name="message" rows="5" required data-i18n-placeholder="cskaPartnerFormMessagePlaceholder" placeholder="Напиши какво предлагате и как можем да си партнираме."></textarea>
-
-          <button id="cskaPartnerFormSubmit" class="partnership-btn partner-inquiry-submit" type="submit" data-i18n="cskaPartnerFormSubmit">Изпрати формата</button>
-          <p id="cskaPartnerFormStatus" class="partner-inquiry-status" role="status" aria-live="polite"></p>
-        </form>
-      </section>
     </section>
 
     <footer class="footer">

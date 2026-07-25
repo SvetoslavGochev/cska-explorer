@@ -117,8 +117,9 @@ const LOCAL_CACHE_KEY = "cska_explorer_root_cache_v10";
 const LOCAL_CACHE_TTL_MS = 10 * 60 * 1000;
 const LANGUAGE_KEY = "cska_site_language";
 const CSKA_SUPPORT_WALLET = "0xfca710eC5eB0FB036157Bb1E114BADc2310efE37";
-const CSKA_PARTNER_FORM_ENDPOINT = (window.CSKA_PARTNER_FORM_ENDPOINT || "https://dashboard.mailerlite.com/jsonp/2530470/forms/193859703235675441/subscribe").trim();
-const CSKA_PARTNER_FORM_MIN_SUBMIT_MS = 3000;
+const CSKA_PARTNER_INSTAGRAM_URL = (window.CSKA_PARTNER_INSTAGRAM_URL || "https://www.instagram.com/").trim();
+const CSKA_PARTNER_FACEBOOK_URL = (window.CSKA_PARTNER_FACEBOOK_URL || "https://www.facebook.com/").trim();
+const CSKA_PARTNER_X_URL = (window.CSKA_PARTNER_X_URL || "https://x.com/").trim();
 const DATA_API_URL = (() => {
   const explicit = String(window.CSKA_DATA_API_URL || "").trim();
   if (!explicit) return "";
@@ -187,29 +188,13 @@ const I18N = {
     partnerLinksLabel: "Партньорски линкове",
     cskaPartnerTitle: "Партньорство с CSKA Explorer",
     cskaPartnerText: "Представете вашите спортни услуги пред аудитория от 20,000+ преданни фенове. Ние ще включим вашата оферта в нашите експертни анализи и специализирани статии. За успешни партньорства предлагаме комисионен модел от 10% за всяка регистрация или покупка, направена чрез нашите линкове.",
-    cskaPartnerCta: "Изпрати запитване",
+    cskaPartnerCta: "Свържи се с нас",
     cskaPartnerPaypalCta: "PayPal плащане",
     cskaPartnerWalletLabel: "MetaMask адрес за подкрепа:",
     cskaPartnerWalletCopy: "Копирай адрес",
     cskaPartnerWalletCopied: "Копирано",
     cskaPartnerWalletHint: "Изпращай само през съвместима EVM мрежа.",
-    cskaPartnerContactHint: "Използвай формата по-долу за партньорско запитване.",
-    cskaPartnerFormTitle: "Форма за партньорство",
-    cskaPartnerFormNameLabel: "Име / Бранд",
-    cskaPartnerFormEmailLabel: "Имейл за обратна връзка",
-    cskaPartnerFormMessageLabel: "Кратко описание на услугата",
-    cskaPartnerFormNamePlaceholder: "Например: Red Sports Hub",
-    cskaPartnerFormEmailPlaceholder: "Например: contact@brand.com",
-    cskaPartnerFormMessagePlaceholder: "Напиши какво предлагате и как можем да си партнираме.",
-    cskaPartnerFormSubmit: "Изпрати формата",
-    cskaPartnerFormRequired: "Попълни всички полета, за да изпратиш запитване.",
-    cskaPartnerFormTooFast: "Моля, изчакай няколко секунди и опитай отново.",
-    cskaPartnerFormInvalidEmail: "Моля, въведи валиден имейл адрес.",
-    cskaPartnerFormEndpointMissing: "Формата не е конфигурирана. Задай валиден Formspree endpoint.",
-    cskaPartnerFormSending: "Изпращане...",
-    cskaPartnerFormSuccess: "Благодарим! Запитването е изпратено успешно.",
-    cskaPartnerFormRateLimited: "Изпращанията са ограничени временно. Опитай отново след малко.",
-    cskaPartnerFormError: "Възникна проблем при изпращането. Опитай отново.",
+    cskaPartnerContactHint: "Пиши ни директно през социалните мрежи за партньорства.",
     sourceMissingStats: "В таблицата липсващите статистики се допълват с \"-\".",
     statusFromCache: "Показани са данни от локалния кеш (без нова заявка).",
     statusLatest: "Показани са последните данни.",
@@ -278,29 +263,13 @@ const I18N = {
     partnerLinksLabel: "Partner Links",
     cskaPartnerTitle: "Partnership with CSKA Explorer",
     cskaPartnerText: "Present your sports services to an audience of 20,000+ dedicated fans. We will include your offer in our expert analyses and specialized articles. For successful partnerships, we offer a commission model of 10% for each registration or purchase made through our links.",
-    cskaPartnerCta: "Send inquiry",
+    cskaPartnerCta: "Contact us",
     cskaPartnerPaypalCta: "Pay with PayPal",
     cskaPartnerWalletLabel: "MetaMask support address:",
     cskaPartnerWalletCopy: "Copy address",
     cskaPartnerWalletCopied: "Copied",
     cskaPartnerWalletHint: "Send only on a compatible EVM network.",
-    cskaPartnerContactHint: "Use the form below for partnership inquiries.",
-    cskaPartnerFormTitle: "Partnership form",
-    cskaPartnerFormNameLabel: "Name / Brand",
-    cskaPartnerFormEmailLabel: "Reply email",
-    cskaPartnerFormMessageLabel: "Short service description",
-    cskaPartnerFormNamePlaceholder: "Example: Red Sports Hub",
-    cskaPartnerFormEmailPlaceholder: "Example: contact@brand.com",
-    cskaPartnerFormMessagePlaceholder: "Tell us what you offer and how we can partner.",
-    cskaPartnerFormSubmit: "Submit form",
-    cskaPartnerFormRequired: "Please complete all fields before submitting.",
-    cskaPartnerFormTooFast: "Please wait a few seconds and try again.",
-    cskaPartnerFormInvalidEmail: "Please enter a valid email address.",
-    cskaPartnerFormEndpointMissing: "Form is not configured. Set a valid Formspree endpoint.",
-    cskaPartnerFormSending: "Sending...",
-    cskaPartnerFormSuccess: "Thank you! Your inquiry was sent successfully.",
-    cskaPartnerFormRateLimited: "Too many requests right now. Please try again shortly.",
-    cskaPartnerFormError: "There was a problem sending your inquiry. Please try again.",
+    cskaPartnerContactHint: "For partnerships, message us directly on social media.",
     sourceMissingStats: "Missing statistics are shown as \"-\" in the table.",
     statusFromCache: "Showing data from local cache (without a new request).",
     statusLatest: "Showing the latest data.",
@@ -314,7 +283,6 @@ const I18N = {
 let currentLanguage = localStorage.getItem(LANGUAGE_KEY) === "en" ? "en" : "bg";
 let lastPayload = null;
 let lastFromCache = false;
-let partnerFormReadyAt = 0;
 
 function t(key) {
   return I18N[currentLanguage]?.[key] || I18N.bg[key] || key;
@@ -344,6 +312,9 @@ function applyLanguageUI() {
   const walletAddress = document.getElementById("cskaPartnerWalletAddress");
   const walletCopy = document.getElementById("cskaPartnerWalletCopy");
   const walletHint = document.getElementById("cskaPartnerWalletHint");
+  const instagramLink = document.getElementById("cskaPartnerInstagram");
+  const facebookLink = document.getElementById("cskaPartnerFacebook");
+  const xLink = document.getElementById("cskaPartnerX");
 
   if (walletLabel) walletLabel.textContent = t("cskaPartnerWalletLabel");
   if (walletAddress) walletAddress.textContent = CSKA_SUPPORT_WALLET;
@@ -352,6 +323,9 @@ function applyLanguageUI() {
     walletCopy.dataset.defaultLabel = t("cskaPartnerWalletCopy");
   }
   if (walletHint) walletHint.textContent = t("cskaPartnerWalletHint");
+  if (instagramLink) instagramLink.href = CSKA_PARTNER_INSTAGRAM_URL;
+  if (facebookLink) facebookLink.href = CSKA_PARTNER_FACEBOOK_URL;
+  if (xLink) xLink.href = CSKA_PARTNER_X_URL;
 }
 
 function setupLanguageSwitch() {
@@ -369,71 +343,13 @@ function setupLanguageSwitch() {
   });
 }
 
-function setupPartnershipButton() {
-  const partnershipBtn = document.getElementById("cskaPartnershipBtn");
-  if (partnershipBtn) {
-    partnershipBtn.addEventListener("click", () => {
-      const formSection = document.getElementById("cskaPartnerInquiryForm");
-      if (formSection) {
-        formSection.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-    });
-  }
-}
+function setupPartnershipButton() {}
 
-function getCskaPartnerFormElements() {
-  return {
-    form: document.getElementById("cskaPartnerInquiryFormInner"),
-    name: document.getElementById("cskaPartnerFormName"),
-    email: document.getElementById("cskaPartnerFormEmail"),
-    message: document.getElementById("cskaPartnerFormMessage"),
-    website: document.getElementById("cskaPartnerFormWebsite"),
-    submit: document.getElementById("cskaPartnerFormSubmit"),
-    status: document.getElementById("cskaPartnerFormStatus")
-  };
-}
-
-function isCskaPartnerEndpointConfigured() {
-  return !/yourFormId$/i.test(CSKA_PARTNER_FORM_ENDPOINT);
-}
-
-function isMailerLiteJsonpEndpoint(endpoint) {
-  return /dashboard\.mailerlite\.com\/jsonp\//i.test(endpoint);
-}
-
-async function submitCskaPartnerFormToMailerLite(payload) {
-  const formData = new URLSearchParams({
-    "fields[email]": payload.email,
-    "fields[name]": payload.name,
-    "fields[message]": payload.message,
-    "fields[source]": payload.source,
-    "ml-submit": "1",
-    anticsrf: "true"
-  });
-
-  await fetch(CSKA_PARTNER_FORM_ENDPOINT, {
-    method: "POST",
-    mode: "no-cors",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
-    },
-    body: formData.toString()
-  });
-}
-
-function setupPartnershipForm() {
-  const formElements = getCskaPartnerFormElements();
+function setupPartnershipWalletCopy() {
   const walletCopy = document.getElementById("cskaPartnerWalletCopy");
-  if (!formElements.form || !formElements.status) {
-    return;
-  }
-
-  formElements.form.addEventListener("submit", handleCskaPartnerFormSubmit);
   if (walletCopy) {
     walletCopy.addEventListener("click", copyCskaPartnerWalletAddress);
   }
-  partnerFormReadyAt = Date.now();
-  formElements.status.textContent = "";
 }
 
 function copyCskaPartnerWalletAddress() {
@@ -480,85 +396,6 @@ function copyCskaWalletFallback(onSuccess) {
   }
 
   document.body.removeChild(textArea);
-}
-
-async function handleCskaPartnerFormSubmit(event) {
-  event.preventDefault();
-
-  const { form, name, email, message, website, submit, status } = getCskaPartnerFormElements();
-  if (!form || !name || !email || !message || !website || !submit || !status) {
-    return;
-  }
-
-  if (website.value.trim()) {
-    status.textContent = t("cskaPartnerFormSuccess");
-    form.reset();
-    return;
-  }
-
-  if (Date.now() - partnerFormReadyAt < CSKA_PARTNER_FORM_MIN_SUBMIT_MS) {
-    status.textContent = t("cskaPartnerFormTooFast");
-    return;
-  }
-
-  if (!name.value.trim() || !email.value.trim() || !message.value.trim()) {
-    status.textContent = t("cskaPartnerFormRequired");
-    return;
-  }
-
-  if (!email.checkValidity()) {
-    status.textContent = t("cskaPartnerFormInvalidEmail");
-    return;
-  }
-
-  if (!isCskaPartnerEndpointConfigured()) {
-    status.textContent = t("cskaPartnerFormEndpointMissing");
-    return;
-  }
-
-  const payload = {
-    name: name.value.trim(),
-    email: email.value.trim(),
-    message: message.value.trim(),
-    source: "CSKA Explorer Partnership Form"
-  };
-
-  status.textContent = t("cskaPartnerFormSending");
-  submit.disabled = true;
-
-  try {
-    if (isMailerLiteJsonpEndpoint(CSKA_PARTNER_FORM_ENDPOINT)) {
-      await submitCskaPartnerFormToMailerLite(payload);
-      status.textContent = t("cskaPartnerFormSuccess");
-      form.reset();
-      return;
-    }
-
-    const response = await fetch(CSKA_PARTNER_FORM_ENDPOINT, {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload)
-    });
-
-    if (response.status === 429) {
-      status.textContent = t("cskaPartnerFormRateLimited");
-      return;
-    }
-
-    if (!response.ok) {
-      throw new Error("Partner form request failed.");
-    }
-
-    status.textContent = t("cskaPartnerFormSuccess");
-    form.reset();
-  } catch (_) {
-    status.textContent = t("cskaPartnerFormError");
-  } finally {
-    submit.disabled = false;
-  }
 }
 
 function localizeValidationWarning(rawWarning) {
@@ -869,8 +706,7 @@ async function loadAndRender({ forceRefresh = false } = {}) {
 async function init() {
   applyLanguageUI();
   setupLanguageSwitch();
-  setupPartnershipButton();
-  setupPartnershipForm();
+  setupPartnershipWalletCopy();
   await loadAndRender({ forceRefresh: false });
 }
 
