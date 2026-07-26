@@ -122,6 +122,7 @@ const CSKA_PARTNER_FACEBOOK_URL = (window.CSKA_PARTNER_FACEBOOK_URL || "https://
 const CSKA_PARTNER_X_URL = (window.CSKA_PARTNER_X_URL || "https://x.com/").trim();
 const DATA_API_URL = (() => {
   const explicit = String(window.CSKA_DATA_API_URL || "").trim();
+  if (/your-backend-url/i.test(explicit)) return "";
   if (!explicit) return "";
   if (/\/api\/data\/?$/i.test(explicit)) return explicit.replace(/\/$/, "");
   return `${explicit.replace(/\/$/, "")}/api/data`;

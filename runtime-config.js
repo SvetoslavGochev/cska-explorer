@@ -1,2 +1,2 @@
 window.CSKA_PROXY_URL = "";
-window.CSKA_DATA_API_URL = "https://YOUR-BACKEND-URL";
+window.CSKA_DATA_API_URL = "";
