@@ -1,4 +1,4 @@
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   const method = req.method || "GET";
 
   if (method === "OPTIONS") {
@@ -39,4 +39,4 @@ export default async function handler(req, res) {
     console.error("[csp-report:error]", error);
     res.status(400).json({ error: "Invalid report payload" });
   }
-}
+};
