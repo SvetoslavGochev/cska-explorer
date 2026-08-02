@@ -128,6 +128,112 @@ const ROLE_BY_GROUP = {
   }
 };
 
+const LATEST_SQUAD_OVERRIDES = [
+  { name: "Питас Йоанис", aliases: ["Йоанис Питас"], flag: "🇨🇾", roleBg: "Нападател", roleEn: "Forward", matches: 11, goals: 6, assists: 1, hattricks: 0, impact: "9.25" },
+  { name: "Годой Леандро", aliases: ["Леандро Годой"], flag: "🇦🇷", roleBg: "Нападател", roleEn: "Forward", matches: 10, goals: 2, assists: 1, hattricks: 0, impact: "3.00" },
+  { name: "Брахими Мохамед", aliases: ["Мохамед Брахими"], flag: "🇫🇷", roleBg: "Нападател", roleEn: "Forward", matches: 12, goals: 1, assists: 0, hattricks: 0, impact: "3.00" },
+  { name: "Жордао Бруно", aliases: ["Бруно Жордао"], flag: "🇵🇹", roleBg: "Халф", roleEn: "Midfielder", matches: 10, goals: 0, assists: 0, hattricks: 0, impact: "2.50" },
+  { name: "Иванов Теодор", aliases: ["Теодор Иванов"], flag: "🇧🇬", roleBg: "Защитник", roleEn: "Defender", matches: 11, goals: 0, assists: 0, hattricks: 0, impact: "2.75" },
+  { name: "Лапоухов Фьодор", aliases: ["Фьодор Лапоухов"], flag: "🇧🇾", roleBg: "Вратар", roleEn: "Goalkeeper", matches: 10, goals: 0, assists: 0, hattricks: 0, impact: "2.50" },
+  { name: "Мартино Анхело", aliases: ["Анжело Мартино"], flag: "🇦🇷", roleBg: "Защитник", roleEn: "Defender", matches: 11, goals: 0, assists: 0, hattricks: 0, impact: "2.75" },
+  { name: "Пастор", aliases: ["Дейвид Пастор"], flag: "🇧🇷", roleBg: "Защитник", roleEn: "Defender", matches: 10, goals: 0, assists: 0, hattricks: 0, impact: "2.50" },
+  { name: "Ето'о Джеймс", aliases: ["Джеймс Ето'о"], flag: "🇨🇲", roleBg: "Халф", roleEn: "Midfielder", matches: 8, goals: 0, assists: 0, hattricks: 0, impact: "2.00" },
+  { name: "Ебонг Макс", aliases: ["Макс Ебонг"], flag: "🇧🇾", roleBg: "Халф", roleEn: "Midfielder", matches: 8, goals: 0, assists: 0, hattricks: 0, impact: "2.00" },
+  { name: "Родригес Факундо", aliases: ["Факундо Родригес"], flag: "🇦🇷", roleBg: "Защитник", roleEn: "Defender", matches: 8, goals: 0, assists: 0, hattricks: 0, impact: "2.00" },
+  { name: "Сенси Стефано", aliases: ["Стефано Сенси"], flag: "🇮🇹", roleBg: "Халф", roleEn: "Midfielder", matches: 6, goals: 0, assists: 1, hattricks: 0, impact: "2.00" },
+  { name: "Панайотов Петко", aliases: ["Петко Панайотов"], flag: "🇧🇬", roleBg: "Халф", roleEn: "Midfielder", matches: 7, goals: 0, assists: 0, hattricks: 0, impact: "1.75" },
+  { name: "Лео Перейра", flag: "🇧🇷", roleBg: "Нападател", roleEn: "Forward", matches: 6, goals: 0, assists: 0, hattricks: 0, impact: "1.50" },
+  { name: "Цварц Жоел", aliases: ["Жоел Цварц"], flag: "🇨🇭", roleBg: "Нападател", roleEn: "Forward", matches: 6, goals: 0, assists: 0, hattricks: 0, impact: "1.50" },
+  { name: "Соле Исак", aliases: ["Исак Соле"], flag: "🇨🇫", roleBg: "Халф", roleEn: "Midfielder", matches: 5, goals: 0, assists: 0, hattricks: 0, impact: "1.25" },
+  { name: "Пиедраита Алехандро", aliases: ["Алехандро Пиедраита"], flag: "🇨🇴", roleBg: "Нападател", roleEn: "Forward", matches: 4, goals: 0, assists: 0, hattricks: 0, impact: "1.00" },
+  { name: "Лапеня Адриан", aliases: ["Адриан Лапеня"], flag: "🇪🇸", roleBg: "Защитник", roleEn: "Defender", matches: 3, goals: 0, assists: 0, hattricks: 0, impact: "0.75" },
+  { name: "Евтимов Димитър", aliases: ["Димитър Евтимов"], flag: "🇧🇬", roleBg: "Вратар", roleEn: "Goalkeeper", matches: 3, goals: 0, assists: 0, hattricks: 0, impact: "0.75" },
+  { name: "Гбамен Жан-Филип", aliases: ["Жан-Филип Гбамен"], flag: "🇨🇮", roleBg: "Защитник", roleEn: "Defender", matches: 5, goals: 0, assists: 0, hattricks: 0, impact: "1.25" },
+  { name: "Йорданов Андрей", aliases: ["Андрей Йорданов"], flag: "🇧🇬", roleBg: "Защитник", roleEn: "Defender", matches: 2, goals: 0, assists: 0, hattricks: 0, impact: "0.50" },
+  { name: "Уору Тамиму", aliases: ["Тамиму Уору"], flag: "🌍", roleBg: "Халф", roleEn: "Midfielder", matches: 2, goals: 0, assists: 0, hattricks: 0, impact: "0.50" },
+  { name: "Николов Даниел", aliases: ["Даниел Николов"], flag: "🇧🇬", roleBg: "Вратар", roleEn: "Goalkeeper", matches: 0, goals: 0, assists: 0, hattricks: 0, impact: "0.00" },
+  { name: "Тунчев Алекс", aliases: ["Алекс Тунчев"], flag: "🇧🇬", roleBg: "Защитник", roleEn: "Defender", matches: 0, goals: 0, assists: 0, hattricks: 0, impact: "0.00" },
+  { name: "Илиев Yulian", flag: "🇧🇬", roleBg: "Халф", roleEn: "Midfielder", matches: 0, goals: 0, assists: 0, hattricks: 0, impact: "0.00" },
+  { name: "Каймаканов Васил", aliases: ["Васил Каймаканов"], flag: "🇧🇬", roleBg: "Халф", roleEn: "Midfielder", matches: 0, goals: 0, assists: 0, hattricks: 0, impact: "0.00" },
+  { name: "Чорбаджийски Георги", aliases: ["Георги Чорбаджийски", "Чорбаджийски Георги Бранков"], flag: "🇧🇬", roleBg: "Халф", roleEn: "Midfielder", matches: 0, goals: 0, assists: 0, hattricks: 0, impact: "0.00" },
+  { name: "Додай Кевин", aliases: ["Кевин Додай"], flag: "🇦🇱", roleBg: "Нападател", roleEn: "Forward", matches: 0, goals: 0, assists: 0, hattricks: 0, impact: "0.00" },
+  { name: "Живков Радослав", aliases: ["Радослав Живков"], flag: "🇧🇬", roleBg: "Нападател", roleEn: "Forward", matches: 0, goals: 0, assists: 0, hattricks: 0, impact: "0.00" }
+];
+
+const LATEST_SQUAD_ORDER = new Map(
+  LATEST_SQUAD_OVERRIDES.map((row, index) => [normalizePlayerName(row.name), index])
+);
+
+function normalizePlayerName(value) {
+  return String(value || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\p{L}\p{N}\s]/gu, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function playerNameSignature(value) {
+  return normalizePlayerName(value)
+    .split(" ")
+    .filter(Boolean)
+    .sort()
+    .join("|");
+}
+
+function applyLatestSquadOverrides(rows) {
+  const byNormalizedName = new Map();
+  const bySignature = new Map();
+  rows.forEach((row) => {
+    const raw = row.rawName || row.displayName;
+    byNormalizedName.set(normalizePlayerName(raw), row);
+    bySignature.set(playerNameSignature(raw), row);
+  });
+
+  LATEST_SQUAD_OVERRIDES.forEach((overrideRow) => {
+    const candidateNames = [overrideRow.name, ...(overrideRow.aliases || [])];
+    const existing = candidateNames
+      .map((name) => byNormalizedName.get(normalizePlayerName(name)) || bySignature.get(playerNameSignature(name)))
+      .find(Boolean);
+    const role = currentLanguage === "en" ? overrideRow.roleEn : overrideRow.roleBg;
+
+    if (existing) {
+      const newRawName = overrideRow.name;
+      existing.rawName = newRawName;
+      existing.displayName = getPlayerDisplayName(newRawName);
+      existing.matches = overrideRow.matches;
+      existing.goals = overrideRow.goals;
+      existing.assists = overrideRow.assists;
+      existing.hattricks = overrideRow.hattricks;
+      existing.impact = String(overrideRow.impact);
+      existing.flag = overrideRow.flag || existing.flag;
+      existing.role = role || existing.role;
+      return;
+    }
+
+    const rawName = overrideRow.name;
+    const displayName = getPlayerDisplayName(rawName);
+    const injected = {
+      matches: overrideRow.matches,
+      goals: overrideRow.goals,
+      assists: overrideRow.assists,
+      hattricks: overrideRow.hattricks,
+      impact: String(overrideRow.impact),
+      rawName,
+      displayName,
+      flag: overrideRow.flag || "🌍",
+      role: role || "—"
+    };
+
+    rows.push(injected);
+    byNormalizedName.set(normalizePlayerName(rawName), injected);
+    bySignature.set(playerNameSignature(rawName), injected);
+  });
+
+  return rows;
+}
+
 const PLAYER_ROLE_BY_NAME = {
   bg: {
     "Евтимов Димитър": "Вратар",
@@ -253,7 +359,24 @@ function renderSquad(squad) {
       flag,
       role
     };
-  }).sort((a, b) => Number(b.impact) - Number(a.impact) || a.displayName.localeCompare(b.displayName));
+  });
+
+  applyLatestSquadOverrides(rows);
+
+  rows.sort((a, b) => {
+    const orderA = LATEST_SQUAD_ORDER.get(normalizePlayerName(a.rawName));
+    const orderB = LATEST_SQUAD_ORDER.get(normalizePlayerName(b.rawName));
+    const hasOrderA = Number.isInteger(orderA);
+    const hasOrderB = Number.isInteger(orderB);
+
+    if (hasOrderA && hasOrderB && orderA !== orderB) {
+      return orderA - orderB;
+    }
+    if (hasOrderA && !hasOrderB) return -1;
+    if (!hasOrderA && hasOrderB) return 1;
+
+    return Number(b.impact) - Number(a.impact) || a.displayName.localeCompare(b.displayName);
+  });
 
   const headers = currentLanguage === "en"
     ? ["Nationality", "Player", "Position / Role", "Matches", "Goals", "Assists", "Hattricks", "Impact"]
