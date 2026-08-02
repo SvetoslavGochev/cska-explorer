@@ -67,6 +67,75 @@ const PLAYER_NAME_EN_BY_BG = {
   "Цварц Жоел": "Joel Cwarz"
 };
 
+const PLAYER_ROLE_BY_NAME = {
+  bg: {
+    "Евтимов Димитър": "Вратар",
+    "Лапоухов Фьодор": "Вратар",
+    "Николов Даниел": "Вратар",
+    "Гбамен Жан-Филип": "Защитник",
+    "Иванов Теодор": "Защитник",
+    "Йорданов Андрей": "Защитник",
+    "Лапеня Адриан": "Защитник",
+    "Мартино Анхело": "Защитник",
+    "Пастор": "Защитник",
+    "Родригес Факундо": "Защитник",
+    "Тунчев Алекс": "Защитник",
+    "Ебонг Макс": "Халф",
+    "Ето'о Джеймс": "Халф",
+    "Жордао Бруно": "Халф",
+    "Илиев Yulian": "Халф",
+    "Каймаканов Васил": "Халф",
+    "Николов Алесандро": "Халф",
+    "Панайотов Петко": "Халф",
+    "Сенси Стефано": "Халф",
+    "Соле Исак": "Халф",
+    "Уору Тамиму": "Халф",
+    "Чорбаджийски Георги Бранков": "Халф",
+    "Брахими Мохамед": "Нападател",
+    "Годой Леандро": "Нападател",
+    "Додай Кевин": "Нападател",
+    "Живков Радослав": "Нападател",
+    "Лео Перейра": "Нападател",
+    "Пиедраита Алехандро": "Нападател",
+    "Питас Йоанис": "Нападател",
+    "Фаетон Матиас": "Нападател",
+    "Цварц Жоел": "Нападател"
+  },
+  en: {
+    "Евтимов Димитър": "Goalkeeper",
+    "Лапоухов Фьодор": "Goalkeeper",
+    "Николов Даниел": "Goalkeeper",
+    "Гбамен Жан-Филип": "Defender",
+    "Иванов Теодор": "Defender",
+    "Йорданов Андрей": "Defender",
+    "Лапеня Адриан": "Defender",
+    "Мартино Анхело": "Defender",
+    "Пастор": "Defender",
+    "Родригес Факундо": "Defender",
+    "Тунчев Алекс": "Defender",
+    "Ебонг Макс": "Midfielder",
+    "Ето'о Джеймс": "Midfielder",
+    "Жордао Бруно": "Midfielder",
+    "Илиев Yulian": "Midfielder",
+    "Каймаканов Васил": "Midfielder",
+    "Николов Алесандро": "Midfielder",
+    "Панайотов Петко": "Midfielder",
+    "Сенси Стефано": "Midfielder",
+    "Соле Исак": "Midfielder",
+    "Уору Тамиму": "Midfielder",
+    "Чорбаджийски Георги Бранков": "Midfielder",
+    "Брахими Мохамед": "Forward",
+    "Годой Леандро": "Forward",
+    "Додай Кевин": "Forward",
+    "Живков Радослав": "Forward",
+    "Лео Перейра": "Forward",
+    "Пиедраита Алехандро": "Forward",
+    "Питас Йоанис": "Forward",
+    "Фаетон Матиас": "Forward",
+    "Цварц Жоел": "Forward"
+  }
+};
+
 function getPlayerDisplayName(name) {
   const safeName = String(name || "").trim();
   if (!safeName) return "-";
@@ -83,35 +152,69 @@ function renderSquad(squad) {
     squadGridEl.innerHTML = "";
     return;
   }
-  // Обединява всички групи (вратари, защитници и т.н.) в един масив
-  const allPlayers = Object.values(squad).flat();
+
+  const allPlayers = Object.values(squad).flat().filter(Boolean);
   if (!allPlayers.length) {
     squadGridEl.innerHTML = "";
     return;
   }
-  squadGridEl.innerHTML = allPlayers.map((p) => {
+
+  const rows = allPlayers.map((p) => {
     const matches = Number.isFinite(Number(p.matches)) ? Number(p.matches) : 0;
     const goals = Number.isFinite(Number(p.goals)) ? Number(p.goals) : 0;
     const assists = Number.isFinite(Number(p.assists)) ? Number(p.assists) : 0;
     const hattricks = Number.isFinite(Number(p.hattricks)) ? Number(p.hattricks) : 0;
     const impactRaw = (matches * 0.25) + (assists * 0.5) + (goals * 1) + (hattricks * 2);
-    const impact = Number.isInteger(impactRaw) ? String(impactRaw) : impactRaw.toFixed(2);
+    const impact = impactRaw.toFixed(2);
     const rawName = String(p.name || "").trim();
     const displayName = getPlayerDisplayName(rawName);
     const flag = PLAYER_FLAG_BY_NAME[rawName] || "🌍";
+    const role = PLAYER_ROLE_BY_NAME[currentLanguage]?.[rawName] || PLAYER_ROLE_BY_NAME.bg[rawName] || "—";
+    return {
+      matches,
+      goals,
+      assists,
+      hattricks,
+      impact,
+      rawName,
+      displayName,
+      flag,
+      role
+    };
+  }).sort((a, b) => Number(b.impact) - Number(a.impact) || a.displayName.localeCompare(b.displayName));
 
+  const headers = currentLanguage === "en"
+    ? ["Nationality", "Player", "Position / Role", "Matches", "Goals", "Assists", "Hattricks", "Impact"]
+    : ["Националност", "Играч", "Позиция / Роля", "Мачове", "Голове", "Асист.", "Хеттрици", "КПД"];
+
+  const rowsHtml = rows.map((player, index) => {
+    const isTopImpact = index < 3;
     return `
-      <article class="squad-player">
-        <h3 class="squad-player-name"><span class="squad-player-flag" aria-hidden="true">${flag}</span>${displayName}</h3>
-        <div class="squad-player-stats">
-          <span class="squad-stat"><b>${t("statMatches")}</b> ${matches}</span>
-          <span class="squad-stat"><b>${t("statGoals")}</b> ${goals}</span>
-          <span class="squad-stat"><b>${t("statAssists")}</b> ${assists}</span>
-          <span class="squad-stat"><b>${t("statImpact")}</b> ${impact}</span>
-        </div>
-      </article>
+      <tr class="${isTopImpact ? "top-impact" : ""}">
+        <td><span class="squad-player-flag" aria-hidden="true">${player.flag}</span></td>
+        <td>${player.displayName}</td>
+        <td>${player.role}</td>
+        <td>${player.matches}</td>
+        <td>${player.goals}</td>
+        <td>${player.assists}</td>
+        <td>${player.hattricks}</td>
+        <td>${player.impact}</td>
+      </tr>
     `;
   }).join("\n");
+
+  squadGridEl.innerHTML = `
+    <div class="squad-table-wrap">
+      <table class="squad-table">
+        <thead>
+          <tr>
+            ${headers.map((header) => `<th>${header}</th>`).join("")}
+          </tr>
+        </thead>
+        <tbody>${rowsHtml}</tbody>
+      </table>
+    </div>
+  `;
 }
 const LOCAL_CACHE_KEY = "cska_explorer_root_cache_v10";
 const LOCAL_CACHE_TTL_MS = 10 * 60 * 1000;
