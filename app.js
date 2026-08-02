@@ -64,7 +64,68 @@ const PLAYER_NAME_EN_BY_BG = {
   "Пиедраита Алехандро": "Alejandro Piedrahita",
   "Питас Йоанис": "Ioannis Pittas",
   "Фаетон Матиас": "Mathias Phaeton",
-  "Цварц Жоел": "Joel Cwarz"
+  "Цварц Жоел": "Joel Cwarz",
+  "Даниел Николов": "Daniel Nikolov",
+  "Фьодор Лапоухов": "Fyodor Lapoukhov",
+  "Димитър Евтимов": "Dimitar Evtimov",
+  "Дейвид Пастор": "David Pastor",
+  "Тамиму Уору": "Tamimu Owaru",
+  "Адриан Лапеня": "Adrian Lapeña",
+  "Жан-Филип Гбамен": "Jean-Philippe Gbamin",
+  "Теодор Иванов": "Teodor Ivanov",
+  "Анжело Мартино": "Angelo Martino",
+  "Андрей Йорданов": "Andrey Yordanov",
+  "Факундо Родригес": "Facundo Rodriguez",
+  "Алекс Тунчев": "Alex Tunchev",
+  "Джеймс Ето'о": "James Eto'o",
+  "Бруно Жордао": "Bruno Jordao",
+  "Макс Ебонг": "Max Ebong",
+  "Стефано Сенси": "Stefano Sensi",
+  "Мохамед Брахими": "Mohamed Brahimi",
+  "Петко Панайотов": "Petko Panayotov",
+  "Георги Чорбаджийски": "Georgi Chorbadzhiyski",
+  "Исак Соле": "Isaac Solet",
+  "Леандро Годой": "Leandro Godoy",
+  "Жоел Цварц": "Joel Cwarz",
+  "Кевин Додай": "Kevin Dodaj",
+  "Йоанис Питас": "Ioannis Pittas",
+  "Васил Каймаканов": "Vasil Kaymakanov",
+  "Лео Перейра": "Leo Pereira",
+  "Алехандро Пиедраита": "Alejandro Piedrahita"
+};
+
+const COUNTRY_FLAG_BY_BG = {
+  "България": "🇧🇬",
+  "Беларус": "🇧🇾",
+  "Кот д'Ивоар": "🇨🇮",
+  "Испания": "🇪🇸",
+  "Аржентина": "🇦🇷",
+  "Бразилия": "🇧🇷",
+  "Камерун": "🇨🇲",
+  "Португалия": "🇵🇹",
+  "Италия": "🇮🇹",
+  "ЦАР": "🇨🇫",
+  "Франция": "🇫🇷",
+  "Албания": "🇦🇱",
+  "Колумбия": "🇨🇴",
+  "Кипър": "🇨🇾",
+  "Нидерландия": "🇳🇱",
+  "Бенин": "🇧🇯"
+};
+
+const ROLE_BY_GROUP = {
+  bg: {
+    goalkeepers: "Вратар",
+    defenders: "Защитник",
+    midfielders: "Халф",
+    forwards: "Нападател"
+  },
+  en: {
+    goalkeepers: "Goalkeeper",
+    defenders: "Defender",
+    midfielders: "Midfielder",
+    forwards: "Forward"
+  }
 };
 
 const PLAYER_ROLE_BY_NAME = {
@@ -153,7 +214,17 @@ function renderSquad(squad) {
     return;
   }
 
-  const allPlayers = Object.values(squad).flat().filter(Boolean);
+  const roleByGroup = ROLE_BY_GROUP[currentLanguage] || ROLE_BY_GROUP.bg;
+  const groupedKeys = ["goalkeepers", "defenders", "midfielders", "forwards"];
+  const hasGroupedSquad = groupedKeys.some((key) => Array.isArray(squad[key]));
+
+  const allPlayers = hasGroupedSquad
+    ? groupedKeys.flatMap((key) => {
+      const groupPlayers = Array.isArray(squad[key]) ? squad[key] : [];
+      return groupPlayers.map((player) => ({ ...player, __group: key }));
+    }).filter(Boolean)
+    : Object.values(squad).flat().filter(Boolean);
+
   if (!allPlayers.length) {
     squadGridEl.innerHTML = "";
     return;
@@ -168,8 +239,9 @@ function renderSquad(squad) {
     const impact = impactRaw.toFixed(2);
     const rawName = String(p.name || "").trim();
     const displayName = getPlayerDisplayName(rawName);
-    const flag = PLAYER_FLAG_BY_NAME[rawName] || "🌍";
-    const role = PLAYER_ROLE_BY_NAME[currentLanguage]?.[rawName] || PLAYER_ROLE_BY_NAME.bg[rawName] || "—";
+    const countryName = String(p.countryName || "").trim();
+    const flag = PLAYER_FLAG_BY_NAME[rawName] || COUNTRY_FLAG_BY_BG[countryName] || "🌍";
+    const role = roleByGroup[p.__group] || PLAYER_ROLE_BY_NAME[currentLanguage]?.[rawName] || PLAYER_ROLE_BY_NAME.bg[rawName] || "—";
     return {
       matches,
       goals,
