@@ -339,8 +339,125 @@ body {
   filter: brightness(1.05);
 }
 
-.cska-analysis-card .analysis-content h3 {
-  margin: 18px 0 8px;
+.cska-analysis-card {
+  background: linear-gradient(135deg, rgba(255, 247, 232, 0.84) 0%, rgba(255, 253, 248, 0.72) 100%);
+  border: 1px solid rgba(184, 140, 90, 0.38);
+  box-shadow: 0 18px 44px rgba(12, 9, 6, 0.28);
+}
+
+.analysis-content {
+  display: grid;
+  gap: 14px;
+  color: #2f2015;
+}
+
+.analysis-content p,
+.analysis-content li {
+  line-height: 1.65;
+}
+
+.analysis-content h3 {
+  margin: 8px 0 2px;
+  color: #7b1f15;
+  font-size: 1.02rem;
+}
+
+.analysis-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.analysis-card,
+.analysis-summary-card {
+  border-radius: 14px;
+  padding: 12px;
+  border: 1px solid rgba(200, 178, 148, 0.5);
+  box-shadow: 0 10px 22px rgba(17, 10, 6, 0.16);
+}
+
+.analysis-card {
+  background: rgba(255, 250, 242, 0.82);
+}
+
+.attack-card {
+  background: linear-gradient(135deg, rgba(255, 245, 232, 0.96) 0%, rgba(255, 234, 214, 0.74) 100%);
+}
+
+.control-card {
+  background: linear-gradient(135deg, rgba(242, 246, 255, 0.96) 0%, rgba(227, 236, 255, 0.78) 100%);
+}
+
+.defense-card {
+  background: linear-gradient(135deg, rgba(242, 251, 245, 0.96) 0%, rgba(226, 244, 231, 0.78) 100%);
+}
+
+.analysis-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.analysis-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 4px 10px rgba(15, 8, 5, 0.12);
+  font-size: 1rem;
+}
+
+.analysis-card h4 {
+  margin: 0;
+  color: #2c140c;
+  font-size: 0.98rem;
+  font-weight: 700;
+}
+
+.analysis-card ul,
+.analysis-summary-card ul {
+  margin: 0 0 8px 16px;
+  padding: 0;
+}
+
+.analysis-card strong,
+.analysis-summary-card strong {
+  color: #7b1f15;
+}
+
+.analysis-card em,
+.analysis-summary-card em {
+  color: #5f3b22;
+}
+
+.analysis-summary-card {
+  background: linear-gradient(135deg, rgba(255, 247, 232, 0.9) 0%, rgba(255, 253, 248, 0.76) 100%);
+}
+
+.analysis-summary-card h3 {
+  margin-top: 0;
+}
+
+.analysis-content > p:first-of-type {
+  margin-top: 0;
+}
+
+@media (max-width: 900px) {
+  .analysis-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 700px) {
+  .analysis-card,
+  .analysis-summary-card {
+    padding: 10px;
+  }
+}
   color: #1a0d06;
   font-size: 1.05rem;
   border-bottom: 1px solid rgba(200, 178, 148, 0.6);
