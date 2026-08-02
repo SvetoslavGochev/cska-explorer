@@ -134,11 +134,11 @@ const ROLE_BY_GROUP = {
 const LATEST_SQUAD_OVERRIDES = [
   { name: "Питас Йоанис", aliases: ["Йоанис Питас"], flag: "🇨🇾", roleBg: "Нападател", roleEn: "Forward", matches: 6, goals: 4, assists: 0, hattricks: 0, impact: "5.50" },
   { name: "Цварц Жоел", aliases: ["Жоел Цварц"], flag: "🇳🇱", roleBg: "Нападател", roleEn: "Forward", matches: 6, goals: 2, assists: 1, hattricks: 0, impact: "4.00" },
-  { name: "Годой Леандро", aliases: ["Леандро Годой"], flag: "🇦🇷", roleBg: "Нападател", roleEn: "Forward", matches: 5, goals: 0, assists: 2, hattricks: 0, impact: "2.25" },
+  { name: "Жордао Бруно", aliases: ["Бруно Жордао"], flag: "🇵🇹", roleBg: "Халф", roleEn: "Midfielder", matches: 6, goals: 1, assists: 1, hattricks: 0, impact: "3.50" },
   { name: "Мартино Анжело", aliases: ["Анжело Мартино"], flag: "🇦🇷", roleBg: "Защитник", roleEn: "Defender", matches: 6, goals: 0, assists: 2, hattricks: 0, impact: "2.50" },
+  { name: "Годой Леандро", aliases: ["Леандро Годой"], flag: "🇦🇷", roleBg: "Нападател", roleEn: "Forward", matches: 5, goals: 0, assists: 2, hattricks: 0, impact: "2.25" },
   { name: "Родригес Факундо", aliases: ["Факундо Родригес"], flag: "🇦🇷", roleBg: "Защитник", roleEn: "Defender", matches: 5, goals: 0, assists: 2, hattricks: 0, impact: "2.25" },
   { name: "Дейвид Пастор", aliases: ["Пастор", "Дейвид Пастор"], flag: "🇧🇷", roleBg: "Защитник", roleEn: "Defender", matches: 6, goals: 0, assists: 1, hattricks: 0, impact: "2.00" },
-  { name: "Жордао Бруно", aliases: ["Бруно Жордао"], flag: "🇵🇹", roleBg: "Халф", roleEn: "Midfielder", matches: 6, goals: 1, assists: 1, hattricks: 0, impact: "3.50" },
   { name: "Сенси Стефано", aliases: ["Стефано Сенси"], flag: "🇮🇹", roleBg: "Халф", roleEn: "Midfielder", matches: 6, goals: 0, assists: 1, hattricks: 0, impact: "2.00" },
   { name: "Ето'о Джеймс", aliases: ["Джеймс Ето'о"], flag: "🇨🇲", roleBg: "Защитник", roleEn: "Defender", matches: 3, goals: 0, assists: 1, hattricks: 0, impact: "1.25" },
   { name: "Иванов Теодор", aliases: ["Теодор Иванов"], flag: "🇧🇬", roleBg: "Защитник", roleEn: "Defender", matches: 6, goals: 0, assists: 0, hattricks: 0, impact: "1.50" },
