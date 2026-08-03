@@ -1061,6 +1061,12 @@ body {
   font-size: 0.85rem;
 }
 
+.footer a {
+  color: #cfdcff;
+  text-decoration: underline;
+  font-weight: 700;
+}
+
 .match-sub {
   display: block;
   font-size: 0.71rem;
