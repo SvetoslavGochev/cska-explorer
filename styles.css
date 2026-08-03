@@ -890,15 +890,34 @@ body {
   gap: 8px;
 }
 
-.squad-mobile-row {
-  display: flex;
+.squad-mobile-head {
+  display: none;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  padding: 0 2px 6px;
+  color: #6b4a2e;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.squad-mobile-row {
+  display: grid;
+  gap: 6px;
+  align-items: center;
+  justify-content: space-between;
   padding: 10px 12px;
   border-radius: 10px;
   border: 1px solid rgba(200, 178, 148, 0.58);
   background: rgba(255, 255, 255, 0.62);
+}
+
+.squad-mobile-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
 }
 
 .squad-mobile-row.top-impact {
@@ -914,10 +933,35 @@ body {
   color: #2a160f;
 }
 
+.squad-mobile-player {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .squad-mobile-impact {
   color: #7b1f15;
   font-size: 0.96rem;
   letter-spacing: 0.01em;
+}
+
+.squad-mobile-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.squad-mobile-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #3a2719;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(199, 176, 144, 0.6);
+  border-radius: 999px;
+  padding: 2px 7px;
 }
 
 .status-ok { color: var(--ok); }
@@ -1493,6 +1537,10 @@ body {
 @media (max-width: 700px) {
   .squad-table-wrap {
     display: none;
+  }
+
+  .squad-mobile-head {
+    display: flex;
   }
 
   .squad-mobile-list {

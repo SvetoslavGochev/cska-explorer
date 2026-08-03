@@ -399,12 +399,22 @@ function renderSquad(squad) {
     `;
   }).join("\n");
 
+  const mobilePrimaryLabel = currentLanguage === "en" ? "Nationality · Player" : "Националност · Играч";
+  const mobileImpactLabel = currentLanguage === "en" ? "Impact" : "КПД";
+
   const mobileRowsHtml = rows.map((player, index) => {
     const isTopImpact = index < 3;
     return `
       <li class="squad-mobile-row${isTopImpact ? " top-impact" : ""}">
-        <span class="squad-mobile-name"><span class="squad-player-flag" aria-hidden="true">${player.flag}</span>${player.displayName}</span>
-        <strong class="squad-mobile-impact">${player.impact}</strong>
+        <div class="squad-mobile-main">
+          <span class="squad-mobile-name"><span class="squad-player-flag" aria-hidden="true">${player.flag}</span><span class="squad-mobile-player">${player.displayName}</span></span>
+          <strong class="squad-mobile-impact">${player.impact}</strong>
+        </div>
+        <div class="squad-mobile-stats">
+          <span class="squad-mobile-stat" title="${currentLanguage === "en" ? "Matches" : "Мачове"}">🎮 ${player.matches}</span>
+          <span class="squad-mobile-stat" title="${currentLanguage === "en" ? "Goals" : "Голове"}">⚽ ${player.goals}</span>
+          <span class="squad-mobile-stat" title="${currentLanguage === "en" ? "Assists" : "Асист."}">🅰 ${player.assists}</span>
+        </div>
       </li>
     `;
   }).join("\n");
@@ -419,6 +429,10 @@ function renderSquad(squad) {
         </thead>
         <tbody>${rowsHtml}</tbody>
       </table>
+    </div>
+    <div class="squad-mobile-head" aria-hidden="true">
+      <span class="squad-mobile-head-main">${mobilePrimaryLabel}</span>
+      <span class="squad-mobile-head-impact">${mobileImpactLabel}</span>
     </div>
     <ul class="squad-mobile-list" aria-label="Compact mobile squad list">
       ${mobileRowsHtml}
