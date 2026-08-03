@@ -608,6 +608,11 @@ function applyLanguageUI() {
     btn.setAttribute("aria-pressed", selected ? "true" : "false");
   });
 
+  document.querySelectorAll("[data-lang-content]").forEach((el) => {
+    const lang = el.getAttribute("data-lang-content");
+    el.hidden = lang !== currentLanguage;
+  });
+
   const walletLabel = document.getElementById("cskaPartnerWalletLabel");
   const walletAddress = document.getElementById("cskaPartnerWalletAddress");
   const walletCopy = document.getElementById("cskaPartnerWalletCopy");
