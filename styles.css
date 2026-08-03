@@ -882,6 +882,44 @@ body {
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
 }
 
+.squad-mobile-list {
+  display: none;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 8px;
+}
+
+.squad-mobile-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(200, 178, 148, 0.58);
+  background: rgba(255, 255, 255, 0.62);
+}
+
+.squad-mobile-row.top-impact {
+  background: linear-gradient(90deg, rgba(255, 244, 215, 0.92) 0%, rgba(255, 234, 195, 0.76) 100%);
+}
+
+.squad-mobile-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-weight: 700;
+  color: #2a160f;
+}
+
+.squad-mobile-impact {
+  color: #7b1f15;
+  font-size: 0.96rem;
+  letter-spacing: 0.01em;
+}
+
 .status-ok { color: var(--ok); }
 
 /* ── Standings zone colouring ───────────────────────── */
@@ -1449,5 +1487,15 @@ body {
   }
   .hero-nav-link {
     flex: 1 1 180px;
+  }
+}
+
+@media (max-width: 700px) {
+  .squad-table-wrap {
+    display: none;
+  }
+
+  .squad-mobile-list {
+    display: grid;
   }
 }

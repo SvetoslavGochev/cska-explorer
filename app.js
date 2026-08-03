@@ -399,6 +399,16 @@ function renderSquad(squad) {
     `;
   }).join("\n");
 
+  const mobileRowsHtml = rows.map((player, index) => {
+    const isTopImpact = index < 3;
+    return `
+      <li class="squad-mobile-row${isTopImpact ? " top-impact" : ""}">
+        <span class="squad-mobile-name"><span class="squad-player-flag" aria-hidden="true">${player.flag}</span>${player.displayName}</span>
+        <strong class="squad-mobile-impact">${player.impact}</strong>
+      </li>
+    `;
+  }).join("\n");
+
   squadGridEl.innerHTML = `
     <div class="squad-table-wrap">
       <table class="squad-table">
@@ -410,6 +420,9 @@ function renderSquad(squad) {
         <tbody>${rowsHtml}</tbody>
       </table>
     </div>
+    <ul class="squad-mobile-list" aria-label="Compact mobile squad list">
+      ${mobileRowsHtml}
+    </ul>
   `;
 }
 const LOCAL_CACHE_KEY = "cska_explorer_root_cache_v10";
