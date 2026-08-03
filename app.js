@@ -365,18 +365,10 @@ function renderSquad(squad) {
   applyLatestSquadOverrides(rows);
 
   rows.sort((a, b) => {
-    const orderA = LATEST_SQUAD_ORDER.get(normalizePlayerName(a.rawName));
-    const orderB = LATEST_SQUAD_ORDER.get(normalizePlayerName(b.rawName));
-    const hasOrderA = Number.isInteger(orderA);
-    const hasOrderB = Number.isInteger(orderB);
-
-    if (hasOrderA && hasOrderB && orderA !== orderB) {
-      return orderA - orderB;
-    }
-    if (hasOrderA && !hasOrderB) return -1;
-    if (!hasOrderA && hasOrderB) return 1;
-
-    return Number(b.impact) - Number(a.impact) || a.displayName.localeCompare(b.displayName);
+    return Number(b.impact) - Number(a.impact)
+      || b.goals - a.goals
+      || b.matches - a.matches
+      || a.displayName.localeCompare(b.displayName);
   });
 
   const headers = currentLanguage === "en"
