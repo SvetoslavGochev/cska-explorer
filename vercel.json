@@ -23,6 +23,7 @@
     { "src": "/api/csp-report", "dest": "/api/csp-report.js" },
     { "src": "/robots.txt", "dest": "/robots.txt" },
     { "src": "/sitemap.xml", "dest": "/sitemap.xml" },
+    { "src": "/ads.txt", "dest": "/ads.txt" },
     { "handle": "filesystem" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
