@@ -132,21 +132,21 @@ const ROLE_BY_GROUP = {
 };
 
 const LATEST_SQUAD_OVERRIDES = [
-  { name: "Цварц Жоел", aliases: ["Жоел Цварц", "Жоел Цвартс"], flag: "🇳🇱", roleBg: "Нападател", roleEn: "Forward", matches: 7, goals: 4, assists: 1, hattricks: 0, impact: "6.25" },
+  { name: "Цварц Жоел", aliases: ["Жоел Цварц", "Жоел Цвартс"], flag: "🇳🇱", roleBg: "Нападател", roleEn: "Forward", matches: 7, goals: 5, assists: 1, hattricks: 0, impact: "7.25" },
   { name: "Лео Перейра", aliases: ["Лео Перейра"], flag: "🇧🇷", roleBg: "Нападател / Крило", roleEn: "Forward / Winger", matches: 6, goals: 1, assists: 1, hattricks: 0, impact: "3.00" },
-  { name: "Питас Йоанис", aliases: ["Йоанис Питас"], flag: "🇨🇾", roleBg: "Нападател", roleEn: "Forward", matches: 7, goals: 1, assists: 1, hattricks: 0, impact: "3.25" },
+  { name: "Питас Йоанис", aliases: ["Йоанис Питас"], flag: "🇨🇾", roleBg: "Нападател", roleEn: "Forward", matches: 7, goals: 1, assists: 2, hattricks: 0, impact: "3.75" },
   { name: "Родригес Факундо", aliases: ["Факундо Родригес"], flag: "🇦🇷", roleBg: "Защитник", roleEn: "Defender", matches: 7, goals: 1, assists: 0, hattricks: 0, impact: "2.75" },
   { name: "Жордао Бруно", aliases: ["Бруно Жордао"], flag: "🇵🇹", roleBg: "Полузащитник", roleEn: "Midfielder", matches: 6, goals: 1, assists: 0, hattricks: 0, impact: "2.50" },
   { name: "Сенси Стефано", aliases: ["Стефано Сенси"], flag: "🇮🇹", roleBg: "Полузащитник", roleEn: "Midfielder", matches: 5, goals: 1, assists: 1, hattricks: 0, impact: "2.75" },
-  { name: "Годой Леандро", aliases: ["Леандро Годой", "Сантяго Годой"], flag: "🇦🇷", roleBg: "Нападател", roleEn: "Forward", matches: 4, goals: 1, assists: 0, hattricks: 0, impact: "2.00" },
+  { name: "Годой Леандро", aliases: ["Леандро Годой", "Сантяго Годой"], flag: "🇦🇷", roleBg: "Нападател", roleEn: "Forward", matches: 4, goals: 2, assists: 0, hattricks: 0, impact: "3.00" },
   { name: "Брахими Мохамед", aliases: ["Мохамед Брахими"], flag: "🇫🇷", roleBg: "Нападател / Крило", roleEn: "Forward / Winger", matches: 6, goals: 0, assists: 1, hattricks: 0, impact: "2.00" },
   { name: "Мартино Анжело", aliases: ["Анжело Мартино"], flag: "🇦🇷", roleBg: "Защитник", roleEn: "Defender", matches: 6, goals: 0, assists: 0, hattricks: 0, impact: "1.50" },
-  { name: "Дейвид Пастор", aliases: ["Пастор", "Дейвид Пастор"], flag: "🇧🇷", roleBg: "Защитник", roleEn: "Defender", matches: 6, goals: 0, assists: 0, hattricks: 0, impact: "1.50" },
+  { name: "Дейвид Пастор", aliases: ["Пастор", "Дейвид Пастор"], flag: "🇧🇷", roleBg: "Защитник", roleEn: "Defender", matches: 6, goals: 0, assists: 1, hattricks: 0, impact: "2.00" },
   { name: "Ето'о Джеймс", aliases: ["Джеймс Ето'о"], flag: "🇨🇲", roleBg: "Полузащитник", roleEn: "Midfielder", matches: 6, goals: 0, assists: 0, hattricks: 0, impact: "1.50" },
   { name: "Иванов Теодор", aliases: ["Теодор Иванов"], flag: "🇧🇬", roleBg: "Защитник", roleEn: "Defender", matches: 6, goals: 0, assists: 0, hattricks: 0, impact: "1.50" },
   { name: "Лапоухов Фьодор", aliases: ["Фьодор Лапоухов"], flag: "🇧🇾", roleBg: "Вратар", roleEn: "Goalkeeper", matches: 6, goals: 0, assists: 1, hattricks: 0, impact: "2.00" },
   { name: "Жан-Филип Гбамин", aliases: ["Жан-Филип Гбамен", "Гбамин Жан-Филип"], flag: "🇨🇮", roleBg: "Полузащитник", roleEn: "Midfielder", matches: 5, goals: 0, assists: 0, hattricks: 0, impact: "1.25" },
-  { name: "Ебонг Макс", aliases: ["Макс Ебонг"], flag: "🇧🇾", roleBg: "Полузащитник", roleEn: "Midfielder", matches: 4, goals: 0, assists: 0, hattricks: 0, impact: "1.00" },
+  { name: "Ебонг Макс", aliases: ["Макс Ебонг"], flag: "🇧🇾", roleBg: "Полузащитник", roleEn: "Midfielder", matches: 4, goals: 1, assists: 0, hattricks: 0, impact: "2.00" },
   { name: "Панайотов Петко", aliases: ["Петко Панайотов"], flag: "🇧🇬", roleBg: "Полузащитник", roleEn: "Midfielder", matches: 4, goals: 0, assists: 0, hattricks: 0, impact: "1.00" },
   { name: "Соле Исак", aliases: ["Исак Соле"], flag: "🇨🇫", roleBg: "Полузащитник", roleEn: "Midfielder", matches: 4, goals: 0, assists: 0, hattricks: 0, impact: "1.00" },
   { name: "Пиедраита Алехандро", aliases: ["Алехандро Пиедраита"], flag: "🇨🇴", roleBg: "Нападател / Крило", roleEn: "Forward / Winger", matches: 3, goals: 0, assists: 0, hattricks: 0, impact: "0.75" },
@@ -183,6 +183,15 @@ function playerNameSignature(value) {
     .join("|");
 }
 
+function calculateImpact(matches, assists, goals, hattricks, impactBonus = 0) {
+  const safeMatches = Number.isFinite(Number(matches)) ? Number(matches) : 0;
+  const safeAssists = Number.isFinite(Number(assists)) ? Number(assists) : 0;
+  const safeGoals = Number.isFinite(Number(goals)) ? Number(goals) : 0;
+  const safeHattricks = Number.isFinite(Number(hattricks)) ? Number(hattricks) : 0;
+  const safeBonus = Number.isFinite(Number(impactBonus)) ? Number(impactBonus) : 0;
+  return ((safeMatches * 0.25) + (safeAssists * 0.5) + (safeGoals * 1) + (safeHattricks * 2) + safeBonus).toFixed(2);
+}
+
 function applyLatestSquadOverrides(rows) {
   const byNormalizedName = new Map();
   const bySignature = new Map();
@@ -207,7 +216,8 @@ function applyLatestSquadOverrides(rows) {
       existing.goals = overrideRow.goals;
       existing.assists = overrideRow.assists;
       existing.hattricks = overrideRow.hattricks;
-      existing.impact = String(overrideRow.impact);
+      existing.impactBonus = Number.isFinite(Number(overrideRow.impactBonus)) ? Number(overrideRow.impactBonus) : 0;
+      existing.impact = calculateImpact(existing.matches, existing.assists, existing.goals, existing.hattricks, existing.impactBonus);
       existing.flag = overrideRow.flag || existing.flag;
       existing.role = role || existing.role;
       return;
@@ -220,12 +230,14 @@ function applyLatestSquadOverrides(rows) {
       goals: overrideRow.goals,
       assists: overrideRow.assists,
       hattricks: overrideRow.hattricks,
-      impact: String(overrideRow.impact),
+      impactBonus: Number.isFinite(Number(overrideRow.impactBonus)) ? Number(overrideRow.impactBonus) : 0,
       rawName,
       displayName,
       flag: overrideRow.flag || "🌍",
       role: role || "—"
     };
+
+    injected.impact = calculateImpact(injected.matches, injected.assists, injected.goals, injected.hattricks, injected.impactBonus);
 
     rows.push(injected);
     byNormalizedName.set(normalizePlayerName(rawName), injected);
@@ -342,8 +354,8 @@ function renderSquad(squad) {
     const goals = Number.isFinite(Number(p.goals)) ? Number(p.goals) : 0;
     const assists = Number.isFinite(Number(p.assists)) ? Number(p.assists) : 0;
     const hattricks = Number.isFinite(Number(p.hattricks)) ? Number(p.hattricks) : 0;
-    const impactRaw = (matches * 0.25) + (assists * 0.5) + (goals * 1) + (hattricks * 2);
-    const impact = impactRaw.toFixed(2);
+    const impactBonus = Number.isFinite(Number(p.impactBonus)) ? Number(p.impactBonus) : 0;
+    const impact = calculateImpact(matches, assists, goals, hattricks, impactBonus);
     const rawName = String(p.name || "").trim();
     const displayName = getPlayerDisplayName(rawName);
     const countryName = String(p.countryName || "").trim();
@@ -354,6 +366,7 @@ function renderSquad(squad) {
       goals,
       assists,
       hattricks,
+      impactBonus,
       impact,
       rawName,
       displayName,
