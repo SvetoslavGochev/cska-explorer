@@ -3,6 +3,7 @@ data/request-budget.json
 data/standings-page.html
 .vscode/
 node_modules/
+dist-static/
 tmp_*.js
 terminal_probe.txt
 git_diagnostics.txt

@@ -3,13 +3,11 @@ const PLAYER_FLAG_BY_NAME = {
   "Евтимов Димитър": "🇧🇬",
   "Лапоухов Фьодор": "🇧🇾",
   "Николов Даниел": "🇧🇬",
-  "Жан-Филип Гбамин": "🇨🇮",
   "Гбамен Жан-Филип": "🇨🇮",
   "Иванов Теодор": "🇧🇬",
   "Йорданов Андрей": "🇧🇬",
   "Лапеня Адриан": "🇪🇸",
   "Мартино Анхело": "🇦🇷",
-  "Дейвид Пастор": "🇧🇷",
   "Пастор": "🇧🇷",
   "Родригес Факундо": "🇦🇷",
   "Тунчев Алекс": "🇧🇬",
@@ -22,7 +20,7 @@ const PLAYER_FLAG_BY_NAME = {
   "Панайотов Петко": "🇧🇬",
   "Сенси Стефано": "🇮🇹",
   "Соле Исак": "🇨🇫",
-  "Уору Тамиму": "🇧🇯",
+  "Уору Тамиму": "🌍",
   "Чорбаджийски Георги Бранков": "🇧🇬",
   "Брахими Мохамед": "🇫🇷",
   "Годой Леандро": "🇦🇷",
@@ -32,20 +30,18 @@ const PLAYER_FLAG_BY_NAME = {
   "Пиедраита Алехандро": "🇨🇴",
   "Питас Йоанис": "🇨🇾",
   "Фаетон Матиас": "🇫🇷",
-  "Цварц Жоел": "🇳🇱"
+  "Жоел Цвартс": "🇳🇱"
 };
 
 const PLAYER_NAME_EN_BY_BG = {
   "Евтимов Димитър": "Dimitar Evtimov",
   "Лапоухов Фьодор": "Fyodor Lapoukhov",
   "Николов Даниел": "Daniel Nikolov",
-  "Жан-Филип Гбамин": "Jean-Philippe Gbamin",
   "Гбамен Жан-Филип": "Jean-Philippe Gbamin",
   "Иванов Теодор": "Teodor Ivanov",
   "Йорданов Андрей": "Andrey Yordanov",
   "Лапеня Адриан": "Adrian Lapeña",
   "Мартино Анхело": "Angelo Martino",
-  "Дейвид Пастор": "David Pastor",
   "Пастор": "David Pastor",
   "Родригес Факундо": "Facundo Rodriguez",
   "Тунчев Алекс": "Alex Tunchev",
@@ -68,261 +64,61 @@ const PLAYER_NAME_EN_BY_BG = {
   "Пиедраита Алехандро": "Alejandro Piedrahita",
   "Питас Йоанис": "Ioannis Pittas",
   "Фаетон Матиас": "Mathias Phaeton",
-  "Цварц Жоел": "Joel Cwarz",
-  "Даниел Николов": "Daniel Nikolov",
-  "Фьодор Лапоухов": "Fyodor Lapoukhov",
-  "Димитър Евтимов": "Dimitar Evtimov",
-  "Тамиму Уору": "Tamimu Owaru",
-  "Адриан Лапеня": "Adrian Lapeña",
-  "Жан-Филип Гбамен": "Jean-Philippe Gbamin",
-  "Теодор Иванов": "Teodor Ivanov",
-  "Анжело Мартино": "Angelo Martino",
-  "Андрей Йорданов": "Andrey Yordanov",
-  "Факундо Родригес": "Facundo Rodriguez",
-  "Алекс Тунчев": "Alex Tunchev",
-  "Джеймс Ето'о": "James Eto'o",
-  "Бруно Жордао": "Bruno Jordao",
-  "Макс Ебонг": "Max Ebong",
-  "Стефано Сенси": "Stefano Sensi",
-  "Мохамед Брахими": "Mohamed Brahimi",
-  "Петко Панайотов": "Petko Panayotov",
-  "Георги Чорбаджийски": "Georgi Chorbadzhiyski",
-  "Исак Соле": "Isaac Solet",
-  "Леандро Годой": "Leandro Godoy",
-  "Жоел Цварц": "Joel Cwarz",
-  "Кевин Додай": "Kevin Dodaj",
-  "Йоанис Питас": "Ioannis Pittas",
-  "Васил Каймаканов": "Vasil Kaymakanov",
-  "Лео Перейра": "Leo Pereira",
-  "Алехандро Пиедраита": "Alejandro Piedrahita"
+  "Жоел Цвартс": "Joel Zwarts"
 };
 
-const COUNTRY_FLAG_BY_BG = {
-  "България": "🇧🇬",
-  "Беларус": "🇧🇾",
-  "Кот д'Ивоар": "🇨🇮",
-  "Испания": "🇪🇸",
-  "Аржентина": "🇦🇷",
-  "Бразилия": "🇧🇷",
-  "Камерун": "🇨🇲",
-  "Португалия": "🇵🇹",
-  "Италия": "🇮🇹",
-  "ЦАР": "🇨🇫",
-  "Франция": "🇫🇷",
-  "Албания": "🇦🇱",
-  "Колумбия": "🇨🇴",
-  "Кипър": "🇨🇾",
-  "Нидерландия": "🇳🇱",
-  "Бенин": "🇧🇯"
-};
+const PLAYER_METADATA_KEYS = Object.keys(PLAYER_FLAG_BY_NAME);
 
-const ROLE_BY_GROUP = {
-  bg: {
-    goalkeepers: "Вратар",
-    defenders: "Защитник",
-    midfielders: "Халф",
-    forwards: "Нападател"
-  },
-  en: {
-    goalkeepers: "Goalkeeper",
-    defenders: "Defender",
-    midfielders: "Midfielder",
-    forwards: "Forward"
-  }
-};
-
-const LATEST_SQUAD_OVERRIDES = [
-  { name: "Цварц Жоел", aliases: ["Жоел Цварц", "Жоел Цвартс"], flag: "🇳🇱", roleBg: "Нападател", roleEn: "Forward", matches: 8, goals: 5, assists: 1, hattricks: 0, impact: "7.25" },
-  { name: "Лео Перейра", aliases: ["Лео Перейра"], flag: "🇧🇷", roleBg: "Нападател / Крило", roleEn: "Forward / Winger", matches: 6, goals: 1, assists: 1, hattricks: 0, impact: "3.00" },
-  { name: "Питас Йоанис", aliases: ["Йоанис Питас"], flag: "🇨🇾", roleBg: "Нападател", roleEn: "Forward", matches: 8, goals: 2, assists: 2, hattricks: 0 },
-  { name: "Родригес Факундо", aliases: ["Факундо Родригес"], flag: "🇦🇷", roleBg: "Защитник", roleEn: "Defender", matches: 8, goals: 1, assists: 0, hattricks: 0, impact: "2.75" },
-  { name: "Жордао Бруно", aliases: ["Бруно Жордао"], flag: "🇵🇹", roleBg: "Полузащитник", roleEn: "Midfielder", matches: 7, goals: 1, assists: 0, hattricks: 0, impact: "2.50" },
-  { name: "Сенси Стефано", aliases: ["Стефано Сенси"], flag: "🇮🇹", roleBg: "Полузащитник", roleEn: "Midfielder", matches: 6, goals: 1, assists: 1, hattricks: 0, impact: "2.75" },
-  { name: "Годой Леандро", aliases: ["Леандро Годой", "Сантяго Годой"], flag: "🇦🇷", roleBg: "Нападател", roleEn: "Forward", matches: 5, goals: 3, assists: 0, hattricks: 0 },
-  { name: "Брахими Мохамед", aliases: ["Мохамед Брахими"], flag: "🇫🇷", roleBg: "Нападател / Крило", roleEn: "Forward / Winger", matches: 7, goals: 0, assists: 1, hattricks: 0, impact: "2.00" },
-  { name: "Мартино Анжело", aliases: ["Анжело Мартино"], flag: "🇦🇷", roleBg: "Защитник", roleEn: "Defender", matches: 7, goals: 0, assists: 0, hattricks: 0, impact: "1.50" },
-  { name: "Дейвид Пастор", aliases: ["Пастор", "Дейвид Пастор"], flag: "🇧🇷", roleBg: "Защитник", roleEn: "Defender", matches: 6, goals: 0, assists: 1, hattricks: 0, impact: "2.00" },
-  { name: "Ето'о Джеймс", aliases: ["Джеймс Ето'о"], flag: "🇨🇲", roleBg: "Полузащитник", roleEn: "Midfielder", matches: 7, goals: 0, assists: 0, hattricks: 0, impact: "1.50" },
-  { name: "Иванов Теодор", aliases: ["Теодор Иванов"], flag: "🇧🇬", roleBg: "Защитник", roleEn: "Defender", matches: 6, goals: 0, assists: 0, hattricks: 0, impact: "1.50" },
-  { name: "Лапоухов Фьодор", aliases: ["Фьодор Лапоухов"], flag: "🇧🇾", roleBg: "Вратар", roleEn: "Goalkeeper", matches: 7, goals: 0, assists: 1, hattricks: 0, impact: "2.00" },
-  { name: "Жан-Филип Гбамин", aliases: ["Жан-Филип Гбамен", "Гбамин Жан-Филип"], flag: "🇨🇮", roleBg: "Полузащитник", roleEn: "Midfielder", matches: 6, goals: 0, assists: 0, hattricks: 0, impact: "1.25" },
-  { name: "Ебонг Макс", aliases: ["Макс Ебонг"], flag: "🇧🇾", roleBg: "Полузащитник", roleEn: "Midfielder", matches: 5, goals: 1, assists: 0, hattricks: 0, impact: "2.00" },
-  { name: "Панайотов Петко", aliases: ["Петко Панайотов"], flag: "🇧🇬", roleBg: "Полузащитник", roleEn: "Midfielder", matches: 5, goals: 0, assists: 0, hattricks: 0, impact: "1.00" },
-  { name: "Соле Исак", aliases: ["Исак Соле"], flag: "🇨🇫", roleBg: "Полузащитник", roleEn: "Midfielder", matches: 5, goals: 1, assists: 0, hattricks: 0 },
-  { name: "Пиедраита Алехандро", aliases: ["Алехандро Пиедраита"], flag: "🇨🇴", roleBg: "Нападател / Крило", roleEn: "Forward / Winger", matches: 3, goals: 0, assists: 0, hattricks: 0, impact: "0.75" },
-  { name: "Уору Тамиму", aliases: ["Тамиму Уору"], flag: "🇧🇯", roleBg: "Защитник", roleEn: "Defender", matches: 2, goals: 0, assists: 0, hattricks: 0, impact: "0.50" },
-  { name: "Евтимов Димитър", aliases: ["Димитър Евтимов"], flag: "🇧🇬", roleBg: "Вратар", roleEn: "Goalkeeper", matches: 1, goals: 0, assists: 1, hattricks: 0, impact: "0.75" },
-  { name: "Йорданов Андрей", aliases: ["Андрей Йорданов"], flag: "🇧🇬", roleBg: "Защитник", roleEn: "Defender", matches: 2, goals: 0, assists: 0, hattricks: 0, impact: "0.25" },
-  { name: "Лапеня Адриан", aliases: ["Адриан Лапеня"], flag: "🇪🇸", roleBg: "Защитник", roleEn: "Defender", matches: 0, goals: 0, assists: 0, hattricks: 0, impact: "0.00" },
-  { name: "Николов Даниел", aliases: ["Даниел Николов"], flag: "🇧🇬", roleBg: "Вратар", roleEn: "Goalkeeper", matches: 0, goals: 0, assists: 0, hattricks: 0, impact: "0.00" },
-  { name: "Тунчев Алекс", aliases: ["Алекс Тунчев"], flag: "🇧🇬", roleBg: "Защитник", roleEn: "Defender", matches: 0, goals: 0, assists: 0, hattricks: 0, impact: "0.00" },
-  { name: "Чорбаджийски Георги", aliases: ["Георги Чорбаджийски", "Чорбаджийски Георги Бранков"], flag: "🇧🇬", roleBg: "Полузащитник", roleEn: "Midfielder", matches: 0, goals: 0, assists: 0, hattricks: 0, impact: "0.00" },
-  { name: "Додай Кевин", aliases: ["Кевин Додай"], flag: "🇦🇱", roleBg: "Нападател", roleEn: "Forward", matches: 0, goals: 0, assists: 0, hattricks: 0, impact: "0.00" },
-  { name: "Каймаканов Васил", aliases: ["Васил Каймаканов"], flag: "🇧🇬", roleBg: "Нападател", roleEn: "Forward", matches: 0, goals: 0, assists: 0, hattricks: 0, impact: "0.00" }
-];
-
-const LATEST_SQUAD_ORDER = new Map(
-  LATEST_SQUAD_OVERRIDES.map((row, index) => [normalizePlayerName(row.name), index])
-);
-
-function normalizePlayerName(value) {
+function normalizePlayerTokens(value) {
   return String(value || "")
+    .trim()
     .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^\p{L}\p{N}\s]/gu, " ")
-    .replace(/\s+/g, " ")
-    .trim();
+    .split(/\s+/)
+    .map((token) => token.trim())
+    .filter(Boolean);
 }
 
-function playerNameSignature(value) {
-  return normalizePlayerName(value)
-    .split(" ")
-    .filter(Boolean)
-    .sort()
-    .join("|");
+function isTokenSubset(leftTokens, rightTokens) {
+  if (!leftTokens.length || !rightTokens.length) return false;
+  return leftTokens.every((token) => rightTokens.includes(token));
 }
 
-function calculateImpact(matches, assists, goals, hattricks, impactBonus = 0) {
-  const safeMatches = Number.isFinite(Number(matches)) ? Number(matches) : 0;
-  const safeAssists = Number.isFinite(Number(assists)) ? Number(assists) : 0;
-  const safeGoals = Number.isFinite(Number(goals)) ? Number(goals) : 0;
-  const safeHattricks = Number.isFinite(Number(hattricks)) ? Number(hattricks) : 0;
-  const safeBonus = Number.isFinite(Number(impactBonus)) ? Number(impactBonus) : 0;
-  return ((safeMatches * 0.25) + (safeAssists * 0.5) + (safeGoals * 1) + (safeHattricks * 2) + safeBonus).toFixed(2);
-}
-
-function applyLatestSquadOverrides(rows) {
-  const byNormalizedName = new Map();
-  const bySignature = new Map();
-  rows.forEach((row) => {
-    const raw = row.rawName || row.displayName;
-    byNormalizedName.set(normalizePlayerName(raw), row);
-    bySignature.set(playerNameSignature(raw), row);
-  });
-
-  LATEST_SQUAD_OVERRIDES.forEach((overrideRow) => {
-    const candidateNames = [overrideRow.name, ...(overrideRow.aliases || [])];
-    const existing = candidateNames
-      .map((name) => byNormalizedName.get(normalizePlayerName(name)) || bySignature.get(playerNameSignature(name)))
-      .find(Boolean);
-    const role = currentLanguage === "en" ? overrideRow.roleEn : overrideRow.roleBg;
-
-    if (existing) {
-      const newRawName = overrideRow.name;
-      existing.rawName = newRawName;
-      existing.displayName = getPlayerDisplayName(newRawName);
-      existing.matches = overrideRow.matches;
-      existing.goals = overrideRow.goals;
-      existing.assists = overrideRow.assists;
-      existing.hattricks = overrideRow.hattricks;
-      existing.impactBonus = Number.isFinite(Number(overrideRow.impactBonus)) ? Number(overrideRow.impactBonus) : 0;
-      existing.impact = calculateImpact(existing.matches, existing.assists, existing.goals, existing.hattricks, existing.impactBonus);
-      existing.flag = overrideRow.flag || existing.flag;
-      existing.role = role || existing.role;
-      return;
-    }
-
-    const rawName = overrideRow.name;
-    const displayName = getPlayerDisplayName(rawName);
-    const injected = {
-      matches: overrideRow.matches,
-      goals: overrideRow.goals,
-      assists: overrideRow.assists,
-      hattricks: overrideRow.hattricks,
-      impactBonus: Number.isFinite(Number(overrideRow.impactBonus)) ? Number(overrideRow.impactBonus) : 0,
-      rawName,
-      displayName,
-      flag: overrideRow.flag || "🌍",
-      role: role || "—"
-    };
-
-    injected.impact = calculateImpact(injected.matches, injected.assists, injected.goals, injected.hattricks, injected.impactBonus);
-
-    rows.push(injected);
-    byNormalizedName.set(normalizePlayerName(rawName), injected);
-    bySignature.set(playerNameSignature(rawName), injected);
-  });
-
-  return rows;
-}
-
-const PLAYER_ROLE_BY_NAME = {
-  bg: {
-    "Евтимов Димитър": "Вратар",
-    "Лапоухов Фьодор": "Вратар",
-    "Николов Даниел": "Вратар",
-    "Гбамен Жан-Филип": "Защитник",
-    "Иванов Теодор": "Защитник",
-    "Йорданов Андрей": "Защитник",
-    "Лапеня Адриан": "Защитник",
-    "Мартино Анхело": "Защитник",
-    "Пастор": "Защитник",
-    "Родригес Факундо": "Защитник",
-    "Тунчев Алекс": "Защитник",
-    "Ебонг Макс": "Халф",
-    "Ето'о Джеймс": "Халф",
-    "Жордао Бруно": "Халф",
-    "Илиев Yulian": "Халф",
-    "Каймаканов Васил": "Халф",
-    "Николов Алесандро": "Халф",
-    "Панайотов Петко": "Халф",
-    "Сенси Стефано": "Халф",
-    "Соле Исак": "Халф",
-    "Уору Тамиму": "Халф",
-    "Чорбаджийски Георги Бранков": "Халф",
-    "Брахими Мохамед": "Нападател",
-    "Годой Леандро": "Нападател",
-    "Додай Кевин": "Нападател",
-    "Живков Радослав": "Нападател",
-    "Лео Перейра": "Нападател",
-    "Пиедраита Алехандро": "Нападател",
-    "Питас Йоанис": "Нападател",
-    "Фаетон Матиас": "Нападател",
-    "Цварц Жоел": "Нападател"
-  },
-  en: {
-    "Евтимов Димитър": "Goalkeeper",
-    "Лапоухов Фьодор": "Goalkeeper",
-    "Николов Даниел": "Goalkeeper",
-    "Гбамен Жан-Филип": "Defender",
-    "Иванов Теодор": "Defender",
-    "Йорданов Андрей": "Defender",
-    "Лапеня Адриан": "Defender",
-    "Мартино Анхело": "Defender",
-    "Пастор": "Defender",
-    "Родригес Факундо": "Defender",
-    "Тунчев Алекс": "Defender",
-    "Ебонг Макс": "Midfielder",
-    "Ето'о Джеймс": "Midfielder",
-    "Жордао Бруно": "Midfielder",
-    "Илиев Yulian": "Midfielder",
-    "Каймаканов Васил": "Midfielder",
-    "Николов Алесандро": "Midfielder",
-    "Панайотов Петко": "Midfielder",
-    "Сенси Стефано": "Midfielder",
-    "Соле Исак": "Midfielder",
-    "Уору Тамиму": "Midfielder",
-    "Чорбаджийски Георги Бранков": "Midfielder",
-    "Брахими Мохамед": "Forward",
-    "Годой Леандро": "Forward",
-    "Додай Кевин": "Forward",
-    "Живков Радослав": "Forward",
-    "Лео Перейра": "Forward",
-    "Пиедраита Алехандро": "Forward",
-    "Питас Йоанис": "Forward",
-    "Фаетон Матиас": "Forward",
-    "Цварц Жоел": "Forward"
+function resolvePlayerMetadataKey(name) {
+  const safeName = String(name || "").trim();
+  if (!safeName) return "";
+  if (PLAYER_FLAG_BY_NAME[safeName] || PLAYER_NAME_EN_BY_BG[safeName]) {
+    return safeName;
   }
-};
+
+  const nameTokens = normalizePlayerTokens(safeName);
+  if (!nameTokens.length) return "";
+
+  for (const candidate of PLAYER_METADATA_KEYS) {
+    const candidateTokens = normalizePlayerTokens(candidate);
+    if (
+      isTokenSubset(candidateTokens, nameTokens) ||
+      isTokenSubset(nameTokens, candidateTokens)
+    ) {
+      return candidate;
+    }
+  }
+
+  return "";
+}
 
 function getPlayerDisplayName(name) {
   const safeName = String(name || "").trim();
   if (!safeName) return "-";
   if (currentLanguage === "en") {
-    return PLAYER_NAME_EN_BY_BG[safeName] || safeName;
+    const metadataKey = resolvePlayerMetadataKey(safeName);
+    return PLAYER_NAME_EN_BY_BG[metadataKey] || safeName;
   }
   return safeName;
+}
+
+function getPlayerFlag(name) {
+  const metadataKey = resolvePlayerMetadataKey(name);
+  return PLAYER_FLAG_BY_NAME[metadataKey] || "🌍";
 }
 
 function renderSquad(squad) {
@@ -332,117 +128,35 @@ function renderSquad(squad) {
     squadGridEl.innerHTML = "";
     return;
   }
-
-  const roleByGroup = ROLE_BY_GROUP[currentLanguage] || ROLE_BY_GROUP.bg;
-  const groupedKeys = ["goalkeepers", "defenders", "midfielders", "forwards"];
-  const hasGroupedSquad = groupedKeys.some((key) => Array.isArray(squad[key]));
-
-  const allPlayers = hasGroupedSquad
-    ? groupedKeys.flatMap((key) => {
-      const groupPlayers = Array.isArray(squad[key]) ? squad[key] : [];
-      return groupPlayers.map((player) => ({ ...player, __group: key }));
-    }).filter(Boolean)
-    : Object.values(squad).flat().filter(Boolean);
-
+  // Обединява всички групи (вратари, защитници и т.н.) в един масив
+  const allPlayers = Object.values(squad).flat();
   if (!allPlayers.length) {
     squadGridEl.innerHTML = "";
     return;
   }
-
-  const rows = allPlayers.map((p) => {
+  squadGridEl.innerHTML = allPlayers.map((p) => {
     const matches = Number.isFinite(Number(p.matches)) ? Number(p.matches) : 0;
     const goals = Number.isFinite(Number(p.goals)) ? Number(p.goals) : 0;
     const assists = Number.isFinite(Number(p.assists)) ? Number(p.assists) : 0;
     const hattricks = Number.isFinite(Number(p.hattricks)) ? Number(p.hattricks) : 0;
-    const impactBonus = Number.isFinite(Number(p.impactBonus)) ? Number(p.impactBonus) : 0;
-    const impact = calculateImpact(matches, assists, goals, hattricks, impactBonus);
+    const impactRaw = (matches * 0.25) + (assists * 0.5) + (goals * 1) + (hattricks * 2);
+    const impact = Number.isInteger(impactRaw) ? String(impactRaw) : impactRaw.toFixed(2);
     const rawName = String(p.name || "").trim();
     const displayName = getPlayerDisplayName(rawName);
-    const countryName = String(p.countryName || "").trim();
-    const flag = PLAYER_FLAG_BY_NAME[rawName] || COUNTRY_FLAG_BY_BG[countryName] || "🌍";
-    const role = roleByGroup[p.__group] || PLAYER_ROLE_BY_NAME[currentLanguage]?.[rawName] || PLAYER_ROLE_BY_NAME.bg[rawName] || "—";
-    return {
-      matches,
-      goals,
-      assists,
-      hattricks,
-      impactBonus,
-      impact,
-      rawName,
-      displayName,
-      flag,
-      role
-    };
-  });
+    const flag = getPlayerFlag(rawName);
 
-  applyLatestSquadOverrides(rows);
-
-  rows.sort((a, b) => {
-    return Number(b.impact) - Number(a.impact)
-      || b.goals - a.goals
-      || b.matches - a.matches
-      || a.displayName.localeCompare(b.displayName);
-  });
-
-  const headers = currentLanguage === "en"
-    ? ["Nationality", "Player", "Position / Role", "Matches", "Goals", "Assists", "Hattricks", "Impact"]
-    : ["Националност", "Играч", "Позиция / Роля", "Мачове", "Голове", "Асист.", "Хеттрици", "КПД"];
-
-  const rowsHtml = rows.map((player, index) => {
-    const isTopImpact = index < 3;
     return `
-      <tr class="${isTopImpact ? "top-impact" : ""}">
-        <td><span class="squad-player-flag" aria-hidden="true">${player.flag}</span></td>
-        <td>${player.displayName}</td>
-        <td>${player.role}</td>
-        <td>${player.matches}</td>
-        <td>${player.goals}</td>
-        <td>${player.assists}</td>
-        <td>${player.hattricks}</td>
-        <td>${player.impact}</td>
-      </tr>
+      <article class="squad-player">
+        <h3 class="squad-player-name"><span class="squad-player-flag" aria-hidden="true">${flag}</span>${displayName}</h3>
+        <div class="squad-player-stats">
+          <span class="squad-stat"><b>${t("statMatches")}</b> ${matches}</span>
+          <span class="squad-stat"><b>${t("statGoals")}</b> ${goals}</span>
+          <span class="squad-stat"><b>${t("statAssists")}</b> ${assists}</span>
+          <span class="squad-stat"><b>${t("statImpact")}</b> ${impact}</span>
+        </div>
+      </article>
     `;
   }).join("\n");
-
-  const mobilePrimaryLabel = currentLanguage === "en" ? "Nationality · Player" : "Националност · Играч";
-  const mobileImpactLabel = currentLanguage === "en" ? "Impact" : "КПД";
-
-  const mobileRowsHtml = rows.map((player, index) => {
-    const isTopImpact = index < 3;
-    return `
-      <li class="squad-mobile-row${isTopImpact ? " top-impact" : ""}">
-        <div class="squad-mobile-main">
-          <span class="squad-mobile-name"><span class="squad-player-flag" aria-hidden="true">${player.flag}</span><span class="squad-mobile-player">${player.displayName}</span></span>
-          <strong class="squad-mobile-impact">${player.impact}</strong>
-        </div>
-        <div class="squad-mobile-stats">
-          <span class="squad-mobile-stat" title="${currentLanguage === "en" ? "Matches" : "Мачове"}">🎮 ${player.matches}</span>
-          <span class="squad-mobile-stat" title="${currentLanguage === "en" ? "Goals" : "Голове"}">⚽ ${player.goals}</span>
-          <span class="squad-mobile-stat" title="${currentLanguage === "en" ? "Assists" : "Асист."}">🅰 ${player.assists}</span>
-        </div>
-      </li>
-    `;
-  }).join("\n");
-
-  squadGridEl.innerHTML = `
-    <div class="squad-table-wrap">
-      <table class="squad-table">
-        <thead>
-          <tr>
-            ${headers.map((header) => `<th>${header}</th>`).join("")}
-          </tr>
-        </thead>
-        <tbody>${rowsHtml}</tbody>
-      </table>
-    </div>
-    <div class="squad-mobile-head" aria-hidden="true">
-      <span class="squad-mobile-head-main">${mobilePrimaryLabel}</span>
-      <span class="squad-mobile-head-impact">${mobileImpactLabel}</span>
-    </div>
-    <ul class="squad-mobile-list" aria-label="Compact mobile squad list">
-      ${mobileRowsHtml}
-    </ul>
-  `;
 }
 const LOCAL_CACHE_KEY = "cska_explorer_root_cache_v10";
 const LOCAL_CACHE_TTL_MS = 10 * 60 * 1000;
@@ -480,7 +194,7 @@ const I18N = {
     todayMatchesTitle: "Мачове днес",
     lastResultsTitle: "Последни резултати",
     squadTitle: "Състав на ЦСКА",
-    cskaAnalysisTitle: "📊 Анализ на играта на ЦСКА",
+    cskaAnalysisTitle: "Анализ на играта на ЦСКА след 10 официални мача (Сезон 2026/27)",
     groupGoalkeepers: "Вратари",
     groupDefenders: "Защитници",
     groupMidfielders: "Халфове",
@@ -555,7 +269,7 @@ const I18N = {
     todayMatchesTitle: "Matches Today",
     lastResultsTitle: "Recent Results",
     squadTitle: "CSKA Sofia Squad",
-    cskaAnalysisTitle: "📊 CSKA Game Analysis",
+    cskaAnalysisTitle: "CSKA Game Analysis After 10 Official Matches (Season 2026/27)",
     groupGoalkeepers: "Goalkeepers",
     groupDefenders: "Defenders",
     groupMidfielders: "Midfielders",
@@ -616,8 +330,83 @@ let currentLanguage = localStorage.getItem(LANGUAGE_KEY) === "en" ? "en" : "bg";
 let lastPayload = null;
 let lastFromCache = false;
 
+const ANALYSIS_CONTENT = {
+  bg: `
+    <p>След изминаването на първите 10 официални двубоя от сезона, статистическият профил на ЦСКА придоби още по-ясни очертания. Отборът премина през тежко европейско изпитание, в което прагматизмът, желязната дисциплина и тактическото търпение в защита се оказаха решаващи за крайния успех.</p>
+
+    <h3>1. Ефективност в атака и завършваща фаза</h3>
+    <ul>
+      <li><b>Общо отбелязани голове:</b> 19 гола в 10 официални мача, или средно по 1.90 гола на двубой.</li>
+      <li><b>Клинична прецизност при ограничен брой положения:</b> В реванша срещу Макаби Тел Авив ЦСКА реализира 1 гол от само 3 точни удара, което отново подчерта ефективността в завършващата фаза.</li>
+      <li><b>Извод:</b> Дори когато не доминира териториално, отборът остава опасен чрез бързи преходи и добро оползотворяване на малкото чисти ситуации.</li>
+    </ul>
+
+    <h3>2. Контрол върху играта и динамика</h3>
+    <ul>
+      <li><b>Владение на топката:</b> Срещу Макаби Тел Авив ЦСКА регистрира 35% притежание на топката срещу 65% за съперника, което свали леко сезонната средна стойност, но потвърди ясния план за игра в блок и защита на аванса.</li>
+      <li><b>Съпротива под натиск:</b> 2 блокирани удара, 5 спасявания или пропуски на съперника пред вратата и 2 спечелени корнера показват колко сериозен натиск е трябвало да бъде овладян.</li>
+      <li><b>Извод:</b> ЦСКА демонстрира зрялост и тактическа гъвкавост, като приема по-дълбока позиция, когато мачът го изисква, без да губи компактност между линиите.</li>
+    </ul>
+
+    <h3>3. Защитна стабилност, единоборства и агресия</h3>
+    <ul>
+      <li><b>Допуснати голове:</b> 8 допуснати гола в 10 мача, което оформя средно по 0.80 гола на двубой.</li>
+      <li><b>Физическа борба и тактически нарушения:</b> Срещу Макаби Тел Авив ЦСКА извърши 22 нарушения срещу 12 за съперника, ясен знак за максимална концентрация в прекъсването на опасните атаки и нарушаването на ритъма на противника.</li>
+      <li><b>Дисциплина под напрежение:</b> Въпреки тежкия характер на мача, отборът остана в контрол с 3 жълти картона и без червен картон.</li>
+    </ul>
+
+    <h3>4. Актуализирани ключови изводи след 10 мача</h3>
+    <ul>
+      <li><b>Характер и турнирен опит:</b> Успехът срещу Макаби показва, че ЦСКА има не само футболни качества, но и психологическа устойчивост да затваря трудни европейски сблъсъци.</li>
+      <li><b>Адаптивност към различни стилове:</b> Отборът може да превключва от доминация и контрол в първенството към организирана игра без топка срещу по-силни офанзивни съперници.</li>
+      <li><b>Цена на битката:</b> Големият брой нарушения е знак за колективна саможертва, но и тема, която щабът трябва да следи заради натрупване на официални предупреждения.</li>
+    </ul>
+
+    <p class="analysis-verdict"><b>Обобщение:</b> С 19 отбелязани гола в 10 официални мача и преминато сериозно европейско препятствие, ЦСКА затвърждава образа си на тактически гъвкав, боеспособен и прагматичен отбор с ясно изразен турнирен характер.</p>
+  `,
+  en: `
+    <p>After the first 10 official matches of the season, CSKA's statistical profile has become much clearer. The team came through a demanding European test in which pragmatism, iron discipline, and tactical patience in defense proved decisive for the final outcome.</p>
+
+    <h3>1. Attacking Efficiency and Final Phase</h3>
+    <ul>
+      <li><b>Total goals scored:</b> 19 goals in 10 official matches, an average of 1.90 goals per game.</li>
+      <li><b>Clinical finishing from limited chances:</b> In the second leg against Maccabi Tel Aviv, CSKA scored 1 goal from only 3 shots on target, once again highlighting the team's efficiency in decisive moments.</li>
+      <li><b>Takeaway:</b> Even when the team does not dominate territorially, it remains dangerous through quick transitions and efficient use of its few clear openings.</li>
+    </ul>
+
+    <h3>2. Game Control and Match Dynamics</h3>
+    <ul>
+      <li><b>Possession:</b> Against Maccabi Tel Aviv, CSKA recorded 35% possession versus 65% for the opponent, which slightly lowered the season average but confirmed a clear game plan based on a compact block and protecting the lead.</li>
+      <li><b>Resistance under pressure:</b> 2 blocked shots, 5 saves or missed attempts by the opponent near goal, and 2 corners won illustrate the scale of the attacking pressure the team had to absorb.</li>
+      <li><b>Takeaway:</b> CSKA showed maturity and tactical flexibility, accepting a deeper position when the match demanded it without losing compactness between the lines.</li>
+    </ul>
+
+    <h3>3. Defensive Stability, Duels, and Aggression</h3>
+    <ul>
+      <li><b>Goals conceded:</b> 8 goals conceded in 10 matches, which means an average of 0.80 goals allowed per game.</li>
+      <li><b>Physical battle and tactical fouls:</b> Against Maccabi Tel Aviv, CSKA committed 22 fouls compared to 12 by the opponent, a clear sign of concentration in breaking up dangerous attacks and disrupting the rival's rhythm.</li>
+      <li><b>Discipline under pressure:</b> Despite the demanding nature of the match, the team stayed under control with 3 yellow cards and no red card.</li>
+    </ul>
+
+    <h3>4. Updated Key Conclusions After 10 Matches</h3>
+    <ul>
+      <li><b>Character and tournament experience:</b> The success against Maccabi shows that CSKA has not only football quality, but also the psychological resilience to close out difficult European ties.</li>
+      <li><b>Adaptability to different styles:</b> The team can switch from dominance and control in domestic matches to organized off-ball play against stronger attacking opponents.</li>
+      <li><b>The cost of the battle:</b> The high number of fouls reflects collective sacrifice, but it is also something the coaching staff will need to monitor because of accumulated official cautions.</li>
+    </ul>
+
+    <p class="analysis-verdict"><b>Summary:</b> With 19 goals scored in 10 official matches and a serious European hurdle cleared, CSKA continues to build the image of a tactically flexible, highly competitive, and pragmatic team with a clear tournament identity.</p>
+  `
+};
+
 function t(key) {
   return I18N[currentLanguage]?.[key] || I18N.bg[key] || key;
+}
+
+function renderAnalysisContent() {
+  const analysisContent = document.getElementById("analysisContent");
+  if (!analysisContent) return;
+  analysisContent.innerHTML = ANALYSIS_CONTENT[currentLanguage] || ANALYSIS_CONTENT.bg;
 }
 
 function applyLanguageUI() {
@@ -640,11 +429,6 @@ function applyLanguageUI() {
     btn.setAttribute("aria-pressed", selected ? "true" : "false");
   });
 
-  document.querySelectorAll("[data-lang-content]").forEach((el) => {
-    const lang = el.getAttribute("data-lang-content");
-    el.hidden = lang !== currentLanguage;
-  });
-
   const walletLabel = document.getElementById("cskaPartnerWalletLabel");
   const walletAddress = document.getElementById("cskaPartnerWalletAddress");
   const walletCopy = document.getElementById("cskaPartnerWalletCopy");
@@ -663,6 +447,8 @@ function applyLanguageUI() {
   if (instagramLink) instagramLink.href = CSKA_PARTNER_INSTAGRAM_URL;
   if (facebookLink) facebookLink.href = CSKA_PARTNER_FACEBOOK_URL;
   if (xLink) xLink.href = CSKA_PARTNER_X_URL;
+
+  renderAnalysisContent();
 }
 
 function setupLanguageSwitch() {

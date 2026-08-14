@@ -3,9 +3,9 @@ const fs = require("fs");
 const path = require("path");
 
 const PORT = process.env.PORT || 3000;
-const CACHE_TTL_MS = 30 * 60 * 1000;
+const CACHE_TTL_MS = 56 * 60 * 60 * 1000;
 const DAILY_REFRESH_LIMIT = Number(process.env.DAILY_REFRESH_LIMIT || 15);
-const AUTO_REFRESH_MINUTES = Number(process.env.AUTO_REFRESH_MINUTES || 120);
+const AUTO_REFRESH_MINUTES = Number(process.env.AUTO_REFRESH_MINUTES || 3360);
 const REQUEST_TIMEOUT_MS = Number(process.env.REQUEST_TIMEOUT_MS || 12000);
 const CORS_ALLOW_ORIGIN = String(process.env.CORS_ALLOW_ORIGIN || "*").trim() || "*";
 const SPORTSDB_BASE = "https://www.thesportsdb.com/api/v1/json/3";
@@ -21,6 +21,20 @@ const DATA_DIR = path.join(ROOT, "data");
 const CACHE_FILE = path.join(DATA_DIR, "live-cache.json");
 const BOOTSTRAP_FILE = path.join(DATA_DIR, "bootstrap-data.json");
 const BUDGET_FILE = path.join(DATA_DIR, "request-budget.json");
+const ROOT_STATIC_FILES = new Set([
+  "index.html",
+  "index-en.html",
+  "styles.css",
+  "app.js",
+  "runtime-config.js",
+  "favicon.svg",
+  "robots.txt",
+  "sitemap.xml",
+  "social-preview.png",
+  "social-preview.svg",
+  "data/bootstrap-data.json"
+]);
+const ROOT_STATIC_PREFIXES = ["assets"];
 
 const TEAM_NAME_MAP = {
   "Arda Kardzhali": "Арда",
@@ -1158,14 +1172,34 @@ function sendJson(res, code, obj) {
   res.end(body);
 }
 
+function resolveStaticPath(reqPath) {
+  const normalizedPath = reqPath === "/" ? "/index.html" : reqPath;
+  const safePath = path.normalize(normalizedPath).replace(/^\\+/, "");
+
+  const rootRelativePath = safePath.replace(/\\/g, "/");
+  const useRootFile = ROOT_STATIC_FILES.has(rootRelativePath);
+  const useRootPrefix = ROOT_STATIC_PREFIXES.some((prefix) => rootRelativePath.startsWith(`${prefix}/`));
+
+  if (useRootFile || useRootPrefix) {
+    const rootPath = path.join(ROOT, safePath);
+    if (rootPath.startsWith(ROOT) && fs.existsSync(rootPath) && !fs.statSync(rootPath).isDirectory()) {
+      return rootPath;
+    }
+  }
+
+  const publicPath = path.join(PUBLIC_DIR, safePath);
+  if (publicPath.startsWith(PUBLIC_DIR) && fs.existsSync(publicPath) && !fs.statSync(publicPath).isDirectory()) {
+    return publicPath;
+  }
+
+  return null;
+}
+
 function serveStatic(req, res) {
-  let reqPath = req.url.split("?")[0];
-  if (reqPath === "/") reqPath = "/index.html";
+  const reqPath = req.url.split("?")[0];
+  const fullPath = resolveStaticPath(reqPath);
 
-  const safePath = path.normalize(reqPath).replace(/^\\+/, "");
-  const fullPath = path.join(PUBLIC_DIR, safePath);
-
-  if (!fullPath.startsWith(PUBLIC_DIR) || !fs.existsSync(fullPath) || fs.statSync(fullPath).isDirectory()) {
+  if (!fullPath) {
     res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" });
     res.end("Not found");
     return;
