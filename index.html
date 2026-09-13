@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="bg" class="bg-lang-primary">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CSKA Explorer | Standings, Squad and Match Analysis</title>
+  <meta name="description" content="CSKA Explorer with standings, squad updates, match analysis, and fan-focused football insights." />
+  <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1" />
+  <meta name="google-site-verification" content="ns_ZwnDwtWypYomgovXDi1GELPmFQqSMYWAGrKywL2U" />
+  <link rel="canonical" href="https://cska-explorer.vercel.app/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="CSKA Explorer" />
+  <meta property="og:title" content="CSKA Explorer | Standings, Squad and Match Analysis" />
+  <meta property="og:description" content="Follow CSKA standings, player data, and performance analysis in one fan-focused explorer." />
+  <meta property="og:url" content="https://cska-explorer.vercel.app/" />
+  <meta property="og:image" content="https://cska-explorer.vercel.app/social-preview.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://cska-explorer.vercel.app/" />
+  <meta name="twitter:title" content="CSKA Explorer | Standings, Squad and Match Analysis" />
+  <meta name="twitter:description" content="Fan-focused CSKA hub with standings, squad cards, and match performance context." />
+  <meta name="twitter:image" content="https://cska-explorer.vercel.app/social-preview.png" />
+  <script>
+    window.va = window.va || function () {
+      (window.vaq = window.vaq || []).push(arguments);
+    };
+  </script>
+  <script defer src="/_vercel/insights/script.js"></script>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="styles.css" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; img-src 'self' data: https://static.flashscore.com https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self' https:; form-action 'self' https://formspree.io https://dashboard.mailerlite.com https://assets.mailerlite.com; upgrade-insecure-requests; block-all-mixed-content;">
+</head>
+<body>
+  <div class="container">
+    <section class="hero">
+      <div class="hero-topline">
+        <div class="lang-switch" role="group" aria-label="Language switcher">
+          <button type="button" class="lang-btn" data-lang="bg">BG</button>
+          <button type="button" class="lang-btn" data-lang="en">ENG</button>
+        </div>
+      </div>
+      <h1 id="mainTitle">CSKA EXPLORER <span id="mainVersion" class="main-version"></span></h1>
+      <nav class="hero-nav" aria-label="Бързи връзки">
+        <a class="hero-nav-link" href="https://cska.bg/club/foundation" target="_blank" rel="noopener noreferrer" data-i18n="heroLinkFoundation">Фондация</a>
+        <a class="hero-nav-link" href="https://cska.bg/shop" target="_blank" rel="noopener noreferrer" data-i18n="heroLinkShop">Магазин</a>
+        <a class="hero-nav-link" href="https://stadium.cska.bg/?_gl=1%2Av5e7vk%2A_ga%2AMzEyNjUzODA1LjE3NTI1MDg2ODI.%2A_ga_JR4JBTGPLN%2AczE3NTMxODkwNDgkbzYkZzAkdDE3NTMxODkwNDgkajYwJGwwJGgw" target="_blank" rel="noopener noreferrer" data-i18n="heroLinkStadium">Стадион</a>
+        <a class="hero-nav-link" href="https://cska.bg/fan-registration" target="_blank" rel="noopener noreferrer" data-i18n="heroLinkFanRegistration">Фен регистрация</a>
+      </nav>
+      <p class="hero-partner-label" data-i18n="partnerLinksLabel">Партньорски линкове</p>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2 data-i18n="standingsTitle">Efbet Лига - Класиране</h2>
+        <div class="table-wrap">
+          <table class="table" id="standingsTable">
+            <thead>
+              <tr>
+                <th>#</th><th data-i18n="thTeam">Отбор</th><th data-i18n="thPTS">Т</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="small"><span data-i18n="sourcePrefix">Източник:</span> <a href="https://www.flashscore.bg/soccer/bulgaria/efbet/#/ID1TwQHr/standings/overall/" target="_blank" rel="noreferrer">Flashscore Efbet standings</a></p>
+        <p class="small standings-partner-label" data-i18n="partnerLinksLabel">Партньорски линкове</p>
+      </article>
+
+    </section>
+
+    <section class="card" style="margin-top:16px;">
+      <h2 data-i18n="squadTitle"><img src="https://static.flashscore.com/res/image/data/MZmpVA7k-nTkb2fj6.png" alt="ЦСКА" style="height:1em;vertical-align:middle;margin-right:0.5em;">Състав на ЦСКА</h2>
+      <p class="team-info-bar" id="teamInfoBar"></p>
+      <div class="squad-grid" id="squadGrid"></div>
+      <p class="small" id="sourceNote"></p>
+      <p class="small status-ok" id="statusLine"></p>
+    </section>
+
+    <section class="card cska-analysis-card" style="margin-top:16px;">
+      <h2 data-i18n="cskaAnalysisTitle">Анализ на играта на ЦСКА след 11 официални мача (Сезон 2026/27)</h2>
+      <div class="analysis-content" id="analysisContent">
+        <p>След изиграването на още един двубой — убедителната победа с <b>5:0 срещу Ботев Враца</b> — статистическият профил на ЦСКА придоби още по-ясни очертания. Отборът не само затвърди тенденциите от предишните мачове, но и показа по-голяма стабилност в завършващата фаза, по-добра динамика и по-голяма колективна агресия.</p>
+
+        <h3>1. Ефективност в атака и завършваща фаза</h3>
+        <ul>
+          <li><b>Общо отбелязани голове:</b> 19 гола в 10 мача, след победата над Ботев Враца — 24 гола в 11 официални мача, или средно по 2.18 гола на двубой.</li>
+          <li><b>Качество на завършващата фаза:</b> Срещу Ботев Враца ЦСКА записа 18 удара, 11 точни удара и 5 гола, което показва най-ефективния офанзивен мач за сезона.</li>
+          <li><b>Извод:</b> Отборът вече не разчита само на бързи преходи. В по-слабите срещи ЦСКА демонстрира способност да доминира, да създава много положения и да реализира с висока клиничност.</li>
+        </ul>
+
+        <h3>2. Контрол върху играта и динамика</h3>
+        <ul>
+          <li><b>Владение на топката:</b> Срещу Макаби Тел Авив ЦСКА регистрира 35% притежание, а срещу Ботев Враца — 48%, което показва, че отборът може да сменя стила си според съперника.</li>
+          <li><b>Натиск и създаване на ситуации:</b> 8 корнера, 18 удара, 11 точни удара и 5 гола срещу Ботев Враца показват, че ЦСКА контролира темпото и територията, когато играе с висока линейна агресия.</li>
+          <li><b>Извод:</b> ЦСКА демонстрира добра тактическа гъвкавост — от организирана игра в блок до доминиращо натискане в офанзивната трета.</li>
+        </ul>
+
+        <h3>3. Защитна стабилност и дисциплина</h3>
+        <ul>
+          <li><b>Допуснати голове:</b> 8 гола в 11 мача, или средно по 0.72 гола на двубой.</li>
+          <li><b>Агресия и нарушения:</b> В последните мачове има признаци на повишена агресия и повече дисциплинарни инциденти, което е важно за проследяване, за да не се превърне в системен проблем.</li>
+          <li><b>Извод:</b> Защитата остава стабилна, но колективната дисциплина в моменти на напрежение изисква повишено внимание.</li>
+        </ul>
+
+        <h3>4. Актуализирани ключови изводи след 11 мача</h3>
+        <ul>
+          <li><b>Офанзивен подем:</b> Победата над Ботев Враца показа най-силната офанзивна продукция за сезона, с разнообразни голмайстори и висока клиничност в завършващата фаза.</li>
+          <li><b>Тактическа гъвкавост:</b> ЦСКА може да играе както организирано и дисциплинирано, така и агресивно и доминиращо според стила на съперника.</li>
+          <li><b>Психологическа устойчивост:</b> След тежкия европейски график отборът запази концентрация и показа стабилна реакция в следващите мачове.</li>
+        </ul>
+
+        <p class="analysis-verdict"><b>Обобщение:</b> С 24 отбелязани гола в 11 официални мача, добра защитна стабилност и силен завършващ етап, ЦСКА изгражда образ на отбор с по-голяма зрелост, гъвкавост и психологическа устойчивост. Победата с 5:0 над Ботев Враца не просто добави точки, а потвърди, че отборът може да доминира, да създава много положения и да реализира с висока ефективност.</p>
+      </div>
+    </section>
+
+    <section class="card projects-card" style="margin-top:16px;">
+      <h2 data-i18n="projectsTitle">🌐 Още наши проекти</h2>
+      <p class="projects-subtitle" data-i18n="projectsSubtitle">Разгледай и други наши интерактивни уеб сайтове.</p>
+      <div class="projects-grid">
+        <article class="project-item">
+          <h3 data-i18n="projectPingTitle">� Game Explorer</h3>
+          <p data-i18n="projectPingDesc">Бърза мини игра с изчистен интерфейс и динамичен геймплей.</p>
+          <a class="project-link" href="https://p-in-pong-trs2.vercel.app/" target="_blank" rel="noopener noreferrer" data-i18n="projectVisitBtn">Посети</a>
+        </article>
+        <article class="project-item">
+          <h3 data-i18n="projectNorwayTitle">🧭 Norway Explorer</h3>
+          <p data-i18n="projectNorwayDesc">Кратък пътеводител за Норвегия с полезна информация и бърз преглед.</p>
+          <a class="project-link" href="https://norway-info.vercel.app/" target="_blank" rel="noopener noreferrer" data-i18n="projectVisitBtn">Посети</a>
+        </article>
+        <article class="project-item">
+          <h3 data-i18n="projectIndonesiaTitle">🇮🇩 Indonesia Explorer</h3>
+          <p data-i18n="projectIndonesiaDesc">Интерактивен сайт за градове, природа, животни и полезни статии.</p>
+          <a class="project-link" href="https://indonesia-five.vercel.app/" target="_blank" rel="noopener noreferrer" data-i18n="projectVisitBtn">Посети</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="card cska-partnership-card" style="margin-top:16px;">
+      <h2 data-i18n="cskaPartnerTitle">Партньорство с CSKA Explorer</h2>
+      <p class="partnership-text" data-i18n="cskaPartnerText">Представете вашите спортни услуги пред аудитория от 20,000+ преданни фенове. Ние ще включим вашата оферта в нашите експертни анализи и специализирани статии. За успешни партньорства предлагаме комисионен модел от 10% за всяка регистрация или покупка, направена чрез нашите линкове.</p>
+      <div class="partnership-wallet" aria-live="polite">
+        <p id="cskaPartnerWalletLabel" class="partnership-wallet-label"></p>
+        <div class="partnership-wallet-row">
+          <code id="cskaPartnerWalletAddress" class="partnership-wallet-address"></code>
+          <button id="cskaPartnerWalletCopy" class="partnership-wallet-copy" type="button"></button>
+        </div>
+        <a class="partnership-btn partnership-paypal-btn" data-i18n="cskaPartnerPaypalCta" href="https://paypal.me/SvetoslavGochev" target="_blank" rel="noopener noreferrer">PayPal Подкрепа</a>
+        <p id="cskaPartnerWalletHint" class="partnership-wallet-hint"></p>
+      </div>
+      <div class="partnership-actions">
+        <p class="partnership-social-title" data-i18n="cskaPartnerCta">Свържи се с нас</p>
+        <div class="partnership-social-grid" aria-label="Social contacts">
+          <a id="cskaPartnerInstagram" class="partnership-btn partnership-social-btn partnership-instagram-btn" href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer">Instagram</a>
+          <a id="cskaPartnerFacebook" class="partnership-btn partnership-social-btn partnership-facebook-btn" href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer">Facebook</a>
+          <a id="cskaPartnerX" class="partnership-btn partnership-social-btn partnership-x-btn" href="https://x.com/" target="_blank" rel="noopener noreferrer">X</a>
+        </div>
+        <p class="partnership-neutral-row"><span class="partnership-email-icon">🛡</span><span data-i18n="cskaPartnerContactHint">Пиши ни директно през социалните мрежи за партньорства.</span></p>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>CSKA EXPLORER <span class="app-version" id="appVersion"></span></p>
+      <p class="footer-note" data-i18n="footerDisclaimer">Този сайт е създаден с учебна цел. Данните са информативни и е възможно да има разминавания при автоматичното обновяване.</p>
+    </footer>
+  </div>
+
+  <script src="runtime-config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
