@@ -15,6 +15,23 @@ const SPORTAL_FOOTBALL_BASE = "https://football.cache.proxy.sportal365.com";
 const SPORTAL_AUTH = "Basic ZWZiZXQuY29tOktYVWM5dWZ6WEFNQWZBQXVqOTROWlphRXlWYUxpZmt0";
 const SPORTAL_CSKA_SOFIA_TEAM_ID = "17";
 
+const MANUAL_SQUAD_OVERRIDES = [
+  { name: "Жоел Цварц", aliases: ["Цварц Жоел", "Жоел Цвартс"], matches: 9, goals: 5, assists: 1 },
+  { name: "Йоанис Питас", aliases: ["Питас Йоанис"], matches: 9, goals: 2, assists: 2 },
+  { name: "Факундо Родригес", aliases: ["Родригес Факундо"], matches: 9, goals: 1, assists: 0 },
+  { name: "Бруно Жордао", aliases: ["Жордао Бруно"], matches: 8, goals: 1, assists: 0 },
+  { name: "Стефано Сенси", aliases: ["Сенси Стефано"], matches: 7, goals: 2, assists: 1 },
+  { name: "Леандро Годой", aliases: ["Годой Леандро", "Сантяго Годой"], matches: 6, goals: 3, assists: 0 },
+  { name: "Мохамед Брахими", aliases: ["Брахими Мохамед"], matches: 8, goals: 0, assists: 1 },
+  { name: "Дейвид Пастор", aliases: ["Пастор"], matches: 7, goals: 0, assists: 1 },
+  { name: "Джеймс Ето'о", aliases: ["Ето'о Джеймс", "Етоо"], matches: 8, goals: 0, assists: 0 },
+  { name: "Теодор Иванов", aliases: ["Иванов Теодор"], matches: 7, goals: 0, assists: 0 },
+  { name: "Фьодор Лапоухов", aliases: ["Лапоухов Фьодор"], matches: 8, goals: 0, assists: 1 },
+  { name: "Жан-Филип Гбамин", aliases: ["Жан-Филип Гбамен", "Гбамин Жан-Филип"], matches: 7, goals: 0, assists: 0 },
+  { name: "Макс Ебонг", aliases: ["Ебонг Макс"], matches: 6, goals: 1, assists: 0 },
+  { name: "Андрей Йорданов", aliases: ["Йорданов Андрей"], matches: 3, goals: 0, assists: 0 }
+];
+
 const ROOT = __dirname;
 const PUBLIC_DIR = path.join(ROOT, "public");
 const DATA_DIR = path.join(ROOT, "data");
@@ -639,6 +656,62 @@ function mergeSquadStats(existingSquad, statsByName) {
   return merged;
 }
 
+function applyManualSquadOverrides(existingSquad) {
+  const groups = ["goalkeepers", "defenders", "midfielders", "forwards"];
+  const squad = existingSquad && typeof existingSquad === "object" ? existingSquad : {};
+
+  const byNormalizedName = new Map();
+  const byTokenKey = new Map();
+
+  groups.forEach((group) => {
+    const players = Array.isArray(squad[group]) ? squad[group] : [];
+    players.forEach((player) => {
+      if (!player || typeof player !== "object") return;
+      const playerName = String(player.name || "").trim();
+      if (!playerName) return;
+
+      const normalized = normalizePersonName(playerName);
+      const tokenKey = getPersonTokenKey(playerName);
+
+      if (normalized) {
+        byNormalizedName.set(normalized, player);
+      }
+      if (tokenKey) {
+        byTokenKey.set(tokenKey, player);
+      }
+    });
+  });
+
+  MANUAL_SQUAD_OVERRIDES.forEach((overrideRow) => {
+    const candidateNames = [overrideRow.name, ...(overrideRow.aliases || [])];
+    const matched = candidateNames
+      .map((name) => {
+        const normalized = normalizePersonName(name);
+        if (normalized && byNormalizedName.has(normalized)) {
+          return byNormalizedName.get(normalized);
+        }
+
+        const tokenKey = getPersonTokenKey(name);
+        if (tokenKey && byTokenKey.has(tokenKey)) {
+          return byTokenKey.get(tokenKey);
+        }
+
+        return null;
+      })
+      .find(Boolean);
+
+    if (!matched) {
+      return;
+    }
+
+    matched.matches = overrideRow.matches;
+    matched.goals = overrideRow.goals;
+    matched.assists = overrideRow.assists;
+  });
+
+  return squad;
+}
+
 function ensureDataDir() {
   if (!fs.existsSync(DATA_DIR)) {
     fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -949,6 +1022,8 @@ async function buildFreshPayloadFromSource() {
     const statsByName = extractFlashscoreSquadStats(squadPageResult.value);
     nextPayload.cska.squad = mergeSquadStats(nextPayload.cska.squad || fallback.cska?.squad || {}, statsByName);
   }
+
+  nextPayload.cska.squad = applyManualSquadOverrides(nextPayload.cska.squad || fallback.cska?.squad || {});
 
   if (standingsPageResult.status === "fulfilled") {
     const todayMatches = extractEfbetTodayMatches(standingsPageResult.value);

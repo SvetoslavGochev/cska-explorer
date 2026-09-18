@@ -78,6 +78,64 @@ function normalizePlayerTokens(value) {
     .filter(Boolean);
 }
 
+const ROLE_BY_GROUP = {
+  bg: {
+    goalkeepers: "Вратар",
+    defenders: "Защитник",
+    midfielders: "Халф",
+    forwards: "Нападател"
+  },
+  en: {
+    goalkeepers: "Goalkeeper",
+    defenders: "Defender",
+    midfielders: "Midfielder",
+    forwards: "Forward"
+  }
+};
+
+const LATEST_SQUAD_OVERRIDES = [
+  { name: "Цварц Жоел", aliases: ["Жоел Цварц", "Жоел Цвартс"], flag: "🇳🇱", roleBg: "Нападател", roleEn: "Forward", matches: 9, goals: 5, assists: 1, hattricks: 0, impact: "7.50" },
+  { name: "Лео Перейра", aliases: ["Лео Перейра"], flag: "🇧🇷", roleBg: "Нападател / Крило", roleEn: "Forward / Winger", matches: 6, goals: 1, assists: 1, hattricks: 0, impact: "3.00" },
+  { name: "Питас Йоанис", aliases: ["Йоанис Питас"], flag: "🇨🇾", roleBg: "Нападател", roleEn: "Forward", matches: 9, goals: 2, assists: 2, hattricks: 0 },
+  { name: "Родригес Факундо", aliases: ["Факундо Родригес"], flag: "🇦🇷", roleBg: "Защитник", roleEn: "Defender", matches: 9, goals: 1, assists: 0, hattricks: 0, impact: "3.00" },
+  { name: "Жордао Бруно", aliases: ["Бруно Жордао"], flag: "🇵🇹", roleBg: "Полузащитник", roleEn: "Midfielder", matches: 8, goals: 1, assists: 0, hattricks: 0, impact: "2.75" },
+  { name: "Сенси Стефано", aliases: ["Стефано Сенси"], flag: "🇮🇹", roleBg: "Полузащитник", roleEn: "Midfielder", matches: 7, goals: 2, assists: 1, hattricks: 0, impact: "4.25" },
+  { name: "Годой Леандро", aliases: ["Леандро Годой", "Сантяго Годой"], flag: "🇦🇷", roleBg: "Нападател", roleEn: "Forward", matches: 6, goals: 3, assists: 0, hattricks: 0 },
+  { name: "Брахими Мохамед", aliases: ["Мохамед Брахими"], flag: "🇫🇷", roleBg: "Нападател / Крило", roleEn: "Forward / Winger", matches: 8, goals: 0, assists: 1, hattricks: 0, impact: "2.25" },
+  { name: "Мартино Анжело", aliases: ["Анжело Мартино"], flag: "🇦🇷", roleBg: "Защитник", roleEn: "Defender", matches: 7, goals: 0, assists: 0, hattricks: 0, impact: "1.50" },
+  { name: "Дейвид Пастор", aliases: ["Пастор", "Дейвид Пастор"], flag: "🇧🇷", roleBg: "Защитник", roleEn: "Defender", matches: 7, goals: 0, assists: 1, hattricks: 0, impact: "2.25" },
+  { name: "Ето'о Джеймс", aliases: ["Джеймс Ето'о"], flag: "🇨🇲", roleBg: "Полузащитник", roleEn: "Midfielder", matches: 8, goals: 0, assists: 0, hattricks: 0, impact: "1.75" },
+  { name: "Иванов Теодор", aliases: ["Теодор Иванов"], flag: "🇧🇬", roleBg: "Защитник", roleEn: "Defender", matches: 7, goals: 0, assists: 0, hattricks: 0, impact: "1.75" },
+  { name: "Лапоухов Фьодор", aliases: ["Фьодор Лапоухов"], flag: "🇧🇾", roleBg: "Вратар", roleEn: "Goalkeeper", matches: 8, goals: 0, assists: 1, hattricks: 0, impact: "2.25" },
+  { name: "Жан-Филип Гбамин", aliases: ["Жан-Филип Гбамен", "Гбамин Жан-Филип"], flag: "🇨🇮", roleBg: "Полузащитник", roleEn: "Midfielder", matches: 7, goals: 0, assists: 0, hattricks: 0, impact: "1.50" },
+  { name: "Ебонг Макс", aliases: ["Макс Ебонг"], flag: "🇧🇾", roleBg: "Полузащитник", roleEn: "Midfielder", matches: 6, goals: 1, assists: 0, hattricks: 0, impact: "2.25" },
+  { name: "Панайотов Петко", aliases: ["Петко Панайотов"], flag: "🇧🇬", roleBg: "Полузащитник", roleEn: "Midfielder", matches: 5, goals: 0, assists: 0, hattricks: 0, impact: "1.00" },
+  { name: "Соле Исак", aliases: ["Исак Соле"], flag: "🇨🇫", roleBg: "Полузащитник", roleEn: "Midfielder", matches: 5, goals: 1, assists: 0, hattricks: 0 },
+  { name: "Пиедраита Алехандро", aliases: ["Алехандро Пиедраита"], flag: "🇨🇴", roleBg: "Нападател / Крило", roleEn: "Forward / Winger", matches: 3, goals: 0, assists: 0, hattricks: 0, impact: "0.75" },
+  { name: "Уору Тамиму", aliases: ["Тамиму Уору"], flag: "🇧🇯", roleBg: "Защитник", roleEn: "Defender", matches: 2, goals: 0, assists: 0, hattricks: 0, impact: "0.50" },
+  { name: "Евтимов Димитър", aliases: ["Димитър Евтимов"], flag: "🇧🇬", roleBg: "Вратар", roleEn: "Goalkeeper", matches: 1, goals: 0, assists: 1, hattricks: 0, impact: "0.75" },
+  { name: "Йорданов Андрей", aliases: ["Андрей Йорданов"], flag: "🇧🇬", roleBg: "Защитник", roleEn: "Defender", matches: 3, goals: 0, assists: 0, hattricks: 0, impact: "0.50" },
+  { name: "Лапеня Адриан", aliases: ["Адриан Лапеня"], flag: "🇪🇸", roleBg: "Защитник", roleEn: "Defender", matches: 0, goals: 0, assists: 0, hattricks: 0, impact: "0.00" },
+  { name: "Николов Даниел", aliases: ["Даниел Николов"], flag: "🇧🇬", roleBg: "Вратар", roleEn: "Goalkeeper", matches: 0, goals: 0, assists: 0, hattricks: 0, impact: "0.00" },
+  { name: "Тунчев Алекс", aliases: ["Алекс Тунчев"], flag: "🇧🇬", roleBg: "Защитник", roleEn: "Defender", matches: 0, goals: 0, assists: 0, hattricks: 0, impact: "0.00" },
+  { name: "Чорбаджийски Георги", aliases: ["Георги Чорбаджийски", "Чорбаджийски Георги Бранков"], flag: "🇧🇬", roleBg: "Полузащитник", roleEn: "Midfielder", matches: 0, goals: 0, assists: 0, hattricks: 0, impact: "0.00" },
+  { name: "Додай Кевин", aliases: ["Кевин Додай"], flag: "🇦🇱", roleBg: "Нападател", roleEn: "Forward", matches: 0, goals: 0, assists: 0, hattricks: 0, impact: "0.00" },
+  { name: "Каймаканов Васил", aliases: ["Васил Каймаканов"], flag: "🇧🇬", roleBg: "Нападател", roleEn: "Forward", matches: 0, goals: 0, assists: 0, hattricks: 0, impact: "0.00" }
+];
+
+const LATEST_SQUAD_ORDER = new Map(
+  LATEST_SQUAD_OVERRIDES.map((row, index) => [normalizePlayerName(row.name), index])
+);
+
+function normalizePlayerName(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .split(/\s+/)
+    .map((token) => token.trim())
+    .filter(Boolean);
+}
+
 function isTokenSubset(leftTokens, rightTokens) {
   if (!leftTokens.length || !rightTokens.length) return false;
   return leftTokens.every((token) => rightTokens.includes(token));
@@ -218,6 +276,8 @@ const I18N = {
     warnLastResultsFetchFailed: "Последни резултати (грешка при заявка)",
     warnNextMatchesFetchFailed: "Следващи мачове (грешка при заявка)",
     footerDisclaimer: "Този сайт е създаден с учебна цел. Данните са информативни и е възможно да има разминавания при автоматичното обновяване.",
+    legendsTitle: "Легенди на ЦСКА",
+    stoichkovSubtitle: "🔴 Христо Стоичков — Аналитичен профил на най-голямата легенда на ЦСКА",
     projectsTitle: "🌐 Още наши проекти",
     projectsSubtitle: "Разгледай и други наши интерактивни уеб сайтове.",
     projectPingTitle: "� Game Explorer",
@@ -293,6 +353,8 @@ const I18N = {
     warnLastResultsFetchFailed: "Last results (fetch failed)",
     warnNextMatchesFetchFailed: "Next matches (fetch failed)",
     footerDisclaimer: "This site was created for educational purposes. The data is informational and discrepancies may occur during automatic updates.",
+    legendsTitle: "Legends of CSKA",
+    stoichkovSubtitle: "🔴 Hristo Stoichkov — Analytical profile of CSKA’s greatest legend",
     projectsTitle: "🌐 More Projects",
     projectsSubtitle: "Explore our other interactive websites.",
     projectPingTitle: "� Game Explorer",
