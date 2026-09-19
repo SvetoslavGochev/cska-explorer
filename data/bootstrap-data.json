@@ -1,9 +1,6 @@
 {
+  "updatedAt": "2026-09-19T11:25:40.370Z",
   "source": {
-    "name": "Flashscore.bg",
-    "standingsUrl": "https://www.flashscore.bg/soccer/bulgaria/efbet/#/ID1TwQHr/standings/overall/",
-    "teamUrl": "https://www.flashscore.bg/team/cska-sofia/0xFNNECi/",
-    "squadUrl": "https://www.flashscore.bg/team/cska-sofia/0xFNNECi/squad/",
     "note": "Automatic server refresh with validation (lastResults fallback kept, nextMatches fallback kept).",
     "validation": {
       "warnings": [
@@ -13,240 +10,180 @@
       "usedFallback": true
     }
   },
-  "updatedAt": "2026-08-14T13:30:03.087Z",
   "standings": [
     {
       "rank": 1,
       "team": "Левски",
-      "mp": 4,
-      "w": 4,
-      "d": 0,
+      "mp": 9,
+      "w": 8,
+      "d": 1,
       "l": 0,
-      "gf": 9,
-      "ga": 2,
-      "gd": 7,
-      "pts": 12
+      "gf": 21,
+      "ga": 4,
+      "gd": 17,
+      "pts": 25
     },
     {
       "rank": 2,
-      "team": "Лудогорец",
-      "mp": 4,
-      "w": 4,
-      "d": 0,
+      "team": "ЦСКА София",
+      "mp": 9,
+      "w": 7,
+      "d": 2,
       "l": 0,
-      "gf": 8,
-      "ga": 3,
-      "gd": 5,
-      "pts": 12
+      "gf": 23,
+      "ga": 6,
+      "gd": 17,
+      "pts": 23
     },
     {
       "rank": 3,
-      "team": "ЦСКА София",
-      "mp": 4,
-      "w": 3,
-      "d": 1,
+      "team": "Лудогорец",
+      "mp": 9,
+      "w": 7,
+      "d": 2,
       "l": 0,
-      "gf": 8,
-      "ga": 3,
-      "gd": 5,
-      "pts": 10
+      "gf": 16,
+      "ga": 7,
+      "gd": 9,
+      "pts": 23
     },
     {
       "rank": 4,
       "team": "ЦСКА 1948",
-      "mp": 4,
-      "w": 3,
+      "mp": 10,
+      "w": 7,
       "d": 1,
-      "l": 0,
-      "gf": 9,
-      "ga": 5,
-      "gd": 4,
-      "pts": 10
+      "l": 2,
+      "gf": 19,
+      "ga": 10,
+      "gd": 9,
+      "pts": 22
     },
     {
       "rank": 5,
-      "team": "Ботев (Пловдив)",
-      "mp": 4,
-      "w": 2,
+      "team": "Арда (Кърджали)",
+      "mp": 9,
+      "w": 5,
       "d": 1,
-      "l": 1,
-      "gf": 7,
-      "ga": 6,
-      "gd": 1,
-      "pts": 7
+      "l": 3,
+      "gf": 14,
+      "ga": 11,
+      "gd": 3,
+      "pts": 16
     },
     {
       "rank": 6,
-      "team": "Арда (Кърджали)",
-      "mp": 4,
-      "w": 2,
+      "team": "Ботев (Пловдив)",
+      "mp": 9,
+      "w": 4,
       "d": 1,
-      "l": 1,
-      "gf": 5,
-      "ga": 3,
-      "gd": 2,
-      "pts": 7
+      "l": 4,
+      "gf": 13,
+      "ga": 14,
+      "gd": -1,
+      "pts": 13
     },
     {
       "rank": 7,
-      "team": "Спартак (Варна)",
-      "mp": 4,
+      "team": "Славия София",
+      "mp": 10,
       "w": 2,
-      "d": 1,
-      "l": 1,
-      "gf": 8,
-      "ga": 5,
-      "gd": 3,
-      "pts": 7
+      "d": 5,
+      "l": 3,
+      "gf": 9,
+      "ga": 8,
+      "gd": 1,
+      "pts": 11
     },
     {
       "rank": 8,
-      "team": "Славия София",
-      "mp": 4,
-      "w": 1,
-      "d": 2,
-      "l": 1,
-      "gf": 4,
-      "ga": 2,
-      "gd": 2,
-      "pts": 5
+      "team": "Спартак (Варна)",
+      "mp": 9,
+      "w": 2,
+      "d": 4,
+      "l": 3,
+      "gf": 10,
+      "ga": 14,
+      "gd": -4,
+      "pts": 10
     },
     {
       "rank": 9,
-      "team": "Локомотив (Пловдив)",
-      "mp": 4,
-      "w": 1,
-      "d": 0,
-      "l": 3,
-      "gf": 2,
-      "ga": 5,
-      "gd": -3,
-      "pts": 3
+      "team": "Септември (София)",
+      "mp": 9,
+      "w": 2,
+      "d": 2,
+      "l": 5,
+      "gf": 8,
+      "ga": 15,
+      "gd": -7,
+      "pts": 8
     },
     {
       "rank": 10,
-      "team": "Локомотив (София)",
-      "mp": 4,
-      "w": 0,
+      "team": "Ботев (Враца)",
+      "mp": 9,
+      "w": 2,
       "d": 2,
-      "l": 2,
-      "gf": 4,
-      "ga": 7,
-      "gd": -3,
-      "pts": 2
+      "l": 5,
+      "gf": 7,
+      "ga": 17,
+      "gd": -10,
+      "pts": 8
     },
     {
       "rank": 11,
-      "team": "Черно море",
-      "mp": 4,
-      "w": 0,
-      "d": 1,
-      "l": 3,
-      "gf": 3,
-      "ga": 8,
-      "gd": -5,
-      "pts": 1
+      "team": "Локомотив (Пловдив)",
+      "mp": 9,
+      "w": 2,
+      "d": 0,
+      "l": 7,
+      "gf": 4,
+      "ga": 12,
+      "gd": -8,
+      "pts": 6
     },
     {
       "rank": 12,
-      "team": "Ботев (Враца)",
-      "mp": 4,
-      "w": 0,
-      "d": 1,
-      "l": 3,
-      "gf": 3,
-      "ga": 8,
-      "gd": -5,
-      "pts": 1
+      "team": "Черно море",
+      "mp": 9,
+      "w": 1,
+      "d": 2,
+      "l": 6,
+      "gf": 10,
+      "ga": 19,
+      "gd": -9,
+      "pts": 5
     },
     {
       "rank": 13,
-      "team": "Септември (София)",
-      "mp": 4,
+      "team": "Локомотив (София)",
+      "mp": 9,
       "w": 0,
-      "d": 1,
-      "l": 3,
-      "gf": 2,
-      "ga": 9,
-      "gd": -7,
-      "pts": 1
+      "d": 4,
+      "l": 5,
+      "gf": 10,
+      "ga": 18,
+      "gd": -8,
+      "pts": 4
     },
     {
       "rank": 14,
       "team": "Дунав (Русе)",
-      "mp": 4,
-      "w": 0,
-      "d": 0,
-      "l": 4,
-      "gf": 2,
-      "ga": 8,
-      "gd": -6,
-      "pts": 0
+      "mp": 9,
+      "w": 1,
+      "d": 1,
+      "l": 7,
+      "gf": 8,
+      "ga": 17,
+      "gd": -9,
+      "pts": 4
     }
   ],
   "cska": {
     "team": "ЦСКА София",
-    "stadium": "Нац. стадион Васил Левски",
-    "nextMatches": [
-      {
-        "date": "08.04",
-        "time": "18:00",
-        "home": "Монтана",
-        "away": "ЦСКА"
-      },
-      {
-        "date": "13.04",
-        "time": "16:00",
-        "home": "ЦСКА",
-        "away": "Левски София"
-      }
-    ],
-    "todayMatches": [
-      {
-        "date": "14.08",
-        "time": "18:15",
-        "home": "ЦСКА 1948",
-        "away": "Черно море"
-      }
-    ],
-    "lastResults": [
-      {
-        "date": "08.04",
-        "home": "Монтана",
-        "away": "ЦСКА",
-        "score": "0:1"
-      },
-      {
-        "date": "04.04",
-        "home": "Берое",
-        "away": "ЦСКА",
-        "score": "0:3"
-      },
-      {
-        "date": "22.03",
-        "home": "ЦСКА",
-        "away": "Добруджа",
-        "score": "2:0"
-      },
-      {
-        "date": "14.03",
-        "home": "Лудогорец",
-        "away": "ЦСКА",
-        "score": "3:0"
-      },
-      {
-        "date": "08.03",
-        "home": "ЦСКА",
-        "away": "Локомотив София",
-        "score": "2:0"
-      },
-      {
-        "date": "04.03",
-        "home": "ЦСКА",
-        "away": "Ботев Враца",
-        "score": "1:0"
-      }
-    ],
+    "nextMatches": [],
+    "lastResults": [],
     "squad": {
       "goalkeepers": [
         {
@@ -254,11 +191,7 @@
           "number": 21,
           "countryName": "Беларус",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/126-Belarus-flag.png",
-<<<<<<< Updated upstream
-          "matches": 15,
-=======
           "matches": 8,
->>>>>>> Stashed changes
           "goals": 0,
           "assists": 1,
           "savesPerMatch": null,
@@ -277,7 +210,7 @@
         },
         {
           "name": "Даниел Николов",
-          "number": 31,
+          "number": 1,
           "countryName": "България",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
           "matches": 0,
@@ -293,15 +226,9 @@
           "number": 2,
           "countryName": "Бразилия",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/16-Brazil-flag.png",
-<<<<<<< Updated upstream
-          "matches": 14,
-          "goals": 0,
-          "assists": 2
-=======
           "matches": 7,
           "goals": 0,
           "assists": 1
->>>>>>> Stashed changes
         },
         {
           "name": "Тамиму Уору",
@@ -313,11 +240,11 @@
           "assists": 0
         },
         {
-          "name": "Адриан Лапеня",
+          "name": "Диниш Алмейда",
           "number": 4,
-          "countryName": "Испания",
-          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/17-Spain-flag.png",
-          "matches": 3,
+          "countryName": "Португалия",
+          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/31-Portugal-flag.png",
+          "matches": 2,
           "goals": 0,
           "assists": 0
         },
@@ -326,11 +253,7 @@
           "number": 5,
           "countryName": "Кот д'Ивоар",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/1-Ivory-Coast-flag.png",
-<<<<<<< Updated upstream
-          "matches": 10,
-=======
           "matches": 7,
->>>>>>> Stashed changes
           "goals": 0,
           "assists": 0
         },
@@ -339,11 +262,7 @@
           "number": 14,
           "countryName": "България",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
-<<<<<<< Updated upstream
-          "matches": 15,
-=======
           "matches": 7,
->>>>>>> Stashed changes
           "goals": 0,
           "assists": 0
         },
@@ -361,30 +280,31 @@
           "number": 19,
           "countryName": "България",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
-<<<<<<< Updated upstream
-          "matches": 6,
-=======
           "matches": 3,
->>>>>>> Stashed changes
           "goals": 0,
-          "assists": 1
+          "assists": 0
         },
         {
           "name": "Факундо Родригес",
           "number": 32,
           "countryName": "Аржентина",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/55-Argentina-flag.png",
-<<<<<<< Updated upstream
-          "matches": 13,
-=======
           "matches": 9,
->>>>>>> Stashed changes
           "goals": 1,
           "assists": 0
         },
         {
+          "name": "Бари Котър",
+          "number": 37,
+          "countryName": "Ейре",
+          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/7-Ireland-flag.png",
+          "matches": 2,
+          "goals": 0,
+          "assists": 0
+        },
+        {
           "name": "Алекс Тунчев",
-          "number": 91,
+          "number": 15,
           "countryName": "България",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
           "matches": 0,
@@ -398,13 +318,8 @@
           "number": 6,
           "countryName": "Португалия",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/31-Portugal-flag.png",
-<<<<<<< Updated upstream
-          "matches": 15,
-          "goals": 2,
-=======
           "matches": 8,
           "goals": 1,
->>>>>>> Stashed changes
           "assists": 0
         },
         {
@@ -412,13 +327,8 @@
           "number": 7,
           "countryName": "Беларус",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/126-Belarus-flag.png",
-<<<<<<< Updated upstream
-          "matches": 12,
-          "goals": 2,
-=======
           "matches": 6,
           "goals": 1,
->>>>>>> Stashed changes
           "assists": 0
         },
         {
@@ -426,11 +336,7 @@
           "number": 8,
           "countryName": "Италия",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/30-Italy-flag.png",
-<<<<<<< Updated upstream
-          "matches": 11,
-=======
           "matches": 7,
->>>>>>> Stashed changes
           "goals": 2,
           "assists": 1
         },
@@ -439,23 +345,17 @@
           "number": 11,
           "countryName": "Франция",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/28-France-flag.png",
-<<<<<<< Updated upstream
-          "matches": 17,
-          "goals": 1,
-          "assists": 2
-=======
           "matches": 8,
           "goals": 0,
           "assists": 1
->>>>>>> Stashed changes
         },
         {
           "name": "Петко Панайотов",
           "number": 30,
           "countryName": "България",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
-          "matches": 9,
-          "goals": 0,
+          "matches": 13,
+          "goals": 1,
           "assists": 0
         },
         {
@@ -472,10 +372,8 @@
           "number": 94,
           "countryName": "ЦАР",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/64-Central-African-Rep-flag.png",
-          "matches": 6,
+          "matches": 10,
           "goals": 1,
-<<<<<<< Updated upstream
-=======
           "assists": 0
         },
         {
@@ -485,17 +383,7 @@
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/52-Cameroon-flag.png",
           "matches": 8,
           "goals": 0,
->>>>>>> Stashed changes
           "assists": 0
-        },
-        {
-          "name": "Джеймс Ето'о",
-          "number": 99,
-          "countryName": "Камерун",
-          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/52-Cameroon-flag.png",
-          "matches": 13,
-          "goals": 0,
-          "assists": 1
         }
       ],
       "forwards": [
@@ -504,60 +392,34 @@
           "number": 9,
           "countryName": "Аржентина",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/55-Argentina-flag.png",
-<<<<<<< Updated upstream
-          "matches": 14,
-          "goals": 4,
-          "assists": 2
-=======
           "matches": 6,
           "goals": 3,
           "assists": 0
->>>>>>> Stashed changes
         },
         {
-          "name": "Жоел Цвартс",
+          "name": "Жоел Цварц",
           "number": 10,
           "countryName": "Нидерландия",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/25-Netherlands-flag.png",
-<<<<<<< Updated upstream
-          "matches": 11,
-          "goals": 4,
-          "assists": 0
-=======
           "matches": 9,
           "goals": 5,
           "assists": 1
->>>>>>> Stashed changes
-        },
-        {
-          "name": "Кевин Додай",
-          "number": 22,
-          "countryName": "Албания",
-          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/47-Albania-flag.png",
-          "matches": 0,
-          "goals": 0,
-          "assists": 0
         },
         {
           "name": "Йоанис Питас",
           "number": 28,
           "countryName": "Кипър",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/140-Cyprus-flag.png",
-<<<<<<< Updated upstream
-          "matches": 16,
-          "goals": 7,
-=======
           "matches": 9,
           "goals": 2,
->>>>>>> Stashed changes
           "assists": 2
         },
         {
           "name": "Васил Каймаканов",
-          "number": 34,
+          "number": 11,
           "countryName": "България",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
-          "matches": 1,
+          "matches": 2,
           "goals": 0,
           "assists": 0
         },
@@ -566,21 +428,35 @@
           "number": 38,
           "countryName": "Бразилия",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/16-Brazil-flag.png",
-          "matches": 8,
-          "goals": 0,
+          "matches": 14,
+          "goals": 1,
           "assists": 0
         },
         {
-          "name": "Алехандро Пиедраита",
-          "number": 77,
-          "countryName": "Колумбия",
-          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/22-Colombia-flag.png",
-          "matches": 5,
+          "name": "Каталин Иту",
+          "number": 67,
+          "countryName": "Румъния",
+          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/20-Romania-flag.png",
+          "matches": 6,
           "goals": 0,
-          "assists": 0
+          "assists": 2
         }
       ]
     },
+    "todayMatches": [
+      {
+        "date": "19.09",
+        "time": "13:30",
+        "home": "Септември София",
+        "away": "Ботев Пловдив"
+      },
+      {
+        "date": "19.09",
+        "time": "16:00",
+        "home": "Арда",
+        "away": "Черно море"
+      }
+    ],
     "teamInfo": {
       "stadium": "Vasil Levski National Stadium",
       "foundedYear": "1948",

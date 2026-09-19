@@ -107,7 +107,22 @@ const refreshState = {
 };
 
 function readJson(filePath) {
-  return JSON.parse(fs.readFileSync(filePath, "utf8"));
+  try {
+    const raw = fs.readFileSync(filePath, "utf8");
+    if (!raw || !raw.trim()) {
+      return null;
+    }
+
+    const sanitized = raw
+      .split(/\r?\n/)
+      .filter((line) => !/^(<<<<<<<|=======|>>>>>>>)\b/.test(line.trim()))
+      .join("\n");
+
+    return JSON.parse(sanitized);
+  } catch (error) {
+    console.error(`[json] failed to parse ${filePath}: ${error.message}`);
+    return null;
+  }
 }
 
 function writeJson(filePath, data) {
@@ -243,7 +258,7 @@ function normalizeEfbetLeagueTeamName(name) {
   return translateTeamName(raw);
 }
 
-async function fetchSportalJson(url) {
+async function fetchSportalJson(url, label = "sportal-json") {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
   try {
@@ -261,7 +276,15 @@ async function fetchSportalJson(url) {
     if (!response.ok) {
       throw new Error(`Sportal upstream ${response.status}`);
     }
-    return await response.json();
+
+    const text = await response.text();
+    try {
+      return JSON.parse(text);
+    } catch (error) {
+      console.error(`[refresh] invalid JSON from ${label} (${url})`);
+      console.error(error.message);
+      return null;
+    }
   } finally {
     clearTimeout(timeout);
   }
@@ -416,7 +439,7 @@ async function fetchSportalTeamSquad(teamId) {
   };
 }
 
-async function fetchJson(url) {
+async function fetchJson(url, label = "json") {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
   try {
@@ -429,7 +452,15 @@ async function fetchJson(url) {
     if (!response.ok) {
       throw new Error(`Upstream ${response.status}`);
     }
-    return await response.json();
+
+    const text = await response.text();
+    try {
+      return JSON.parse(text);
+    } catch (error) {
+      console.error(`[refresh] invalid JSON from ${label} (${url})`);
+      console.error(error.message);
+      return null;
+    }
   } finally {
     clearTimeout(timeout);
   }
@@ -853,18 +884,18 @@ function withCacheMeta(payload, source, budget) {
 }
 
 async function buildFreshPayloadFromSource() {
-  const fallback = readJson(BOOTSTRAP_FILE);
+  const fallback = readJson(BOOTSTRAP_FILE) || {};
   const season = getSeasonKey();
   const warnings = [];
 
   const [standingsResult, resultsResult, upcomingResult, squadPageResult, standingsPageResult, bulgariaPageResult, teamInfoResult] = await Promise.allSettled([
-    fetchJson(`${SPORTSDB_BASE}/lookuptable.php?l=${BULGARIAN_LEAGUE_ID}&s=${season}`),
-    fetchJson(`${SPORTSDB_BASE}/eventslast.php?id=${CSKA_TEAM_ID}`),
-    fetchJson(`${SPORTSDB_BASE}/eventsnext.php?id=${CSKA_TEAM_ID}`),
+    fetchJson(`${SPORTSDB_BASE}/lookuptable.php?l=${BULGARIAN_LEAGUE_ID}&s=${season}`, "thesportsdb-standings"),
+    fetchJson(`${SPORTSDB_BASE}/eventslast.php?id=${CSKA_TEAM_ID}`, "thesportsdb-last-results"),
+    fetchJson(`${SPORTSDB_BASE}/eventsnext.php?id=${CSKA_TEAM_ID}`, "thesportsdb-next-matches"),
     fetchText(fallback?.source?.squadUrl || "https://www.flashscore.bg/team/cska-sofia/0xFNNECi/squad/"),
     fetchText(fallback?.source?.standingsUrl || "https://www.flashscore.bg/soccer/bulgaria/efbet/#/ID1TwQHr/standings/overall/"),
     fetchText("https://www.flashscore.bg/soccer/bulgaria/"),
-    fetchJson(`${SPORTSDB_BASE}/searchteams.php?t=CSKA+Sofia`)
+    fetchJson(`${SPORTSDB_BASE}/searchteams.php?t=CSKA+Sofia`, "thesportsdb-team-search")
   ]);
 
   const nextPayload = {
