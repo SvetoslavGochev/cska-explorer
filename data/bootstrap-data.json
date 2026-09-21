@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-19T11:25:40.370Z",
+  "updatedAt": "2026-09-21T13:21:20.927Z",
   "source": {
     "note": "Automatic server refresh with validation (lastResults fallback kept, nextMatches fallback kept).",
     "validation": {
@@ -26,14 +26,14 @@
     {
       "rank": 2,
       "team": "ЦСКА София",
-      "mp": 9,
+      "mp": 10,
       "w": 7,
-      "d": 2,
+      "d": 3,
       "l": 0,
-      "gf": 23,
-      "ga": 6,
+      "gf": 24,
+      "ga": 7,
       "gd": 17,
-      "pts": 23
+      "pts": 24
     },
     {
       "rank": 3,
@@ -62,26 +62,26 @@
     {
       "rank": 5,
       "team": "Арда (Кърджали)",
-      "mp": 9,
+      "mp": 10,
       "w": 5,
-      "d": 1,
+      "d": 2,
       "l": 3,
-      "gf": 14,
-      "ga": 11,
+      "gf": 15,
+      "ga": 12,
       "gd": 3,
-      "pts": 16
+      "pts": 17
     },
     {
       "rank": 6,
       "team": "Ботев (Пловдив)",
-      "mp": 9,
-      "w": 4,
+      "mp": 10,
+      "w": 5,
       "d": 1,
       "l": 4,
-      "gf": 13,
+      "gf": 16,
       "ga": 14,
-      "gd": -1,
-      "pts": 13
+      "gd": 2,
+      "pts": 16
     },
     {
       "rank": 7,
@@ -98,86 +98,86 @@
     {
       "rank": 8,
       "team": "Спартак (Варна)",
-      "mp": 9,
+      "mp": 10,
       "w": 2,
       "d": 4,
-      "l": 3,
+      "l": 4,
       "gf": 10,
-      "ga": 14,
-      "gd": -4,
+      "ga": 15,
+      "gd": -5,
       "pts": 10
     },
     {
       "rank": 9,
-      "team": "Септември (София)",
-      "mp": 9,
+      "team": "Ботев (Враца)",
+      "mp": 10,
       "w": 2,
-      "d": 2,
+      "d": 3,
       "l": 5,
-      "gf": 8,
-      "ga": 15,
-      "gd": -7,
-      "pts": 8
+      "gf": 9,
+      "ga": 19,
+      "gd": -10,
+      "pts": 9
     },
     {
       "rank": 10,
-      "team": "Ботев (Враца)",
-      "mp": 9,
+      "team": "Септември (София)",
+      "mp": 10,
       "w": 2,
       "d": 2,
-      "l": 5,
-      "gf": 7,
-      "ga": 17,
+      "l": 6,
+      "gf": 8,
+      "ga": 18,
       "gd": -10,
       "pts": 8
     },
     {
       "rank": 11,
-      "team": "Локомотив (Пловдив)",
-      "mp": 9,
-      "w": 2,
-      "d": 0,
-      "l": 7,
-      "gf": 4,
-      "ga": 12,
-      "gd": -8,
-      "pts": 6
+      "team": "Локомотив (София)",
+      "mp": 10,
+      "w": 1,
+      "d": 4,
+      "l": 5,
+      "gf": 11,
+      "ga": 18,
+      "gd": -7,
+      "pts": 7
     },
     {
       "rank": 12,
-      "team": "Черно море",
-      "mp": 9,
-      "w": 1,
-      "d": 2,
-      "l": 6,
-      "gf": 10,
-      "ga": 19,
-      "gd": -9,
-      "pts": 5
+      "team": "Локомотив (Пловдив)",
+      "mp": 10,
+      "w": 2,
+      "d": 1,
+      "l": 7,
+      "gf": 5,
+      "ga": 13,
+      "gd": -8,
+      "pts": 7
     },
     {
       "rank": 13,
-      "team": "Локомотив (София)",
-      "mp": 9,
-      "w": 0,
-      "d": 4,
-      "l": 5,
-      "gf": 10,
-      "ga": 18,
-      "gd": -8,
-      "pts": 4
+      "team": "Черно море",
+      "mp": 10,
+      "w": 1,
+      "d": 3,
+      "l": 6,
+      "gf": 11,
+      "ga": 20,
+      "gd": -9,
+      "pts": 6
     },
     {
       "rank": 14,
       "team": "Дунав (Русе)",
-      "mp": 9,
+      "mp": 10,
       "w": 1,
-      "d": 1,
+      "d": 2,
       "l": 7,
-      "gf": 8,
-      "ga": 17,
+      "gf": 10,
+      "ga": 19,
       "gd": -9,
-      "pts": 4
+      "pts": 5
     }
   ],
   "cska": {
@@ -244,7 +244,7 @@
           "number": 4,
           "countryName": "Португалия",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/31-Portugal-flag.png",
-          "matches": 2,
+          "matches": 3,
           "goals": 0,
           "assists": 0
         },
@@ -298,7 +298,7 @@
           "number": 37,
           "countryName": "Ейре",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/7-Ireland-flag.png",
-          "matches": 2,
+          "matches": 3,
           "goals": 0,
           "assists": 0
         },
@@ -428,7 +428,7 @@
           "number": 38,
           "countryName": "Бразилия",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/16-Brazil-flag.png",
-          "matches": 14,
+          "matches": 15,
           "goals": 1,
           "assists": 0
         },
@@ -443,20 +443,7 @@
         }
       ]
     },
-    "todayMatches": [
-      {
-        "date": "19.09",
-        "time": "13:30",
-        "home": "Септември София",
-        "away": "Ботев Пловдив"
-      },
-      {
-        "date": "19.09",
-        "time": "16:00",
-        "home": "Арда",
-        "away": "Черно море"
-      }
-    ],
+    "todayMatches": [],
     "teamInfo": {
       "stadium": "Vasil Levski National Stadium",
       "foundedYear": "1948",
