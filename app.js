@@ -816,6 +816,16 @@ function setupMainSectionNavigation() {
   const navLinks = Array.from(document.querySelectorAll(".page-nav-link"));
   if (!navLinks.length) return;
 
+  navLinks.forEach((link) => {
+    if (link.dataset.activeBound === "true") return;
+    link.dataset.activeBound = "true";
+    link.addEventListener("click", () => {
+      const href = link.getAttribute("href") || "";
+      if (!href.startsWith("#")) return;
+      setActiveMainSection(href.slice(1));
+    });
+  });
+
   if (mainSectionObserver) {
     mainSectionObserver.disconnect();
   }
@@ -854,6 +864,16 @@ function setupMainSectionNavigation() {
 function setupSquadSectionNavigation() {
   const navLinks = Array.from(document.querySelectorAll(".squad-nav-link"));
   if (!navLinks.length) return;
+
+  navLinks.forEach((link) => {
+    if (link.dataset.activeBound === "true") return;
+    link.dataset.activeBound = "true";
+    link.addEventListener("click", () => {
+      const href = link.getAttribute("href") || "";
+      if (!href.startsWith("#")) return;
+      setActiveSquadGroup(href.slice(1));
+    });
+  });
 
   if (squadSectionObserver) {
     squadSectionObserver.disconnect();
