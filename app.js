@@ -891,16 +891,42 @@ function setupSquadSectionNavigation() {
   setActiveSquadGroup(targets[0].id);
 
   squadSectionObserver = new IntersectionObserver((entries) => {
-    const visibleEntries = entries
-      .filter((entry) => entry.isIntersecting)
-      .sort((left, right) => left.boundingClientRect.top - right.boundingClientRect.top);
+    const hasVisibleEntries = entries.some((entry) => entry.isIntersecting);
+    if (!hasVisibleEntries) return;
 
-    if (!visibleEntries.length) return;
+    const rootStyles = getComputedStyle(document.documentElement);
+    const masterTop = parseFloat(rootStyles.getPropertyValue("--sticky-master-top")) || 8;
+    const masterHeight = parseFloat(rootStyles.getPropertyValue("--sticky-master-height")) || 64;
+    const stickyGap = parseFloat(rootStyles.getPropertyValue("--sticky-gap")) || 8;
+    const squadHeight = parseFloat(rootStyles.getPropertyValue("--sticky-squad-height")) || 44;
+    const activationLine = masterTop + masterHeight + stickyGap + squadHeight + 10;
 
-    const topEntry = visibleEntries[0];
-    if (topEntry?.target?.id) {
-      setActiveSquadGroup(topEntry.target.id);
+    const orderedTargets = targets
+      .map((target) => ({ id: target.id, top: target.getBoundingClientRect().top }))
+      .sort((left, right) => left.top - right.top);
+
+    if (!orderedTargets.length) return;
+
+    const hashId = window.location.hash.replace(/^#/, "");
+    if (SQUAD_SECTION_IDS.includes(hashId)) {
+      const hashTarget = document.getElementById(hashId);
+      if (hashTarget) {
+        const rect = hashTarget.getBoundingClientRect();
+        const visibleEnough = rect.bottom > activationLine && rect.top < (window.innerHeight * 0.88);
+        if (visibleEnough) {
+          setActiveSquadGroup(hashId);
+          return;
+        }
+      }
     }
+
+    const activeTarget = orderedTargets.reduce((best, current) => {
+      const bestDistance = Math.abs(best.top - activationLine);
+      const currentDistance = Math.abs(current.top - activationLine);
+      return currentDistance < bestDistance ? current : best;
+    });
+
+    setActiveSquadGroup(activeTarget.id);
   }, {
     root: null,
     threshold: [0.2, 0.45, 0.7],
