@@ -41,12 +41,6 @@
         </div>
       </div>
       <h1 id="mainTitle">CSKA EXPLORER <span id="mainVersion" class="main-version"></span></h1>
-      <nav class="hero-nav" aria-label="Бързи връзки">
-        <a class="hero-nav-link" href="https://cska.bg/club/foundation" target="_blank" rel="noopener noreferrer" data-i18n="heroLinkFoundation">Фондация</a>
-        <a class="hero-nav-link" href="https://cska.bg/shop" target="_blank" rel="noopener noreferrer" data-i18n="heroLinkShop">Магазин</a>
-        <a class="hero-nav-link" href="https://stadium.cska.bg/?_gl=1%2Av5e7vk%2A_ga%2AMzEyNjUzODA1LjE3NTI1MDg2ODI.%2A_ga_JR4JBTGPLN%2AczE3NTMxODkwNDgkbzYkZzAkdDE3NTMxODkwNDgkajYwJGwwJGgw" target="_blank" rel="noopener noreferrer" data-i18n="heroLinkStadium">Стадион</a>
-        <a class="hero-nav-link" href="https://cska.bg/fan-registration" target="_blank" rel="noopener noreferrer" data-i18n="heroLinkFanRegistration">Фен регистрация</a>
-      </nav>
       <div class="page-nav-wrap">
         <p class="page-nav-label" data-i18n="sectionNavLabel">Бърза навигация</p>
         <nav class="page-nav" aria-label="Навигация по секции">
@@ -55,6 +49,12 @@
           <a class="page-nav-link" href="#legends-section" data-i18n="navLegends">Легенди на ЦСКА</a>
         </nav>
       </div>
+      <nav class="hero-nav" aria-label="Бързи връзки">
+        <a class="hero-nav-link" href="https://cska.bg/club/foundation" target="_blank" rel="noopener noreferrer" data-i18n="heroLinkFoundation">Фондация</a>
+        <a class="hero-nav-link" href="https://cska.bg/shop" target="_blank" rel="noopener noreferrer" data-i18n="heroLinkShop">Магазин</a>
+        <a class="hero-nav-link" href="https://stadium.cska.bg/?_gl=1%2Av5e7vk%2A_ga%2AMzEyNjUzODA1LjE3NTI1MDg2ODI.%2A_ga_JR4JBTGPLN%2AczE3NTMxODkwNDgkbzYkZzAkdDE3NTMxODkwNDgkajYwJGwwJGgw" target="_blank" rel="noopener noreferrer" data-i18n="heroLinkStadium">Стадион</a>
+        <a class="hero-nav-link" href="https://cska.bg/fan-registration" target="_blank" rel="noopener noreferrer" data-i18n="heroLinkFanRegistration">Фен регистрация</a>
+      </nav>
       <p class="hero-partner-label" data-i18n="partnerLinksLabel">Партньорски линкове</p>
     </section>
 
@@ -79,6 +79,14 @@
 
     <section class="card section-anchor" id="squad-section" style="margin-top:16px;">
       <h2 data-i18n="squadTitle"><img src="https://static.flashscore.com/res/image/data/MZmpVA7k-nTkb2fj6.png" alt="ЦСКА" style="height:1em;vertical-align:middle;margin-right:0.5em;">Състав на ЦСКА</h2>
+      <div class="squad-nav-wrap">
+        <nav class="squad-nav" aria-label="Навигация по позиции в състава">
+          <a class="squad-nav-link squad-nav-gk" href="#squad-group-goalkeepers"><span class="squad-nav-icon" aria-hidden="true">🧤</span><span data-i18n="squadNavGoalkeepers">ВР</span></a>
+          <a class="squad-nav-link squad-nav-df" href="#squad-group-defenders"><span class="squad-nav-icon" aria-hidden="true">🛡</span><span data-i18n="squadNavDefenders">ЗАЩ</span></a>
+          <a class="squad-nav-link squad-nav-mf" href="#squad-group-midfielders"><span class="squad-nav-icon" aria-hidden="true">🎯</span><span data-i18n="squadNavMidfielders">ХАЛФ</span></a>
+          <a class="squad-nav-link squad-nav-fw" href="#squad-group-forwards"><span class="squad-nav-icon" aria-hidden="true">⚽</span><span data-i18n="squadNavForwards">НАП</span></a>
+        </nav>
+      </div>
       <p class="team-info-bar" id="teamInfoBar"></p>
       <div class="squad-grid" id="squadGrid"></div>
       <p class="small" id="sourceNote"></p>
@@ -127,6 +135,7 @@
 
         <p class="analysis-verdict"><b>Финален извод:</b> След 17 официални мача ЦСКА изглежда като <b>зрял, балансиран и стабилен отбор</b>. Има силна защита, ефективна атака, тактическа гъвкавост и психологическа устойчивост. Първенството върви силно, а европейският опит ще е ценен за следващия етап на развитие. Това е отбор, който вече има ясна идентичност и реалистични амбиции.</p>
       </div>
+      <div class="analysis-dashboard" id="analysisDashboard"></div>
     </section>
 
     <section class="card stoychkov-profile-card section-anchor" id="legends-section" style="margin-top:16px;">

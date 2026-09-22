@@ -184,15 +184,17 @@ function renderSquad(squad) {
   if (!squadGridEl) return;
   if (!squad || typeof squad !== "object") {
     squadGridEl.innerHTML = "";
+    setupSquadSectionNavigation();
     return;
   }
-  // Обединява всички групи (вратари, защитници и т.н.) в един масив
-  const allPlayers = Object.values(squad).flat();
-  if (!allPlayers.length) {
+  const squadGroups = ["goalkeepers", "defenders", "midfielders", "forwards"];
+  const hasPlayers = squadGroups.some((groupKey) => Array.isArray(squad[groupKey]) && squad[groupKey].length);
+  if (!hasPlayers) {
     squadGridEl.innerHTML = "";
+    setupSquadSectionNavigation();
     return;
   }
-  squadGridEl.innerHTML = allPlayers.map((p) => {
+  const renderPlayerCard = (p) => {
     const matches = Number.isFinite(Number(p.matches)) ? Number(p.matches) : 0;
     const goals = Number.isFinite(Number(p.goals)) ? Number(p.goals) : 0;
     const assists = Number.isFinite(Number(p.assists)) ? Number(p.assists) : 0;
@@ -214,7 +216,23 @@ function renderSquad(squad) {
         </div>
       </article>
     `;
+  };
+
+  squadGridEl.innerHTML = squadGroups.map((groupKey) => {
+    const players = Array.isArray(squad[groupKey]) ? squad[groupKey] : [];
+    if (!players.length) return "";
+
+    return `
+      <section class="squad-group section-anchor" id="squad-group-${groupKey}">
+        <h3>${t(`group${groupKey.charAt(0).toUpperCase()}${groupKey.slice(1)}`)}</h3>
+        <div class="squad-group-grid">
+          ${players.map(renderPlayerCard).join("\n")}
+        </div>
+      </section>
+    `;
   }).join("\n");
+
+  setupSquadSectionNavigation();
 }
 const LOCAL_CACHE_KEY = "cska_explorer_root_cache_v10";
 const LOCAL_CACHE_TTL_MS = 10 * 60 * 1000;
@@ -257,6 +275,26 @@ const I18N = {
     groupDefenders: "Защитници",
     groupMidfielders: "Халфове",
     groupForwards: "Нападатели",
+    squadNavGoalkeepers: "ВР",
+    squadNavDefenders: "ЗАЩ",
+    squadNavMidfielders: "ХАЛФ",
+    squadNavForwards: "НАП",
+    analysisDashboardTitle: "Мини Opta: ключови графики",
+    analysisImpactChartTitle: "КПД на играчите",
+    analysisImpactChartHint: "Топ играчи по КПД формулата на сайта.",
+    analysisGoalsChartTitle: "Голове по мачове",
+    analysisGoalsChartHint: "Последни резултати на ЦСКА, когато мачовата история е налична.",
+    analysisGoalsFallback: "Ще покажем графика по мачове, когато има налични последни резултати в източника.",
+    analysisFormChartTitle: "Форма през сезона",
+    analysisFormChartHint: "W/D/L timeline и точки на мач според наличните мачове.",
+    analysisFormFallback: "Няма пълна серия от последни мачове, затова показваме сезонното W/D/L разпределение.",
+    analysisNoData: "Няма достатъчно данни",
+    analysisResultWin: "П",
+    analysisResultDraw: "Р",
+    analysisResultLoss: "З",
+    analysisPpmLabel: "Точки/мач",
+    analysisGoalsLabel: "Голове",
+    analysisSeasonFormLabel: "Сезонна форма",
     statMatches: "Мачове",
     statGoals: "Голове",
     statAssists: "Асист.",
@@ -344,6 +382,26 @@ const I18N = {
     groupDefenders: "Defenders",
     groupMidfielders: "Midfielders",
     groupForwards: "Forwards",
+    squadNavGoalkeepers: "GK",
+    squadNavDefenders: "DF",
+    squadNavMidfielders: "MF",
+    squadNavForwards: "FW",
+    analysisDashboardTitle: "Mini Opta: key charts",
+    analysisImpactChartTitle: "Player Impact",
+    analysisImpactChartHint: "Top players by the site's impact formula.",
+    analysisGoalsChartTitle: "Goals by Match",
+    analysisGoalsChartHint: "CSKA recent results when match history is available.",
+    analysisGoalsFallback: "A match-by-match goals chart will appear when recent results are available from the source.",
+    analysisFormChartTitle: "Season Form",
+    analysisFormChartHint: "W/D/L timeline and points per match based on available results.",
+    analysisFormFallback: "Recent match history is incomplete, so we are showing the season W/D/L distribution instead.",
+    analysisNoData: "Not enough data",
+    analysisResultWin: "W",
+    analysisResultDraw: "D",
+    analysisResultLoss: "L",
+    analysisPpmLabel: "Pts/Match",
+    analysisGoalsLabel: "Goals",
+    analysisSeasonFormLabel: "Season form",
     statMatches: "Matches",
     statGoals: "Goals",
     statAssists: "Assists",
@@ -411,6 +469,14 @@ const I18N = {
 let currentLanguage = localStorage.getItem(LANGUAGE_KEY) === "en" ? "en" : "bg";
 let lastPayload = null;
 let lastFromCache = false;
+let squadSectionObserver = null;
+
+const SQUAD_SECTION_IDS = [
+  "squad-group-goalkeepers",
+  "squad-group-defenders",
+  "squad-group-midfielders",
+  "squad-group-forwards"
+];
 
 const ANALYSIS_CONTENT = {
   bg: `
@@ -498,119 +564,481 @@ function renderAnalysisContent() {
   analysisContent.innerHTML = ANALYSIS_CONTENT[currentLanguage] || ANALYSIS_CONTENT.bg;
 }
 
+function getAllSquadPlayers(squad) {
+  return ["goalkeepers", "defenders", "midfielders", "forwards"]
+    .flatMap((groupKey) => Array.isArray(squad?.[groupKey]) ? squad[groupKey] : []);
+}
+
+function computePlayerImpact(player) {
+  const matches = Number(player?.matches) || 0;
+  const goals = Number(player?.goals) || 0;
+  const assists = Number(player?.assists) || 0;
+  const hattricks = Number(player?.hattricks) || 0;
+  const impact = (matches * 0.25) + (assists * 0.5) + goals + (hattricks * 2);
+  return Number(impact.toFixed(2));
+}
+
+function getCskaStandingRow(standings) {
+  return (standings || []).find((row) => normalizeTeamName(row?.team) === "ЦСКА София") || null;
+}
+
+function parseGoalsFromScore(score) {
+  const match = String(score || "").match(/^(\d+)\s*:\s*(\d+)$/);
+  if (!match) return null;
+  return { home: Number(match[1]), away: Number(match[2]) };
+}
+
+function buildRecentResultsSeries(lastResults) {
+  return (Array.isArray(lastResults) ? lastResults : [])
+    .map((match, index) => {
+      const parsedScore = parseGoalsFromScore(match?.score);
+      const normalizedHome = normalizeTeamName(match?.home);
+      const normalizedAway = normalizeTeamName(match?.away);
+      const isCskaHome = normalizedHome === "ЦСКА София";
+      const isCskaAway = normalizedAway === "ЦСКА София";
+      if (!parsedScore || (!isCskaHome && !isCskaAway)) return null;
+
+      const cskaGoals = isCskaHome ? parsedScore.home : parsedScore.away;
+      const opponentGoals = isCskaHome ? parsedScore.away : parsedScore.home;
+      let resultKey = "draw";
+      if (cskaGoals > opponentGoals) resultKey = "win";
+      else if (cskaGoals < opponentGoals) resultKey = "loss";
+
+      const opponentName = isCskaHome ? match.away : match.home;
+      const shortRound = String(match?.round || "").trim() || `${index + 1}`;
+      return {
+        label: shortRound,
+        opponent: opponentName,
+        goals: cskaGoals,
+        conceded: opponentGoals,
+        resultKey,
+        score: match.score,
+        date: match.date || ""
+      };
+    })
+    .filter(Boolean)
+    .reverse();
+}
+
+function buildTrendSvg(values, width, height, strokeColor, fillColor) {
+  const safeValues = values.filter((value) => Number.isFinite(value));
+  if (!safeValues.length) return "";
+  const maxValue = Math.max(...safeValues, 1);
+  const stepX = safeValues.length === 1 ? 0 : width / (safeValues.length - 1);
+  const points = safeValues.map((value, index) => {
+    const x = safeValues.length === 1 ? width / 2 : index * stepX;
+    const y = height - ((value / maxValue) * (height - 16)) - 8;
+    return { x: Number(x.toFixed(2)), y: Number(y.toFixed(2)), value };
+  });
+  const linePath = points.map((point, index) => `${index === 0 ? "M" : "L"}${point.x} ${point.y}`).join(" ");
+  const areaPath = `${linePath} L ${points[points.length - 1].x} ${height - 4} L ${points[0].x} ${height - 4} Z`;
+
+  return `
+    <svg class="analysis-trend-svg" viewBox="0 0 ${width} ${height}" aria-hidden="true">
+      <path d="${areaPath}" fill="${fillColor}"></path>
+      <path d="${linePath}" fill="none" stroke="${strokeColor}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
+      ${points.map((point) => `<circle cx="${point.x}" cy="${point.y}" r="4" fill="${strokeColor}"></circle>`).join("")}
+    </svg>
+  `;
+}
+
+function renderAnalysisDashboard(payload) {
+  const dashboard = document.getElementById("analysisDashboard");
+  if (!dashboard) return;
+
+  const squadPlayers = getAllSquadPlayers(payload?.cska?.squad);
+  const topImpactPlayers = squadPlayers
+    .map((player) => ({
+      name: getPlayerDisplayName(player?.name),
+      impact: computePlayerImpact(player)
+    }))
+    .filter((player) => player.impact > 0)
+    .sort((left, right) => right.impact - left.impact)
+    .slice(0, 8);
+
+  const impactMax = Math.max(...topImpactPlayers.map((player) => player.impact), 1);
+  const impactMarkup = topImpactPlayers.length
+    ? topImpactPlayers.map((player) => `
+        <div class="analysis-bar-row">
+          <div class="analysis-bar-meta">
+            <span class="analysis-bar-label">${player.name}</span>
+            <span class="analysis-bar-value">${player.impact.toFixed(2)}</span>
+          </div>
+          <div class="analysis-bar-track"><span class="analysis-bar-fill" style="width:${(player.impact / impactMax) * 100}%"></span></div>
+        </div>
+      `).join("")
+    : `<p class="analysis-chart-fallback">${t("analysisNoData")}</p>`;
+
+  const recentResults = buildRecentResultsSeries(payload?.cska?.lastResults);
+  const goalsMarkup = recentResults.length
+    ? (() => {
+        const goalValues = recentResults.map((match) => match.goals);
+        const goalMax = Math.max(...goalValues, 1);
+        const trendSvg = buildTrendSvg(goalValues, 320, 120, "#b0121a", "rgba(176,18,26,0.16)");
+        return `
+          <div class="analysis-goals-chart">
+            <div class="analysis-trend-wrap">${trendSvg}</div>
+            <div class="analysis-goal-bars">
+              ${recentResults.map((match) => `
+                <div class="analysis-goal-col">
+                  <span class="analysis-goal-value">${match.goals}</span>
+                  <span class="analysis-goal-bar" style="height:${Math.max(18, (match.goals / goalMax) * 90)}px"></span>
+                  <span class="analysis-goal-label">${match.label}</span>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        `;
+      })()
+    : `<p class="analysis-chart-fallback">${t("analysisGoalsFallback")}</p>`;
+
+  const cskaStanding = getCskaStandingRow(payload?.standings || []);
+  const formMarkup = recentResults.length
+    ? (() => {
+        let runningPoints = 0;
+        const ppmValues = recentResults.map((match, index) => {
+          runningPoints += match.resultKey === "win" ? 3 : match.resultKey === "draw" ? 1 : 0;
+          return Number((runningPoints / (index + 1)).toFixed(2));
+        });
+        const ppmSvg = buildTrendSvg(ppmValues, 320, 96, "#1f7a3d", "rgba(31,122,61,0.16)");
+        return `
+          <div class="analysis-form-timeline">
+            ${recentResults.map((match) => `
+              <span class="analysis-form-chip analysis-form-chip-${match.resultKey}" title="${match.date} ${match.score} vs ${match.opponent}">${t(`analysisResult${match.resultKey.charAt(0).toUpperCase()}${match.resultKey.slice(1)}`)}</span>
+            `).join("")}
+          </div>
+          <div class="analysis-trend-caption">${t("analysisPpmLabel")}</div>
+          <div class="analysis-trend-wrap analysis-trend-wrap-compact">${ppmSvg}</div>
+        `;
+      })()
+    : cskaStanding
+      ? (() => {
+          const total = Math.max((Number(cskaStanding.w) || 0) + (Number(cskaStanding.d) || 0) + (Number(cskaStanding.l) || 0), 1);
+          const ppm = Number((((Number(cskaStanding.pts) || 0) / (Number(cskaStanding.mp) || total || 1)).toFixed(2)));
+          return `
+            <p class="analysis-chart-fallback">${t("analysisFormFallback")}</p>
+            <div class="analysis-season-summary">
+              <div class="analysis-season-bars">
+                <span class="analysis-season-segment analysis-season-segment-win" style="width:${((Number(cskaStanding.w) || 0) / total) * 100}%"></span>
+                <span class="analysis-season-segment analysis-season-segment-draw" style="width:${((Number(cskaStanding.d) || 0) / total) * 100}%"></span>
+                <span class="analysis-season-segment analysis-season-segment-loss" style="width:${((Number(cskaStanding.l) || 0) / total) * 100}%"></span>
+              </div>
+              <div class="analysis-season-meta">
+                <span>${t("analysisResultWin")}: ${cskaStanding.w}</span>
+                <span>${t("analysisResultDraw")}: ${cskaStanding.d}</span>
+                <span>${t("analysisResultLoss")}: ${cskaStanding.l}</span>
+                <span>${t("analysisPpmLabel")}: ${ppm}</span>
+              </div>
+            </div>
+          `;
+        })()
+      : `<p class="analysis-chart-fallback">${t("analysisNoData")}</p>`;
+
+  dashboard.innerHTML = `
+    <div class="analysis-dashboard-head">
+      <h3>${t("analysisDashboardTitle")}</h3>
+    </div>
+    <div class="analysis-dashboard-grid">
+      <article class="analysis-widget analysis-widget-impact">
+        <div class="analysis-widget-head">
+          <h4>${t("analysisImpactChartTitle")}</h4>
+          <p>${t("analysisImpactChartHint")}</p>
+        </div>
+        <div class="analysis-bars">${impactMarkup}</div>
+      </article>
+      <article class="analysis-widget analysis-widget-goals">
+        <div class="analysis-widget-head">
+          <h4>${t("analysisGoalsChartTitle")}</h4>
+          <p>${t("analysisGoalsChartHint")}</p>
+        </div>
+        ${goalsMarkup}
+      </article>
+      <article class="analysis-widget analysis-widget-form wide-panel">
+        <div class="analysis-widget-head">
+          <h4>${t("analysisFormChartTitle")}</h4>
+          <p>${t("analysisFormChartHint")}</p>
+        </div>
+        ${formMarkup}
+      </article>
+    </div>
+  `;
+}
+
+function setActiveSquadGroup(activeId) {
+  const fallbackId = SQUAD_SECTION_IDS.find((id) => document.getElementById(id)) || "";
+  const safeActiveId = SQUAD_SECTION_IDS.includes(activeId) ? activeId : fallbackId;
+
+  document.querySelectorAll(".squad-nav-link").forEach((link) => {
+    const selected = link.getAttribute("href") === `#${safeActiveId}`;
+    link.classList.toggle("is-active", selected);
+    link.setAttribute("aria-current", selected ? "true" : "false");
+  });
+}
+
+function setupSquadSectionNavigation() {
+  const navLinks = Array.from(document.querySelectorAll(".squad-nav-link"));
+  if (!navLinks.length) return;
+
+  if (squadSectionObserver) {
+    squadSectionObserver.disconnect();
+  }
+
+  const targets = SQUAD_SECTION_IDS.map((id) => document.getElementById(id)).filter(Boolean);
+  if (!targets.length) {
+    navLinks.forEach((link) => {
+      link.classList.remove("is-active");
+      link.removeAttribute("aria-current");
+    });
+    return;
+  }
+
+  setActiveSquadGroup(targets[0].id);
+
+  squadSectionObserver = new IntersectionObserver((entries) => {
+    const visibleEntries = entries
+      .filter((entry) => entry.isIntersecting)
+      .sort((left, right) => left.boundingClientRect.top - right.boundingClientRect.top);
+
+    if (!visibleEntries.length) return;
+
+    const topEntry = visibleEntries[0];
+    if (topEntry?.target?.id) {
+      setActiveSquadGroup(topEntry.target.id);
+    }
+  }, {
+    root: null,
+    threshold: [0.2, 0.45, 0.7],
+    rootMargin: "-18% 0px -60% 0px"
+  });
+
+  targets.forEach((target) => squadSectionObserver.observe(target));
+}
+
 const LEGEND_PROFILE_KEY = "cska_legends_profile";
 const LEGEND_PROFILES = {
   "hristo-stoichkov": {
-    title: "Христо Стоичков",
-    subtitle: "Най-емблематичната фигура на ЦСКА и един от най-големите български футболисти в историята.",
-    intro: "Христо Стоичков е най-емблематичният български футболист и най-яркият представител на школата на ЦСКА. Неговата кариера е пример за комбинация от талант, характер, агресия, дисциплина и непримиримост — качества, които го превръщат в световна звезда и в символ на българския футбол.",
-    cards: [
-      {
-        title: "1. Ранни години и път към ЦСКА",
-        body: `Стоичков е роден на 8 февруари 1966 г. в Пловдив. Започва в местни клубове, но истинският му пробив идва след преминаването в ЦСКА през 1988 г.
-        <ul>
-          <li>изключителна скорост</li>
-          <li>мощен удар с левия крак</li>
-          <li>агресивен стил</li>
-          <li>умение да играе под напрежение</li>
-        </ul>
-        Това го прави идеален за философията на ЦСКА — клуб, който винаги е разчитал на силни характери.`
-      },
-      {
-        title: "2. Кариера в ЦСКА — статистика и влияние",
-        body: `Мачове: 119<br>Голове: 81<br>Трофеи: 3 титли + 4 купи
-        <p>Стоичков не е просто голмайстор — той е играч, който променя динамиката на мача. Неговите силни страни са пресиране, експлозивност, завършващ удар и психологическа устойчивост.</p>
-        <p>ЦСКА печели мачове благодарение на неговата агресия и лидерство.</p>`
-      },
-      {
-        title: "3. Европейският пробив — Барселона и „Dream Team“",
-        body: `През 1990 г. Стоичков преминава в Барселона, където попада под ръководството на Йохан Кройф. Там се превръща в част от легендарния „Dream Team“.
-        <p>Шампионска лига: 1992<br>4 титли Испания<br>Златна топка: 1994</p>
-        Стоичков става ключов елемент в тактиката на Кройф: диагонални пробиви, пространство за Ромарио и непрекъснат интензитет.`
-      },
-      {
-        title: "4. Национален отбор — върхът на българския футбол",
-        body: `На Световното първенство през 1994 г. Стоичков е голмайстор с 6 гола, а България достига 4-то място — най-големият успех в историята ни.
-        <ul>
-          <li>лидер на терена</li>
-          <li>играч, който носи мачове сам</li>
-          <li>психологически мотор на отбора</li>
-        </ul>
-        Без Стоичков България не би постигнала този резултат.`
-      },
-      {
-        title: "5. Стил на игра — технически и тактически анализ",
-        body: `<strong>Технически качества:</strong> мощен удар, бърз дрибъл, отлична игра един на един, прецизност при статични положения.<br><br>
-        <strong>Тактически качества:</strong> намира празни пространства, агресивно пресиране, игра между линиите, силна връзка с партньорите в атака.<br><br>
-        <strong>Психологически профил:</strong> изключителна мотивация, непримиримост, лидерство, способност да играе под огромно напрежение.`
-      },
-      {
-        title: "6. Наследство и влияние върху ЦСКА",
-        body: `Стоичков е не просто легенда — той е икона. Неговото влияние върху ЦСКА е многопластово: поставя клуба на европейската карта, вдъхновява поколения играчи, създава стандарт за борбеност и остава символ на червения дух.
-        <p>За феновете на ЦСКА той е повече от футболист — той е част от идентичността на клуба.</p>`
-      }
-    ],
-    conclusion: "Христо Стоичков е най-голямата легенда на ЦСКА и най-успешният български футболист. Кариерата му е пример за талант, характер и непримиримост. Той остава вечен символ на клуба и на българския футбол."
+    bg: {
+      subtitle: "Най-емблематичната фигура на ЦСКА и един от най-големите български футболисти в историята.",
+      intro: "Христо Стоичков е най-емблематичният български футболист и най-яркият представител на школата на ЦСКА. Неговата кариера е пример за комбинация от талант, характер, агресия, дисциплина и непримиримост — качества, които го превръщат в световна звезда и в символ на българския футбол.",
+      conclusionTitle: "7. Заключение",
+      cards: [
+        {
+          title: "1. Ранни години и път към ЦСКА",
+          body: `Стоичков е роден на 8 февруари 1966 г. в Пловдив. Започва в местни клубове, но истинският му пробив идва след преминаването в ЦСКА през 1988 г.
+          <ul>
+            <li>изключителна скорост</li>
+            <li>мощен удар с левия крак</li>
+            <li>агресивен стил</li>
+            <li>умение да играе под напрежение</li>
+          </ul>
+          Това го прави идеален за философията на ЦСКА — клуб, който винаги е разчитал на силни характери.`
+        },
+        {
+          title: "2. Кариера в ЦСКА — статистика и влияние",
+          body: `Мачове: 119<br>Голове: 81<br>Трофеи: 3 титли + 4 купи
+          <p>Стоичков не е просто голмайстор — той е играч, който променя динамиката на мача. Неговите силни страни са пресиране, експлозивност, завършващ удар и психологическа устойчивост.</p>
+          <p>ЦСКА печели мачове благодарение на неговата агресия и лидерство.</p>`
+        },
+        {
+          title: "3. Европейският пробив — Барселона и „Dream Team“",
+          body: `През 1990 г. Стоичков преминава в Барселона, където попада под ръководството на Йохан Кройф. Там се превръща в част от легендарния „Dream Team“.
+          <p>Шампионска лига: 1992<br>4 титли Испания<br>Златна топка: 1994</p>
+          Стоичков става ключов елемент в тактиката на Кройф: диагонални пробиви, пространство за Ромарио и непрекъснат интензитет.`
+        },
+        {
+          title: "4. Национален отбор — върхът на българския футбол",
+          body: `На Световното първенство през 1994 г. Стоичков е голмайстор с 6 гола, а България достига 4-то място — най-големият успех в историята ни.
+          <ul>
+            <li>лидер на терена</li>
+            <li>играч, който носи мачове сам</li>
+            <li>психологически мотор на отбора</li>
+          </ul>
+          Без Стоичков България не би постигнала този резултат.`
+        },
+        {
+          title: "5. Стил на игра — технически и тактически анализ",
+          body: `<strong>Технически качества:</strong> мощен удар, бърз дрибъл, отлична игра един на един, прецизност при статични положения.<br><br>
+          <strong>Тактически качества:</strong> намира празни пространства, агресивно пресиране, игра между линиите, силна връзка с партньорите в атака.<br><br>
+          <strong>Психологически профил:</strong> изключителна мотивация, непримиримост, лидерство, способност да играе под огромно напрежение.`
+        },
+        {
+          title: "6. Наследство и влияние върху ЦСКА",
+          body: `Стоичков е не просто легенда — той е икона. Неговото влияние върху ЦСКА е многопластово: поставя клуба на европейската карта, вдъхновява поколения играчи, създава стандарт за борбеност и остава символ на червения дух.
+          <p>За феновете на ЦСКА той е повече от футболист — той е част от идентичността на клуба.</p>`
+        }
+      ],
+      conclusion: "Христо Стоичков е най-голямата легенда на ЦСКА и най-успешният български футболист. Кариерата му е пример за талант, характер и непримиримост. Той остава вечен символ на клуба и на българския футбол."
+    },
+    en: {
+      subtitle: "Analytical profile of CSKA's greatest legend.",
+      intro: "Hristo Stoichkov is the most iconic Bulgarian footballer and the brightest product of the CSKA school. His career blends talent, character, aggression, discipline, and relentlessness — qualities that turned him into a world star and a symbol of Bulgarian football.",
+      conclusionTitle: "7. Conclusion",
+      cards: [
+        {
+          title: "1. Early Years and Road to CSKA",
+          body: `Stoichkov was born on 8 February 1966 in Plovdiv. He started in local clubs, but his real breakthrough came after joining CSKA in 1988.
+          <ul>
+            <li>outstanding speed</li>
+            <li>powerful left-footed shot</li>
+            <li>aggressive style</li>
+            <li>ability to perform under pressure</li>
+          </ul>
+          That made him a perfect fit for CSKA's philosophy — a club that has always relied on strong personalities.`
+        },
+        {
+          title: "2. CSKA Career — Statistics and Influence",
+          body: `Matches: 119<br>Goals: 81<br>Trophies: 3 league titles + 4 cups
+          <p>Stoichkov was more than a goalscorer — he was a player who changed the rhythm of a match. His major strengths were pressing, explosiveness, finishing, and psychological resilience.</p>
+          <p>CSKA won matches thanks to his aggression and leadership.</p>`
+        },
+        {
+          title: "3. European Breakthrough — Barcelona and the Dream Team",
+          body: `In 1990, Stoichkov moved to Barcelona under Johan Cruyff and became part of the legendary Dream Team.
+          <p>Champions League: 1992<br>4 La Liga titles<br>Ballon d'Or: 1994</p>
+          Stoichkov became a key piece in Cruyff's system through diagonal runs, creating space for Romario, and relentless intensity.`
+        },
+        {
+          title: "4. National Team — The Peak of Bulgarian Football",
+          body: `At the 1994 FIFA World Cup, Stoichkov finished as top scorer with 6 goals, while Bulgaria reached fourth place — the greatest achievement in the country's history.
+          <ul>
+            <li>leader on the pitch</li>
+            <li>a player who could carry matches alone</li>
+            <li>the team's psychological engine</li>
+          </ul>
+          Without Stoichkov, Bulgaria would not have reached that level.`
+        },
+        {
+          title: "5. Playing Style — Technical and Tactical Analysis",
+          body: `<strong>Technical qualities:</strong> powerful shot, quick dribble, excellent one-on-one play, precision from set pieces.<br><br>
+          <strong>Tactical qualities:</strong> finds open spaces, presses aggressively, operates between the lines, and connects strongly with attacking teammates.<br><br>
+          <strong>Psychological profile:</strong> exceptional motivation, relentlessness, leadership, and the ability to perform under enormous pressure.`
+        },
+        {
+          title: "6. Legacy and Influence on CSKA",
+          body: `Stoichkov is not just a legend — he is an icon. His influence on CSKA is multilayered: he put the club on the European map, inspired generations of players, set the standard for fighting spirit, and remains a symbol of the red identity.
+          <p>For CSKA supporters, he is more than a footballer — he is part of the club's identity.</p>`
+        }
+      ],
+      conclusion: "Hristo Stoichkov is CSKA's greatest legend and Bulgaria's most successful footballer. His career is an example of talent, character, and relentlessness. He remains an eternal symbol of the club and of Bulgarian football."
+    }
   },
   "dimitar-berbatov": {
-    title: "Димитър Бербатов",
-    subtitle: "Най-елегантният голмайстор, израснал в школата на ЦСКА.",
-    intro: "Димитър Бербатов е един от най‑талантливите и технични български футболисти в историята. Продукт на школата на ЦСКА, той е пример за комбинация от класа, интелект, техника и хладнокръвие — качества, които го превърнаха в световна звезда и в символ на българския футбол на най-високо ниво.",
-    cards: [
-      { title: "1. Ранни години и път към ЦСКА", body: `Бербатов е роден на 30 януари 1981 г. в Благоевград. Започва в Пирин, но истинският му пробив идва след преминаването в ЦСКА през 1998 г., където школата и методиката на клуба оформят неговия стил:<ul><li>изключителна техника</li><li>елегантен контрол на топката</li><li>хладнокръвие в завършващата фаза</li><li>интелигентно движение без топка</li></ul>Още като юноша се откроява като играч с „европейски“ профил — спокоен, прецизен, различен.` },
-      { title: "2. Кариера в ЦСКА — статистика и влияние", body: `Мачове: 65<br>Голове: 38<br>Трофеи: Купа на България (1999)
-      <p>Бербатов не е просто нападател — той е играч, който променя философията на атаката. Неговите силни страни в ЦСКА:</p><ul><li>техничен завършващ удар</li><li>игра с гръб към вратата</li><li>перфектен първи контрол</li><li>спокойствие под напрежение</li></ul><p>ЦСКА печели мачове благодарение на неговата класа и способност да решава ситуации с едно докосване.</p>` },
-      { title: "3. Европейският пробив — Байер Леверкузен, Тотнъм, Манчестър Юнайтед", body: `След ЦСКА Бербатов преминава в Байер Леверкузен, където се превръща в един от най‑силните нападатели в Бундеслигата.
-      <p>След това следват:</p><p><strong>Тотнъм</strong><br>- превръща се в един от най-елегантните нападатели във Висшата лига<br>- печели сърцата на феновете с техника и интелигентност</p><p><strong>Манчестър Юнайтед</strong><br>- Шампион на Англия: 2 пъти<br>- Голмайстор на Висшата лига: 2010/11<br>- хеттрик срещу Ливърпул<br>- играч с уникален стил, който съчетава класа и ефективност</p><p>Бербатов става част от елита на европейския футбол — не чрез сила, а чрез изкуство.</p>` },
-      { title: "4. Национален отбор — лидер и голмайстор", body: `Голове: 48 (най‑резултатният български национал)<br>Мачове: 78
-      <p>Бербатов е лидер чрез спокойствие, техника и интелект. Той е играч, който носи мачове сам, без да повишава тон — само чрез класа.</p>` },
-      { title: "5. Стил на игра — технически и тактически анализ", body: `<strong>Технически качества:</strong><ul><li>феноменален първи контрол</li><li>прецизност при завършващ удар</li><li>елегантен дрибъл</li><li>игра с гръб към вратата</li><li>уникална визия за играта</li></ul><strong>Тактически качества:</strong><ul><li>умение да забавя или ускорява атаката</li><li>перфектно позициониране</li><li>игра между линиите</li><li>създаване на пространство за партньорите</li></ul><strong>Психологически профил:</strong><ul><li>спокойствие</li><li>увереност</li><li>интелект</li><li>липса на паника в ключови моменти</li></ul>Бербатов е нападател, който не просто бележи — той създава стил.` },
-      { title: "6. Наследство и влияние върху ЦСКА", body: `Бербатов остава символ на това, което школата на ЦСКА може да създаде: играч с европейска класа, техника и интелект.
-      <p>За феновете на ЦСКА той е пример за талант, развит по правилния начин, дисциплина, спокойствие и футболна елегантност. Той е доказателство, че ЦСКА е клуб, който ражда световни звезди.</p>` }
-    ],
-    conclusion: "Димитър Бербатов е един от най‑елегантните и технични нападатели в историята на българския футбол. Продукт на школата на ЦСКА, той остава символ на класа, интелект и спокойствие — качества, които го превърнаха в световна звезда и в легенда на българския футбол."
+    bg: {
+      subtitle: "Най-елегантният голмайстор, израснал в школата на ЦСКА.",
+      intro: "Димитър Бербатов е един от най‑талантливите и технични български футболисти в историята. Продукт на школата на ЦСКА, той е пример за комбинация от класа, интелект, техника и хладнокръвие — качества, които го превърнаха в световна звезда и в символ на българския футбол на най-високо ниво.",
+      conclusionTitle: "7. Заключение",
+      cards: [
+        { title: "1. Ранни години и път към ЦСКА", body: `Бербатов е роден на 30 януари 1981 г. в Благоевград. Започва в Пирин, но истинският му пробив идва след преминаването в ЦСКА през 1998 г., където школата и методиката на клуба оформят неговия стил:<ul><li>изключителна техника</li><li>елегантен контрол на топката</li><li>хладнокръвие в завършващата фаза</li><li>интелигентно движение без топка</li></ul>Още като юноша се откроява като играч с „европейски“ профил — спокоен, прецизен, различен.` },
+        { title: "2. Кариера в ЦСКА — статистика и влияние", body: `Мачове: 65<br>Голове: 38<br>Трофеи: Купа на България (1999)<p>Бербатов не е просто нападател — той е играч, който променя философията на атаката. Неговите силни страни в ЦСКА:</p><ul><li>техничен завършващ удар</li><li>игра с гръб към вратата</li><li>перфектен първи контрол</li><li>спокойствие под напрежение</li></ul><p>ЦСКА печели мачове благодарение на неговата класа и способност да решава ситуации с едно докосване.</p>` },
+        { title: "3. Европейският пробив — Байер Леверкузен, Тотнъм, Манчестър Юнайтед", body: `След ЦСКА Бербатов преминава в Байер Леверкузен, където се превръща в един от най‑силните нападатели в Бундеслигата.<p>След това следват:</p><p><strong>Тотнъм</strong><br>- превръща се в един от най-елегантните нападатели във Висшата лига<br>- печели сърцата на феновете с техника и интелигентност</p><p><strong>Манчестър Юнайтед</strong><br>- Шампион на Англия: 2 пъти<br>- Голмайстор на Висшата лига: 2010/11<br>- хеттрик срещу Ливърпул<br>- играч с уникален стил, който съчетава класа и ефективност</p><p>Бербатов става част от елита на европейския футбол — не чрез сила, а чрез изкуство.</p>` },
+        { title: "4. Национален отбор — лидер и голмайстор", body: `Голове: 48 (най‑резултатният български национал)<br>Мачове: 78<p>Бербатов е лидер чрез спокойствие, техника и интелект. Той е играч, който носи мачове сам, без да повишава тон — само чрез класа.</p>` },
+        { title: "5. Стил на игра — технически и тактически анализ", body: `<strong>Технически качества:</strong><ul><li>феноменален първи контрол</li><li>прецизност при завършващ удар</li><li>елегантен дрибъл</li><li>игра с гръб към вратата</li><li>уникална визия за играта</li></ul><strong>Тактически качества:</strong><ul><li>умение да забавя или ускорява атаката</li><li>перфектно позициониране</li><li>игра между линиите</li><li>създаване на пространство за партньорите</li></ul><strong>Психологически профил:</strong><ul><li>спокойствие</li><li>увереност</li><li>интелект</li><li>липса на паника в ключови моменти</li></ul>Бербатов е нападател, който не просто бележи — той създава стил.` },
+        { title: "6. Наследство и влияние върху ЦСКА", body: `Бербатов остава символ на това, което школата на ЦСКА може да създаде: играч с европейска класа, техника и интелект.<p>За феновете на ЦСКА той е пример за талант, развит по правилния начин, дисциплина, спокойствие и футболна елегантност. Той е доказателство, че ЦСКА е клуб, който ражда световни звезди.</p>` }
+      ],
+      conclusion: "Димитър Бербатов е един от най‑елегантните и технични нападатели в историята на българския футбол. Продукт на школата на ЦСКА, той остава символ на класа, интелект и спокойствие — качества, които го превърнаха в световна звезда и в легенда на българския футбол."
+    },
+    en: {
+      subtitle: "The most elegant goalscorer to emerge from the CSKA academy.",
+      intro: "Dimitar Berbatov is one of the most talented and technically gifted Bulgarian footballers in history. A product of CSKA's academy, he represents a blend of class, intelligence, technique, and composure — qualities that made him a global star and a symbol of Bulgarian football at the highest level.",
+      conclusionTitle: "7. Conclusion",
+      cards: [
+        { title: "1. Early Years and Road to CSKA", body: `Berbatov was born on 30 January 1981 in Blagoevgrad. He started at Pirin, but his real breakthrough came after joining CSKA in 1998, where the club's academy and methodology shaped his style:<ul><li>outstanding technique</li><li>elegant ball control</li><li>calm finishing</li><li>intelligent off-ball movement</li></ul>Even as a youngster, he stood out as a player with a truly European profile — calm, precise, and different.` },
+        { title: "2. CSKA Career — Statistics and Influence", body: `Matches: 65<br>Goals: 38<br>Trophies: Bulgarian Cup (1999)<p>Berbatov was not just a striker — he changed the philosophy of attack. His main strengths at CSKA were:</p><ul><li>technical finishing</li><li>playing with his back to goal</li><li>a perfect first touch</li><li>composure under pressure</li></ul><p>CSKA won matches thanks to his class and his ability to decide situations with a single touch.</p>` },
+        { title: "3. European Breakthrough — Bayer Leverkusen, Tottenham, Manchester United", body: `After CSKA, Berbatov moved to Bayer Leverkusen, where he became one of the Bundesliga's top strikers.<p>Then came:</p><p><strong>Tottenham</strong><br>- became one of the most elegant strikers in the Premier League<br>- won fans over with technique and intelligence</p><p><strong>Manchester United</strong><br>- English champion: 2 times<br>- Premier League top scorer: 2010/11<br>- hat-trick against Liverpool<br>- a player with a unique style combining class and efficiency</p><p>Berbatov entered the European elite not through power, but through artistry.</p>` },
+        { title: "4. National Team — Leader and Goalscorer", body: `Goals: 48 (Bulgaria's all-time top scorer)<br>Matches: 78<p>Berbatov led through calmness, technique, and intelligence. He was a player who could carry matches without raising his voice — only through class.</p>` },
+        { title: "5. Playing Style — Technical and Tactical Analysis", body: `<strong>Technical qualities:</strong><ul><li>phenomenal first touch</li><li>precise finishing</li><li>elegant dribbling</li><li>back-to-goal play</li><li>unique vision</li></ul><strong>Tactical qualities:</strong><ul><li>ability to slow down or accelerate attacks</li><li>perfect positioning</li><li>operating between the lines</li><li>creating space for teammates</li></ul><strong>Psychological profile:</strong><ul><li>calmness</li><li>confidence</li><li>intelligence</li><li>lack of panic in key moments</li></ul>Berbatov was a striker who did not just score — he created style.` },
+        { title: "6. Legacy and Influence on CSKA", body: `Berbatov remains a symbol of what the CSKA academy can produce: a player with European class, technique, and football intelligence.<p>For CSKA supporters, he is an example of talent developed the right way, discipline, calmness, and football elegance. He proves that CSKA is a club that creates world stars.</p>` }
+      ],
+      conclusion: "Dimitar Berbatov is one of the most elegant and technically refined strikers in Bulgarian football history. A product of the CSKA academy, he remains a symbol of class, intelligence, and composure — qualities that turned him into a world star and a Bulgarian legend."
+    }
   },
   "petar-zhekov": {
-    title: "Петър Жеков",
-    subtitle: "Най-големият голмайстор в историята на българския футбол.",
-    intro: "Петър Жеков е легенда, която стои над статистиката — той е човекът, който превърна гола в изкуство. Най‑резултатният български нападател за всички времена.",
-    cards: [
-      { title: "1. Ранни години и път към ЦСКА", body: `Роден на 10 октомври 1944 г. в Симеоновград. След силни сезони в Берое преминава в ЦСКА през 1968 г.` },
-      { title: "2. Кариера в ЦСКА — статистика и влияние", body: `<strong>Мачове:</strong> 200+<br><strong>Голове:</strong> 150+<br><strong>Трофеи:</strong> 3 титли, 2 купи<br><strong>Златна обувка:</strong> 1969<br>Жеков е нападател, който бележи от всякакви позиции.` },
-      { title: "3. Европейски успехи", body: `Един от най‑страховитите нападатели в Европа в края на 60‑те и началото на 70‑те.` },
-      { title: "4. Национален отбор", body: `Участник на Световното първенство 1970.<br>Голмайстор на България за всички времена.` },
-      { title: "5. Стил на игра", body: `<ul><li>убийствен удар</li><li>перфектно позициониране</li><li>хищнически инстинкт</li><li>играч, който бележи без да му трябва много пространство</li></ul>` },
-      { title: "6. Наследство", body: `Жеков остава вечен символ на гола в ЦСКА.` }
-    ],
-    conclusion: "Петър Жеков остава вечен символ на гола в ЦСКА и на голмайсторската класа в българския футбол."
+    bg: {
+      subtitle: "Най-големият голмайстор в историята на българския футбол.",
+      intro: "Петър Жеков е легенда, която стои над статистиката — той е човекът, който превърна гола в изкуство. Най‑резултатният български нападател за всички времена.",
+      conclusionTitle: "7. Заключение",
+      cards: [
+        { title: "1. Ранни години и път към ЦСКА", body: `Роден на 10 октомври 1944 г. в Симеоновград. След силни сезони в Берое преминава в ЦСКА през 1968 г.` },
+        { title: "2. Кариера в ЦСКА — статистика и влияние", body: `<strong>Мачове:</strong> 200+<br><strong>Голове:</strong> 150+<br><strong>Трофеи:</strong> 3 титли, 2 купи<br><strong>Златна обувка:</strong> 1969<br>Жеков е нападател, който бележи от всякакви позиции.` },
+        { title: "3. Европейски успехи", body: `Един от най‑страховитите нападатели в Европа в края на 60‑те и началото на 70‑те.` },
+        { title: "4. Национален отбор", body: `Участник на Световното първенство 1970.<br>Голмайстор на България за всички времена.` },
+        { title: "5. Стил на игра", body: `<ul><li>убийствен удар</li><li>перфектно позициониране</li><li>хищнически инстинкт</li><li>играч, който бележи без да му трябва много пространство</li></ul>` },
+        { title: "6. Наследство", body: `Жеков остава вечен символ на гола в ЦСКА.` }
+      ],
+      conclusion: "Петър Жеков остава вечен символ на гола в ЦСКА и на голмайсторската класа в българския футбол."
+    },
+    en: {
+      subtitle: "The greatest goalscorer in the history of Bulgarian football.",
+      intro: "Petar Zhekov is a legend who stands above statistics — the man who turned scoring into an art. He remains Bulgaria's most prolific striker of all time.",
+      conclusionTitle: "7. Conclusion",
+      cards: [
+        { title: "1. Early Years and Road to CSKA", body: `Born on 10 October 1944 in Simeonovgrad. After strong seasons with Beroe, he joined CSKA in 1968.` },
+        { title: "2. CSKA Career — Statistics and Influence", body: `<strong>Matches:</strong> 200+<br><strong>Goals:</strong> 150+<br><strong>Trophies:</strong> 3 league titles, 2 cups<br><strong>European Golden Shoe:</strong> 1969<br>Zhekov was a striker who could score from any position.` },
+        { title: "3. European Success", body: `One of the most feared strikers in Europe in the late 1960s and early 1970s.` },
+        { title: "4. National Team", body: `Played at the 1970 FIFA World Cup.<br>Bulgaria's all-time top goalscorer.` },
+        { title: "5. Playing Style", body: `<ul><li>lethal shot</li><li>perfect positioning</li><li>predatory instinct</li><li>a player who scored without needing much space</li></ul>` },
+        { title: "6. Legacy", body: `Zhekov remains an eternal symbol of goals for CSKA.` }
+      ],
+      conclusion: "Petar Zhekov remains an eternal symbol of scoring for CSKA and of pure goalscoring class in Bulgarian football."
+    }
   },
   "georgi-dimitrov-djeki": {
-    title: "Георги Димитров – „Джеки“",
-    subtitle: "Аналитичен профил на капитана, който въплъщаваше духа на ЦСКА.",
-    intro: "Георги Димитров – Джеки е един от най‑великите защитници в историята на българския футбол и емблематичен капитан на ЦСКА. Той е символ на стабилност, характер, лидерство и непреклонност — качества, които го превръщат в гръбнака на отбора през 70‑те и 80‑те години.",
-    cards: [
-      { title: "1. Ранни години и път към ЦСКА", body: `Роден на 14 януари 1959 г. в Стара Загора, Джеки започва в Берое, но истинският му разцвет идва след трансфера в ЦСКА през 1979 г.<ul><li>феноменален тайминг в единоборствата</li><li>изключителна игра с глава</li><li>лидерски качества</li><li>спокойствие под напрежение</li></ul>Той бързо се превръща в естествения капитан на отбора.` },
-      { title: "2. Кариера в ЦСКА — статистика и влияние", body: `<strong>Мачове:</strong> 250+<br><strong>Трофеи:</strong> 4 титли, 4 купи<br><strong>Европейски успехи:</strong> два пъти четвъртфинал в КЕШ
-      <p>Джеки е защитник, който диктува темпото на целия отбор.</p><ul><li>перфектно позициониране</li><li>лидерство в трудни моменти</li><li>умение да организира защитата</li><li>спокойствие и авторитет</li></ul>` },
-      { title: "3. Национален отбор", body: `Капитан на България на Световното първенство 1986.<br>Един от най‑уважаваните български футболисти в Европа.` },
-      { title: "4. Стил на игра", body: `<ul><li>силен, но интелигентен защитник</li><li>безупречен в единоборствата</li><li>отличен във въздуха</li><li>лидер, който говори малко, но тежи много</li></ul>` },
-      { title: "5. Наследство", body: `Джеки остава символ на капитанството в ЦСКА. За феновете той е пример за чест, характер и непреклонност.` }
-    ],
-    conclusion: "Георги Димитров – Джеки е символ на капитанството в ЦСКА и пример за чест, характер и непреклонност."
+    bg: {
+      subtitle: "Аналитичен профил на капитана, който въплъщаваше духа на ЦСКА.",
+      intro: "Георги Димитров – Джеки е един от най‑великите защитници в историята на българския футбол и емблематичен капитан на ЦСКА. Той е символ на стабилност, характер, лидерство и непреклонност — качества, които го превръщат в гръбнака на отбора през 70‑те и 80‑те години.",
+      conclusionTitle: "7. Заключение",
+      cards: [
+        { title: "1. Ранни години и път към ЦСКА", body: `Роден на 14 януари 1959 г. в Стара Загора, Джеки започва в Берое, но истинският му разцвет идва след трансфера в ЦСКА през 1979 г.<ul><li>феноменален тайминг в единоборствата</li><li>изключителна игра с глава</li><li>лидерски качества</li><li>спокойствие под напрежение</li></ul>Той бързо се превръща в естествения капитан на отбора.` },
+        { title: "2. Кариера в ЦСКА — статистика и влияние", body: `<strong>Мачове:</strong> 250+<br><strong>Трофеи:</strong> 4 титли, 4 купи<br><strong>Европейски успехи:</strong> два пъти четвъртфинал в КЕШ<p>Джеки е защитник, който диктува темпото на целия отбор.</p><ul><li>перфектно позициониране</li><li>лидерство в трудни моменти</li><li>умение да организира защитата</li><li>спокойствие и авторитет</li></ul>` },
+        { title: "3. Национален отбор", body: `Капитан на България на Световното първенство 1986.<br>Един от най‑уважаваните български футболисти в Европа.` },
+        { title: "4. Стил на игра", body: `<ul><li>силен, но интелигентен защитник</li><li>безупречен в единоборствата</li><li>отличен във въздуха</li><li>лидер, който говори малко, но тежи много</li></ul>` },
+        { title: "5. Наследство", body: `Джеки остава символ на капитанството в ЦСКА. За феновете той е пример за чест, характер и непреклонност.` }
+      ],
+      conclusion: "Георги Димитров – Джеки е символ на капитанството в ЦСКА и пример за чест, характер и непреклонност."
+    },
+    en: {
+      subtitle: "Analytical profile of the captain who embodied the spirit of CSKA.",
+      intro: "Georgi Dimitrov – Djeki is one of the greatest defenders in Bulgarian football history and an iconic captain of CSKA. He became a symbol of stability, character, leadership, and resilience — qualities that made him the backbone of the team throughout the 1970s and 1980s.",
+      conclusionTitle: "6. Conclusion",
+      cards: [
+        { title: "1. Early Years and Road to CSKA", body: `Born on 14 January 1959 in Stara Zagora, Djeki started at Beroe, but his true rise came after his transfer to CSKA in 1979.<ul><li>phenomenal timing in duels</li><li>excellent heading ability</li><li>leadership qualities</li><li>calmness under pressure</li></ul>He quickly became the natural captain of the team.` },
+        { title: "2. CSKA Career — Statistics and Influence", body: `<strong>Matches:</strong> 250+<br><strong>Trophies:</strong> 4 league titles, 4 cups<br><strong>European achievements:</strong> two European Cup quarter-finals<p>Djeki was a defender who dictated the tempo of the whole team.</p><ul><li>perfect positioning</li><li>leadership in difficult moments</li><li>ability to organize the defence</li><li>calmness and authority</li></ul>` },
+        { title: "3. National Team", body: `Captain of Bulgaria at the 1986 FIFA World Cup.<br>One of the most respected Bulgarian footballers in Europe.` },
+        { title: "4. Playing Style", body: `<ul><li>strong but intelligent defender</li><li>flawless in duels</li><li>excellent in the air</li><li>a leader who spoke little but carried huge weight</li></ul>` },
+        { title: "5. Legacy", body: `Djeki remains a symbol of captaincy at CSKA. For the supporters, he stands for honour, character, and resilience.` }
+      ],
+      conclusion: "Georgi Dimitrov – Djeki remains a symbol of captaincy at CSKA and an example of honour, character, and resilience."
+    }
   },
   "stoycho-mladenov": {
-    title: "Стойчо Младенов",
-    subtitle: "Аналитичен профил на човека, който победи Ливърпул и стана легенда два пъти — като играч и треньор.",
-    intro: "Стойчо Младенов е една от най‑ярките фигури в историята на ЦСКА — голмайстор, лидер, треньор, символ на червения дух. Той е човекът, който два пъти остави следа: на терена и на скамейката.",
-    cards: [
-      { title: "1. Ранни години и път към ЦСКА", body: `Роден на 12 април 1957 г. в Петрич.<br>След силни сезони в Берое преминава в ЦСКА през 1980 г.<br><br>Още в първите мачове показва:<ul><li>мощен удар</li><li>невероятен нюх за гол</li><li>агресивност в наказателното поле</li><li>лидерски качества</li></ul>` },
-      { title: "2. Кариера в ЦСКА — статистика и влияние", body: `<strong>Мачове:</strong> 180+<br><strong>Голове:</strong> 100+<br><strong>Трофеи:</strong> 3 титли, 2 купи<br>Най‑емблематичният момент: <strong>Голът срещу Ливърпул през 1982 г.</strong>, който изпраща ЦСКА на полуфинал в КЕШ.` },
-      { title: "3. Европейски пробив", body: `Младенов е един от най‑страховитите нападатели в Европа в началото на 80‑те. Комбинира сила, техника и хищнически инстинкт.` },
-      { title: "4. Национален отбор", body: `Участник на Световното първенство 1986.<br>Един от най‑резултатните български нападатели за времето си.` },
-      { title: "5. Стил на игра", body: `<ul><li>мощен и директен</li><li>отличен завършващ удар</li><li>играч, който не се крие</li><li>лидер, който носи мачове сам</li></ul>` },
-      { title: "6. Наследство", body: `Като треньор печели титла през 2008 г. За феновете е символ на борбеност, чест и непримиримост.` }
-    ],
-    conclusion: "Стойчо Младенов е символ на борбеност, чест и непримиримост — легенда два пъти, като играч и като треньор."
+    bg: {
+      subtitle: "Аналитичен профил на човека, който победи Ливърпул и стана легенда два пъти — като играч и треньор.",
+      intro: "Стойчо Младенов е една от най‑ярките фигури в историята на ЦСКА — голмайстор, лидер, треньор, символ на червения дух. Той е човекът, който два пъти остави следа: на терена и на скамейката.",
+      conclusionTitle: "7. Заключение",
+      cards: [
+        { title: "1. Ранни години и път към ЦСКА", body: `Роден на 12 април 1957 г. в Петрич.<br>След силни сезони в Берое преминава в ЦСКА през 1980 г.<br><br>Още в първите мачове показва:<ul><li>мощен удар</li><li>невероятен нюх за гол</li><li>агресивност в наказателното поле</li><li>лидерски качества</li></ul>` },
+        { title: "2. Кариера в ЦСКА — статистика и влияние", body: `<strong>Мачове:</strong> 180+<br><strong>Голове:</strong> 100+<br><strong>Трофеи:</strong> 3 титли, 2 купи<br>Най‑емблематичният момент: <strong>Голът срещу Ливърпул през 1982 г.</strong>, който изпраща ЦСКА на полуфинал в КЕШ.` },
+        { title: "3. Европейски пробив", body: `Младенов е един от най‑страховитите нападатели в Европа в началото на 80‑те. Комбинира сила, техника и хищнически инстинкт.` },
+        { title: "4. Национален отбор", body: `Участник на Световното първенство 1986.<br>Един от най‑резултатните български нападатели за времето си.` },
+        { title: "5. Стил на игра", body: `<ul><li>мощен и директен</li><li>отличен завършващ удар</li><li>играч, който не се крие</li><li>лидер, който носи мачове сам</li></ul>` },
+        { title: "6. Наследство", body: `Като треньор печели титла през 2008 г. За феновете е символ на борбеност, чест и непримиримост.` }
+      ],
+      conclusion: "Стойчо Младенов е символ на борбеност, чест и непримиримост — легенда два пъти, като играч и като треньор."
+    },
+    en: {
+      subtitle: "Analytical profile of the man who beat Liverpool and became a legend twice — as a player and as a coach.",
+      intro: "Stoycho Mladenov is one of the brightest figures in CSKA history — a goalscorer, leader, coach, and symbol of the club's fighting spirit. He left his mark twice: first on the pitch and later from the bench.",
+      conclusionTitle: "7. Conclusion",
+      cards: [
+        { title: "1. Early Years and Road to CSKA", body: `Born on 12 April 1957 in Petrich.<br>After strong seasons with Beroe, he joined CSKA in 1980.<br><br>From his first matches he showed:<ul><li>a powerful shot</li><li>outstanding instinct for goals</li><li>aggression in the penalty area</li><li>leadership qualities</li></ul>` },
+        { title: "2. CSKA Career — Statistics and Influence", body: `<strong>Matches:</strong> 180+<br><strong>Goals:</strong> 100+<br><strong>Trophies:</strong> 3 league titles, 2 cups<br>Most iconic moment: <strong>the goal against Liverpool in 1982</strong>, which sent CSKA to the European Cup semi-final.` },
+        { title: "3. European Breakthrough", body: `Mladenov was one of the most feared strikers in Europe in the early 1980s. He combined power, technique, and a predatory instinct.` },
+        { title: "4. National Team", body: `Played at the 1986 FIFA World Cup.<br>One of Bulgaria's most productive strikers of his era.` },
+        { title: "5. Playing Style", body: `<ul><li>powerful and direct</li><li>excellent finishing</li><li>a player who never hid</li><li>a leader who could carry matches alone</li></ul>` },
+        { title: "6. Legacy", body: `As a coach, he won the league title in 2008. For supporters, he remains a symbol of fighting spirit, honour, and relentlessness.` }
+      ],
+      conclusion: "Stoycho Mladenov is a symbol of fight, honour, and relentlessness — a legend twice over, as a player and as a coach."
+    }
   }
 };
 
@@ -621,7 +1049,8 @@ let currentLegendId = (() => {
 })();
 
 function legendProfileHTML(profile) {
-  const cards = profile.cards.map((card, index) => {
+  const localizedProfile = profile[currentLanguage] || profile.bg;
+  const cards = localizedProfile.cards.map((card, index) => {
     const wideClass = index >= 4 ? " wide-panel" : "";
     return `
       <article class="stoychkov-panel${wideClass}">
@@ -634,10 +1063,10 @@ function legendProfileHTML(profile) {
   return `
     <div class="stoychkov-profile">
       <div class="stoychkov-header">
-        <p class="section-subtitle">${profile.subtitle}</p>
+        <p class="section-subtitle">${localizedProfile.subtitle}</p>
       </div>
       <div class="stoychkov-intro">
-        <p>${profile.intro}</p>
+        <p>${localizedProfile.intro}</p>
       </div>
 
       <div class="stoychkov-grid">
@@ -645,8 +1074,8 @@ function legendProfileHTML(profile) {
       </div>
 
       <div class="stoychkov-conclusion">
-        <h3>7. Заключение</h3>
-        <p>${profile.conclusion}</p>
+        <h3>${localizedProfile.conclusionTitle}</h3>
+        <p>${localizedProfile.conclusion}</p>
       </div>
     </div>
   `;
@@ -995,6 +1424,7 @@ function render(payload, fromCache) {
   renderStandings(payload.standings || []);
 
   renderSquad(payload.cska?.squad || FALLBACK_DATA.cska.squad);
+  renderAnalysisDashboard(payload);
 
   const teamInfoBarEl = document.getElementById("teamInfoBar");
   if (teamInfoBarEl) {
@@ -1102,6 +1532,7 @@ async function init() {
   applyLanguageUI();
   setupLanguageSwitch();
   setupPartnershipWalletCopy();
+  setupSquadSectionNavigation();
   setupLegendProfileSwitcher();
   await loadAndRender({ forceRefresh: false });
 }
