@@ -338,7 +338,7 @@ const I18N = {
     legendNavHristo: "Христо Стоичков",
     legendNavBerbatov: "Димитър Бербатов",
     legendNavZhekov: "Петър Жеков",
-    legendNavDjeki: "Георги Димитров – „Джеки“",
+    legendNavPenev: "Любослав Пенев",
     legendNavStoycho: "Стойчо Младенов",
     partnerLinksLabel: "Партньорски линкове",
     cskaPartnerTitle: "Партньорство с CSKA Explorer",
@@ -446,7 +446,7 @@ const I18N = {
     legendNavHristo: "Hristo Stoichkov",
     legendNavBerbatov: "Dimitar Berbatov",
     legendNavZhekov: "Petar Zhekov",
-    legendNavDjeki: "Georgi Dimitrov – Djeki",
+    legendNavPenev: "Luboslav Penev",
     legendNavStoycho: "Stoycho Mladenov",
     partnerLinksLabel: "Partner Links",
     cskaPartnerTitle: "Partnership with CSKA Explorer",
@@ -1104,32 +1104,32 @@ const LEGEND_PROFILES = {
       conclusion: "Petar Zhekov remains an eternal symbol of scoring for CSKA and of pure goalscoring class in Bulgarian football."
     }
   },
-  "georgi-dimitrov-djeki": {
+  "luboslav-penev": {
     bg: {
-      subtitle: "Аналитичен профил на капитана, който въплъщаваше духа на ЦСКА.",
-      intro: "Георги Димитров – Джеки е един от най‑великите защитници в историята на българския футбол и емблематичен капитан на ЦСКА. Той е символ на стабилност, характер, лидерство и непреклонност — качества, които го превръщат в гръбнака на отбора през 70‑те и 80‑те години.",
-      conclusionTitle: "7. Заключение",
+      subtitle: "Аналитичен профил на голмайстора и лидера, който въплъщаваше духа на ЦСКА.",
+      intro: "Любослав Пенев е един от най‑емблематичните нападатели в историята на ЦСКА — футболист с характер, класа, лидерство и непреклонност. Той е играч, който носи мачове сам, вдъхновява съотборниците си и превръща атаката на ЦСКА в оръжие, от което противниците се страхуват.",
+      conclusionTitle: "6. Заключение",
       cards: [
-        { title: "1. Ранни години и път към ЦСКА", body: `Роден на 14 януари 1959 г. в Стара Загора, Джеки започва в Берое, но истинският му разцвет идва след трансфера в ЦСКА през 1979 г.<ul><li>феноменален тайминг в единоборствата</li><li>изключителна игра с глава</li><li>лидерски качества</li><li>спокойствие под напрежение</li></ul>Той бързо се превръща в естествения капитан на отбора.` },
-        { title: "2. Кариера в ЦСКА — статистика и влияние", body: `<strong>Мачове:</strong> 250+<br><strong>Трофеи:</strong> 4 титли, 4 купи<br><strong>Европейски успехи:</strong> два пъти четвъртфинал в КЕШ<p>Джеки е защитник, който диктува темпото на целия отбор.</p><ul><li>перфектно позициониране</li><li>лидерство в трудни моменти</li><li>умение да организира защитата</li><li>спокойствие и авторитет</li></ul>` },
-        { title: "3. Национален отбор", body: `Капитан на България на Световното първенство 1986.<br>Един от най‑уважаваните български футболисти в Европа.` },
-        { title: "4. Стил на игра", body: `<ul><li>силен, но интелигентен защитник</li><li>безупречен в единоборствата</li><li>отличен във въздуха</li><li>лидер, който говори малко, но тежи много</li></ul>` },
-        { title: "5. Наследство", body: `Джеки остава символ на капитанството в ЦСКА. За феновете той е пример за чест, характер и непреклонност.` }
+        { title: "1. Ранни години и път към ЦСКА", body: `Роден на 31 август 1966 г. в София, Любо преминава през школата на ЦСКА, където бързо се откроява като нападател с изключителен усет към гола и силно присъствие в наказателното поле.<ul><li>феноменален голмайсторски инстинкт</li><li>мощна физика и борбеност</li><li>игра с характер и самочувствие</li><li>лидерско присъствие дори в ранните години</li></ul>Той е типичният „червен“ нападател — смел, агресивен, решителен.` },
+        { title: "2. Кариера в ЦСКА — статистика и влияние", body: `<strong>Мачове:</strong> 200+<br><strong>Голове:</strong> 100+<br><strong>Трофеи:</strong> 3 титли, 2 купи<br><strong>Европейски успехи:</strong> участие в легендарните европейски кампании от края на 80‑те<p>Любо Пенев е нападател, който променя начина, по който ЦСКА атакува.</p><ul><li>бележи в най‑важните мачове</li><li>играе силно срещу големите европейски отбори</li><li>вдъхновява съотборниците си с характер</li><li>носи отбора в трудни моменти</li></ul><p>За феновете той е символ на борбеност и победен дух.</p>` },
+        { title: "3. Национален отбор", body: `<strong>Мачове:</strong> 62<br><strong>Голове:</strong> 14<ul><li>част от „златното поколение“ на България</li><li>ключова фигура в квалификациите за Световното първенство 1994</li></ul>Пропуска самия турнир по здравословни причини, но остава важна фигура в пътя към историческия успех.` },
+        { title: "4. Стил на игра", body: `Любослав Пенев е нападател, който съчетава сила, техника и характер.<ul><li>мощен, агресивен и труден за спиране</li><li>отличен в играта с тяло</li><li>силен във въздуха</li><li>умее да задържа топката и да организира атаката</li><li>лидер, който говори малко, но влияе много</li><li>играч, който бележи под напрежение</li></ul>Той е типът нападател, който прави отбора по‑смел и по‑опасен.` },
+        { title: "5. Наследство", body: `Любо Пенев остава символ на борбения дух на ЦСКА — играч, който никога не отстъпва и който носи червената фланелка с чест и характер.<ul><li>легенда на атаката</li><li>пример за смелост и непреклонност</li><li>лидер, който вдъхновява поколения</li></ul>` }
       ],
-      conclusion: "Георги Димитров – Джеки е символ на капитанството в ЦСКА и пример за чест, характер и непреклонност."
+      conclusion: "Любослав Пенев е един от най‑силните и характерни нападатели в историята на ЦСКА. Той въплъщава духа на клуба — борбеност, страст, лидерство и непреклонност, и остава завинаги част от червената история като голмайстор, лидер и истинска легенда."
     },
     en: {
-      subtitle: "Analytical profile of the captain who embodied the spirit of CSKA.",
-      intro: "Georgi Dimitrov – Djeki is one of the greatest defenders in Bulgarian football history and an iconic captain of CSKA. He became a symbol of stability, character, leadership, and resilience — qualities that made him the backbone of the team throughout the 1970s and 1980s.",
+      subtitle: "Analytical profile of the goalscorer and leader who embodied the spirit of CSKA.",
+      intro: "Luboslav Penev is one of the most iconic strikers in CSKA history — a player defined by character, class, leadership, and relentlessness. He could win matches almost single-handedly, inspire teammates, and turn CSKA's attack into a feared weapon.",
       conclusionTitle: "6. Conclusion",
       cards: [
-        { title: "1. Early Years and Road to CSKA", body: `Born on 14 January 1959 in Stara Zagora, Djeki started at Beroe, but his true rise came after his transfer to CSKA in 1979.<ul><li>phenomenal timing in duels</li><li>excellent heading ability</li><li>leadership qualities</li><li>calmness under pressure</li></ul>He quickly became the natural captain of the team.` },
-        { title: "2. CSKA Career — Statistics and Influence", body: `<strong>Matches:</strong> 250+<br><strong>Trophies:</strong> 4 league titles, 4 cups<br><strong>European achievements:</strong> two European Cup quarter-finals<p>Djeki was a defender who dictated the tempo of the whole team.</p><ul><li>perfect positioning</li><li>leadership in difficult moments</li><li>ability to organize the defence</li><li>calmness and authority</li></ul>` },
-        { title: "3. National Team", body: `Captain of Bulgaria at the 1986 FIFA World Cup.<br>One of the most respected Bulgarian footballers in Europe.` },
-        { title: "4. Playing Style", body: `<ul><li>strong but intelligent defender</li><li>flawless in duels</li><li>excellent in the air</li><li>a leader who spoke little but carried huge weight</li></ul>` },
-        { title: "5. Legacy", body: `Djeki remains a symbol of captaincy at CSKA. For the supporters, he stands for honour, character, and resilience.` }
+        { title: "1. Early Years and Road to CSKA", body: `Born on 31 August 1966 in Sofia, Penev came through the CSKA academy and quickly stood out as a striker with exceptional scoring instinct and a strong presence in the box.<ul><li>phenomenal goalscoring instinct</li><li>powerful physique and fighting spirit</li><li>character and confidence</li><li>leadership presence from an early age</li></ul>He was the classic red striker — brave, aggressive, and decisive.` },
+        { title: "2. CSKA Career — Statistics and Influence", body: `<strong>Matches:</strong> 200+<br><strong>Goals:</strong> 100+<br><strong>Trophies:</strong> 3 league titles, 2 cups<br><strong>European highlights:</strong> part of CSKA's legendary late-1980s European campaigns<p>Penev was a striker who changed the way CSKA attacked.</p><ul><li>scored in the biggest matches</li><li>performed strongly against major European teams</li><li>inspired teammates through character</li><li>carried the team in difficult moments</li></ul><p>For supporters, he became a symbol of fighting spirit and winning mentality.</p>` },
+        { title: "3. National Team", body: `<strong>Matches:</strong> 62<br><strong>Goals:</strong> 14<ul><li>part of Bulgaria's golden generation</li><li>key figure in the qualification campaign for the 1994 World Cup</li></ul>He missed the tournament itself for health reasons, but remained crucial in the road to that historic success.` },
+        { title: "4. Playing Style", body: `Luboslav Penev combined power, technique, and character.<ul><li>strong, aggressive, and hard to stop</li><li>excellent body play</li><li>dominant in the air</li><li>able to hold the ball and organize attacks</li><li>a leader who spoke little but influenced a lot</li><li>a player who scored under pressure</li></ul>He was the type of striker who made the team braver and more dangerous.` },
+        { title: "5. Legacy", body: `Penev remains a symbol of CSKA's fighting spirit — a player who never backed down and wore the red shirt with honour and character.<ul><li>an attacking legend</li><li>an example of courage and relentlessness</li><li>a leader who inspires generations</li></ul>` }
       ],
-      conclusion: "Georgi Dimitrov – Djeki remains a symbol of captaincy at CSKA and an example of honour, character, and resilience."
+      conclusion: "Luboslav Penev is one of the strongest and most distinctive strikers in CSKA history. He embodied the club's spirit — fight, passion, leadership, and relentlessness — and remains forever part of the red story as a goalscorer, leader, and true legend."
     }
   },
   "stoycho-mladenov": {
@@ -1166,7 +1166,7 @@ const LEGEND_PROFILES = {
 
 let currentLegendId = (() => {
   const storedLegendId = localStorage.getItem(LEGEND_PROFILE_KEY);
-  if (storedLegendId === "lubo-penev") return "hristo-stoichkov";
+  if (storedLegendId === "georgi-dimitrov-djeki" || storedLegendId === "lubo-penev") return "luboslav-penev";
   return storedLegendId || "hristo-stoichkov";
 })();
 
