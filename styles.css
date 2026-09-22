@@ -8,6 +8,10 @@
   --red-dark: #6f0b10;
   --line: rgba(200, 178, 148, 0.65);
   --ok: #0d7f48;
+  --sticky-master-top: 10px;
+  --sticky-master-height: 64px;
+  --sticky-squad-height: 56px;
+  --sticky-gap: 10px;
 }
 
 html {
@@ -246,12 +250,35 @@ body {
 }
 
 .page-nav-wrap {
-  margin-top: 14px;
+  margin-top: 0;
   padding: 12px;
   border-radius: 16px;
   background: rgba(255, 247, 232, 0.12);
   border: 1px solid rgba(255, 233, 203, 0.28);
   backdrop-filter: blur(6px);
+}
+
+.page-nav-sticky-wrap {
+  position: sticky;
+  top: var(--sticky-master-top);
+  z-index: 24;
+  margin-top: 12px;
+}
+
+.page-nav-sticky-wrap .page-nav-wrap {
+  background: rgba(255, 249, 237, 0.9);
+  border: 1px solid rgba(200, 178, 148, 0.55);
+  box-shadow: 0 12px 26px rgba(20, 7, 5, 0.14);
+}
+
+.page-nav-sticky-wrap .page-nav-label {
+  color: rgba(76, 45, 20, 0.82);
+}
+
+.page-nav-sticky-wrap .page-nav-link {
+  color: #4a2b18;
+  background: rgba(255, 255, 255, 0.78);
+  border-color: rgba(200, 178, 148, 0.55);
 }
 
 .page-nav-label {
@@ -294,8 +321,20 @@ body {
   box-shadow: 0 10px 22px rgba(20, 6, 6, 0.26);
 }
 
+.page-nav-sticky-wrap .page-nav-link:hover {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(176, 108, 50, 0.72);
+}
+
+.page-nav-link.is-active {
+  color: #fffdf8;
+  background: linear-gradient(180deg, var(--red) 0%, var(--red-dark) 100%);
+  border-color: rgba(104, 11, 16, 0.84);
+  box-shadow: 0 10px 22px rgba(111, 11, 16, 0.24);
+}
+
 .section-anchor {
-  scroll-margin-top: 18px;
+  scroll-margin-top: calc(var(--sticky-master-top) + var(--sticky-master-height) + 18px);
 }
 
 .section-mini-nav-wrap {
@@ -1145,7 +1184,7 @@ body {
 
 .squad-nav-wrap {
   position: sticky;
-  top: 12px;
+  top: calc(var(--sticky-master-top) + var(--sticky-master-height) + var(--sticky-gap));
   z-index: 4;
   margin: 12px 0 8px;
   padding: 8px;
@@ -1345,7 +1384,7 @@ body {
   border-radius: 12px;
   padding: 10px;
   box-shadow: 0 4px 14px rgba(10, 4, 2, 0.18);
-  scroll-margin-top: 74px;
+  scroll-margin-top: calc(var(--sticky-master-top) + var(--sticky-master-height) + var(--sticky-gap) + var(--sticky-squad-height) + 14px);
 }
 
 .squad-group-grid {
@@ -1985,6 +2024,11 @@ body {
 }
 
 @media (max-width: 900px) {
+  :root {
+    --sticky-master-top: 8px;
+    --sticky-gap: 8px;
+  }
+
   body {
     background-image:
       linear-gradient(180deg, rgba(42, 24, 19, 0.32) 0%, rgba(30, 18, 14, 0.50) 100%),
@@ -2027,7 +2071,6 @@ body {
 
 @media (max-width: 700px) {
   .squad-nav-wrap {
-    top: 8px;
     padding: 7px;
   }
 

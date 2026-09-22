@@ -330,6 +330,7 @@ const I18N = {
     heroLinkStadium: "Стадион",
     heroLinkFanRegistration: "Фен регистрация",
     sectionNavLabel: "Бърза навигация",
+    navStandings: "Класиране",
     navSquad: "Състав на ЦСКА",
     navAnalysis: "Анализ на играта",
     navLegends: "Легенди на ЦСКА",
@@ -437,6 +438,7 @@ const I18N = {
     heroLinkStadium: "Stadium",
     heroLinkFanRegistration: "Fan Registration",
     sectionNavLabel: "Quick Navigation",
+    navStandings: "Standings",
     navSquad: "CSKA Squad",
     navAnalysis: "Match Analysis",
     navLegends: "CSKA Legends",
@@ -470,12 +472,20 @@ let currentLanguage = localStorage.getItem(LANGUAGE_KEY) === "en" ? "en" : "bg";
 let lastPayload = null;
 let lastFromCache = false;
 let squadSectionObserver = null;
+let mainSectionObserver = null;
 
 const SQUAD_SECTION_IDS = [
   "squad-group-goalkeepers",
   "squad-group-defenders",
   "squad-group-midfielders",
   "squad-group-forwards"
+];
+
+const MAIN_SECTION_IDS = [
+  "standings-section",
+  "squad-section",
+  "analysis-section",
+  "legends-section"
 ];
 
 const ANALYSIS_CONTENT = {
@@ -773,6 +783,72 @@ function setActiveSquadGroup(activeId) {
     link.classList.toggle("is-active", selected);
     link.setAttribute("aria-current", selected ? "true" : "false");
   });
+}
+
+function setActiveMainSection(activeId) {
+  const fallbackId = MAIN_SECTION_IDS.find((id) => document.getElementById(id)) || "";
+  const safeActiveId = MAIN_SECTION_IDS.includes(activeId) ? activeId : fallbackId;
+
+  document.querySelectorAll(".page-nav-link").forEach((link) => {
+    const selected = link.getAttribute("href") === `#${safeActiveId}`;
+    link.classList.toggle("is-active", selected);
+    link.setAttribute("aria-current", selected ? "true" : "false");
+  });
+}
+
+function updateStickyNavigationOffsets() {
+  const root = document.documentElement;
+  const stickyNavWrap = document.querySelector(".page-nav-sticky-wrap");
+  const squadNavWrap = document.querySelector(".squad-nav-wrap");
+
+  if (stickyNavWrap) {
+    const stickyHeight = Math.ceil(stickyNavWrap.getBoundingClientRect().height);
+    root.style.setProperty("--sticky-master-height", `${Math.max(stickyHeight, 48)}px`);
+  }
+
+  if (squadNavWrap) {
+    const squadHeight = Math.ceil(squadNavWrap.getBoundingClientRect().height);
+    root.style.setProperty("--sticky-squad-height", `${Math.max(squadHeight, 44)}px`);
+  }
+}
+
+function setupMainSectionNavigation() {
+  const navLinks = Array.from(document.querySelectorAll(".page-nav-link"));
+  if (!navLinks.length) return;
+
+  if (mainSectionObserver) {
+    mainSectionObserver.disconnect();
+  }
+
+  const targets = MAIN_SECTION_IDS.map((id) => document.getElementById(id)).filter(Boolean);
+  if (!targets.length) {
+    navLinks.forEach((link) => {
+      link.classList.remove("is-active");
+      link.removeAttribute("aria-current");
+    });
+    return;
+  }
+
+  setActiveMainSection(targets[0].id);
+
+  mainSectionObserver = new IntersectionObserver((entries) => {
+    const visibleEntries = entries
+      .filter((entry) => entry.isIntersecting)
+      .sort((left, right) => left.boundingClientRect.top - right.boundingClientRect.top);
+
+    if (!visibleEntries.length) return;
+
+    const topEntry = visibleEntries[0];
+    if (topEntry?.target?.id) {
+      setActiveMainSection(topEntry.target.id);
+    }
+  }, {
+    root: null,
+    threshold: [0.2, 0.45, 0.7],
+    rootMargin: "-20% 0px -58% 0px"
+  });
+
+  targets.forEach((target) => mainSectionObserver.observe(target));
 }
 
 function setupSquadSectionNavigation() {
@@ -1150,6 +1226,8 @@ function applyLanguageUI() {
 
   renderAnalysisContent();
   renderLegendProfile();
+
+  requestAnimationFrame(updateStickyNavigationOffsets);
 }
 
 function setupLanguageSwitch() {
@@ -1447,6 +1525,8 @@ function render(payload, fromCache) {
   statusLine.textContent = fromCache
     ? t("statusFromCache")
     : t("statusLatest");
+
+  requestAnimationFrame(updateStickyNavigationOffsets);
 }
 
 async function fetchFreshData() {
@@ -1532,8 +1612,11 @@ async function init() {
   applyLanguageUI();
   setupLanguageSwitch();
   setupPartnershipWalletCopy();
+  setupMainSectionNavigation();
   setupSquadSectionNavigation();
   setupLegendProfileSwitcher();
+  updateStickyNavigationOffsets();
+  window.addEventListener("resize", updateStickyNavigationOffsets);
   await loadAndRender({ forceRefresh: false });
 }
 

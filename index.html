@@ -41,14 +41,6 @@
         </div>
       </div>
       <h1 id="mainTitle">CSKA EXPLORER <span id="mainVersion" class="main-version"></span></h1>
-      <div class="page-nav-wrap">
-        <p class="page-nav-label" data-i18n="sectionNavLabel">Бърза навигация</p>
-        <nav class="page-nav" aria-label="Навигация по секции">
-          <a class="page-nav-link" href="#squad-section" data-i18n="navSquad">Състав на ЦСКА</a>
-          <a class="page-nav-link" href="#analysis-section" data-i18n="navAnalysis">Анализ на играта</a>
-          <a class="page-nav-link" href="#legends-section" data-i18n="navLegends">Легенди на ЦСКА</a>
-        </nav>
-      </div>
       <nav class="hero-nav" aria-label="Бързи връзки">
         <a class="hero-nav-link" href="https://cska.bg/club/foundation" target="_blank" rel="noopener noreferrer" data-i18n="heroLinkFoundation">Фондация</a>
         <a class="hero-nav-link" href="https://cska.bg/shop" target="_blank" rel="noopener noreferrer" data-i18n="heroLinkShop">Магазин</a>
@@ -58,8 +50,20 @@
       <p class="hero-partner-label" data-i18n="partnerLinksLabel">Партньорски линкове</p>
     </section>
 
+    <section class="page-nav-sticky-wrap" aria-label="Бърза навигация по основни секции">
+      <div class="page-nav-wrap">
+        <p class="page-nav-label" data-i18n="sectionNavLabel">Бърза навигация</p>
+        <nav class="page-nav" aria-label="Навигация по секции">
+          <a class="page-nav-link" href="#standings-section" data-i18n="navStandings">Класиране</a>
+          <a class="page-nav-link" href="#squad-section" data-i18n="navSquad">Състав на ЦСКА</a>
+          <a class="page-nav-link" href="#analysis-section" data-i18n="navAnalysis">Анализ на играта</a>
+          <a class="page-nav-link" href="#legends-section" data-i18n="navLegends">Легенди на ЦСКА</a>
+        </nav>
+      </div>
+    </section>
+
     <section class="grid">
-      <article class="card">
+      <article class="card section-anchor" id="standings-section">
         <h2 data-i18n="standingsTitle">Efbet Лига - Класиране</h2>
         <div class="table-wrap">
           <table class="table" id="standingsTable">
