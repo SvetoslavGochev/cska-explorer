@@ -1,0 +1,16 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#120f14"/>
+      <stop offset="1" stop-color="#371a22"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="1000" cy="100" r="170" fill="#ffcc00" opacity="0.22"/>
+  <circle cx="180" cy="120" r="220" fill="#d91f2a" opacity="0.24"/>
+  <text x="80" y="220" fill="#ffffff" font-size="74" font-family="Segoe UI, Arial, sans-serif" font-weight="700">CSKA Explorer</text>
+  <text x="80" y="290" fill="#f2dbe0" font-size="34" font-family="Segoe UI, Arial, sans-serif">Standings, squad insights, and fan-focused match analysis.</text>
+  <rect x="80" y="350" width="620" height="170" rx="20" fill="#ffffff" opacity="0.09"/>
+  <text x="110" y="420" fill="#ffffff" font-size="44" font-family="Segoe UI, Arial, sans-serif" font-weight="700">Live Club Overview</text>
+  <text x="110" y="468" fill="#f6d0d7" font-size="26" font-family="Segoe UI, Arial, sans-serif">Stats, news context, and partnership panel.</text>
+</svg>
