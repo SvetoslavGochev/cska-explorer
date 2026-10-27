@@ -787,6 +787,210 @@ function applyManualSquadOverrides(existingSquad) {
   return squad;
 }
 
+function getCskaStandingRow(standings) {
+  const rows = Array.isArray(standings) ? standings : [];
+  return rows.find((row) => containsExpectedTeam(row?.team)) || null;
+}
+
+function parseScore(score) {
+  const match = String(score || "").match(/^(\d+)\s*:\s*(\d+)$/);
+  if (!match) return null;
+  return { home: Number(match[1]), away: Number(match[2]) };
+}
+
+function getAllSquadPlayers(squad) {
+  return ["goalkeepers", "defenders", "midfielders", "forwards"]
+    .flatMap((group) => Array.isArray(squad?.[group]) ? squad[group] : []);
+}
+
+function buildRecentFormStats(lastResults) {
+  const rows = Array.isArray(lastResults) ? lastResults : [];
+  const base = {
+    matches: 0,
+    wins: 0,
+    draws: 0,
+    losses: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    cleanSheets: 0
+  };
+
+  return rows.reduce((acc, match) => {
+    const parsedScore = parseScore(match?.score);
+    if (!parsedScore) return acc;
+
+    const home = normalizeEfbetLeagueTeamName(match?.home || "");
+    const away = normalizeEfbetLeagueTeamName(match?.away || "");
+    const isCskaHome = containsExpectedTeam(home);
+    const isCskaAway = containsExpectedTeam(away);
+
+    if (!isCskaHome && !isCskaAway) return acc;
+
+    const cskaGoals = isCskaHome ? parsedScore.home : parsedScore.away;
+    const oppGoals = isCskaHome ? parsedScore.away : parsedScore.home;
+
+    acc.matches += 1;
+    acc.goalsFor += cskaGoals;
+    acc.goalsAgainst += oppGoals;
+    if (oppGoals === 0) acc.cleanSheets += 1;
+    if (cskaGoals > oppGoals) acc.wins += 1;
+    else if (cskaGoals === oppGoals) acc.draws += 1;
+    else acc.losses += 1;
+
+    return acc;
+  }, base);
+}
+
+function inferOfficialMatchesCount(squad, standingRow, recentFormStats) {
+  const maxFromSquad = getAllSquadPlayers(squad)
+    .reduce((max, player) => Math.max(max, toNumber(player?.matches, 0)), 0);
+  const leagueMatches = toNumber(standingRow?.mp, 0);
+  const recentMatches = toNumber(recentFormStats?.matches, 0);
+  return Math.max(maxFromSquad, leagueMatches, recentMatches, 0);
+}
+
+function buildCskaAutoAnalysis(payload, season) {
+  const standingRow = getCskaStandingRow(payload?.standings);
+  const recentForm = buildRecentFormStats(payload?.cska?.lastResults);
+  const officialMatches = inferOfficialMatchesCount(payload?.cska?.squad, standingRow, recentForm);
+
+  const wins = toNumber(standingRow?.w, 0);
+  const draws = toNumber(standingRow?.d, 0);
+  const losses = toNumber(standingRow?.l, 0);
+  const leagueMatches = toNumber(standingRow?.mp, 0);
+  const goalsFor = toNumber(standingRow?.gf, 0);
+  const goalsAgainst = toNumber(standingRow?.ga, 0);
+  const points = toNumber(standingRow?.pts, 0);
+  const goalDiff = goalsFor - goalsAgainst;
+  const pointsPerMatch = leagueMatches > 0 ? Number((points / leagueMatches).toFixed(2)) : 0;
+  const recentGoalsForPerMatch = recentForm.matches > 0
+    ? Number((recentForm.goalsFor / recentForm.matches).toFixed(2))
+    : 0;
+  const recentGoalsAgainstPerMatch = recentForm.matches > 0
+    ? Number((recentForm.goalsAgainst / recentForm.matches).toFixed(2))
+    : 0;
+  const seasonLabel = (() => {
+    const [start, end] = String(season || "").split("-");
+    if (!start || !end) return String(season || "");
+    return `${start}/${String(end).slice(-2)}`;
+  })();
+  const hasRecentForm = recentForm.matches > 0;
+
+  const titleBg = `Анализ на играта на ЦСКА след ${officialMatches} официални мача (Сезон ${seasonLabel})`;
+  const titleEn = `CSKA Game Analysis After ${officialMatches} Official Matches (Season ${seasonLabel})`;
+
+  const summaryBg = hasRecentForm
+    ? `Динамичен анализ на база актуалните данни от API: резултатност ${goalsFor}:${goalsAgainst}, точков коефициент ${pointsPerMatch} и форма от последните ${recentForm.matches} мача.`
+    : `Динамичен анализ на база актуалните данни от API: резултатност ${goalsFor}:${goalsAgainst} и точков коефициент ${pointsPerMatch}. Подробната форма ще се обогати при налични последни резултати.`;
+  const summaryEn = hasRecentForm
+    ? `Dynamic API-driven analysis: scoring profile ${goalsFor}:${goalsAgainst}, points-per-match ${pointsPerMatch}, and recent form over the last ${recentForm.matches} matches.`
+    : `Dynamic API-driven analysis: scoring profile ${goalsFor}:${goalsAgainst} and points-per-match ${pointsPerMatch}. Recent-form details will expand when recent results are available.`;
+
+  const sectionsBg = [
+    {
+      heading: "1. Резултатност и ефективност",
+      bullets: [
+        `В първенството ЦСКА е с баланс ${wins}-${draws}-${losses} и голова разлика ${goalDiff >= 0 ? "+" : ""}${goalDiff}.`,
+        `Отборът има ${points} точки от ${leagueMatches} мача (${pointsPerMatch} т./мач).`,
+        hasRecentForm
+          ? `В последните ${recentForm.matches} мача средно бележи ${recentGoalsForPerMatch} и допуска ${recentGoalsAgainstPerMatch} гола на мач.`
+          : "Последните мачове все още не са достатъчни за надежден form-rate анализ."
+      ]
+    },
+    {
+      heading: "2. Защитен профил",
+      bullets: [
+        `Допуснатите голове в лигата са ${goalsAgainst}, което очертава дисциплиниран дефанзивен блок.`,
+        hasRecentForm
+          ? `Сухите мрежи в последните мачове са ${recentForm.cleanSheets}, което е индикатор за стабилност в ключови фази.`
+          : "Показателят за сухи мрежи ще се уточнява динамично при натрупване на мачови резултати.",
+        "При липса на официални possession данни анализът приоритизира резултатност, допуснати голове и форма."
+      ]
+    },
+    {
+      heading: "3. Форма и ключов извод",
+      bullets: [
+        hasRecentForm
+          ? `Последната серия е ${recentForm.wins} победи, ${recentForm.draws} равенства и ${recentForm.losses} загуби.`
+          : "Последната серия ще се визуализира автоматично, когато има валиден набор от последни резултати.",
+        `Отборът поддържа устойчивост между резултатност в атака и контрол на риска в защита.`,
+        "Ако тази ефективност се запази, ЦСКА остава в силна позиция за високо класиране и стабилен сезонен профил."
+      ]
+    }
+  ];
+
+  const sectionsEn = [
+    {
+      heading: "1. Output and Efficiency",
+      bullets: [
+        `In the league, CSKA currently has a ${wins}-${draws}-${losses} record with a ${goalDiff >= 0 ? "+" : ""}${goalDiff} goal difference.`,
+        `The team has ${points} points from ${leagueMatches} matches (${pointsPerMatch} pts/match).`,
+        hasRecentForm
+          ? `Over the last ${recentForm.matches} matches, CSKA averages ${recentGoalsForPerMatch} scored and ${recentGoalsAgainstPerMatch} conceded per game.`
+          : "Recent matches are not yet sufficient for a stable form-rate estimate."
+      ]
+    },
+    {
+      heading: "2. Defensive Profile",
+      bullets: [
+        `${goalsAgainst} goals conceded in league play indicates a structured defensive baseline.`,
+        hasRecentForm
+          ? `${recentForm.cleanSheets} clean sheets in recent matches point to stability in key phases.`
+          : "Clean-sheet trend will update dynamically once enough recent results are available.",
+        "When possession metrics are unavailable, the analysis prioritizes measurable output, concessions, and form trends."
+      ]
+    },
+    {
+      heading: "3. Form and Key Takeaway",
+      bullets: [
+        hasRecentForm
+          ? `Recent form stands at ${recentForm.wins} wins, ${recentForm.draws} draws, and ${recentForm.losses} losses.`
+          : "Recent-form split will be generated automatically when valid match results are present.",
+        "CSKA maintains a balanced profile between attacking output and defensive risk control.",
+        "If this efficiency level is sustained, the team remains on track for a strong competitive finish."
+      ]
+    }
+  ];
+
+  const verdictBg = `Финален извод: към момента профилът на ЦСКА е ефективен и балансиран, с акцент върху резултатност, контрол на риска и постоянство.`;
+  const verdictEn = "Final takeaway: CSKA currently shows an efficient and balanced profile, combining output, risk control, and consistency.";
+
+  return {
+    season,
+    officialMatches,
+    titleBg,
+    titleEn,
+    summaryBg,
+    summaryEn,
+    sectionsBg,
+    sectionsEn,
+    verdictBg,
+    verdictEn,
+    metrics: {
+      leagueMatches,
+      wins,
+      draws,
+      losses,
+      goalsFor,
+      goalsAgainst,
+      goalDiff,
+      points,
+      pointsPerMatch,
+      recentMatches: recentForm.matches,
+      recentWins: recentForm.wins,
+      recentDraws: recentForm.draws,
+      recentLosses: recentForm.losses,
+      recentGoalsFor: recentForm.goalsFor,
+      recentGoalsAgainst: recentForm.goalsAgainst,
+      cleanSheetsRecent: recentForm.cleanSheets,
+      recentGoalsForPerMatch,
+      recentGoalsAgainstPerMatch,
+      possession: null
+    },
+    generatedAt: new Date().toISOString()
+  };
+}
+
 function ensureDataDir() {
   if (!fs.existsSync(DATA_DIR)) {
     fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -1100,6 +1304,7 @@ async function buildFreshPayloadFromSource() {
 
   nextPayload.cska.squad = applyManualSquadOverrides(nextPayload.cska.squad || fallback.cska?.squad || {});
   nextPayload.cska.squad = normalizeSquadStatsAndImpact(nextPayload.cska.squad || fallback.cska?.squad || {});
+  nextPayload.cska.analysis = buildCskaAutoAnalysis(nextPayload, season);
 
   if (standingsPageResult.status === "fulfilled") {
     const todayMatches = extractEfbetTodayMatches(standingsPageResult.value);

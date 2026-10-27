@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-27T15:04:12.418Z",
+  "updatedAt": "2026-10-27T15:10:36.194Z",
   "source": {
     "note": "Automatic server refresh with validation (lastResults fetch failed, nextMatches fetch failed).",
     "validation": {
@@ -158,26 +158,26 @@
     {
       "rank": 13,
       "team": "Септември (София)",
-      "mp": 11,
+      "mp": 12,
       "w": 2,
-      "d": 2,
+      "d": 3,
       "l": 7,
       "gf": 10,
       "ga": 21,
       "gd": -11,
-      "pts": 8
+      "pts": 9
     },
     {
       "rank": 14,
       "team": "Черно море",
-      "mp": 11,
+      "mp": 12,
       "w": 1,
-      "d": 3,
+      "d": 4,
       "l": 7,
       "gf": 11,
       "ga": 22,
       "gd": -11,
-      "pts": 6
+      "pts": 7
     }
   ],
   "cska": {
@@ -474,12 +474,6 @@
       {
         "date": "27.10",
         "time": "",
-        "home": "Черно море",
-        "away": "Септември София"
-      },
-      {
-        "date": "27.10",
-        "time": "",
         "home": "Арда",
         "away": "Левски София"
       }
@@ -489,6 +483,90 @@
       "foundedYear": "1948",
       "country": "Bulgaria",
       "badge": ""
+    },
+    "analysis": {
+      "season": "2026-2027",
+      "officialMatches": 22,
+      "titleBg": "Анализ на играта на ЦСКА след 22 официални мача (Сезон 2026/27)",
+      "titleEn": "CSKA Game Analysis After 22 Official Matches (Season 2026/27)",
+      "summaryBg": "Динамичен анализ на база актуалните данни от API: резултатност 29:9 и точков коефициент 2.5. Подробната форма ще се обогати при налични последни резултати.",
+      "summaryEn": "Dynamic API-driven analysis: scoring profile 29:9 and points-per-match 2.5. Recent-form details will expand when recent results are available.",
+      "sectionsBg": [
+        {
+          "heading": "1. Резултатност и ефективност",
+          "bullets": [
+            "В първенството ЦСКА е с баланс 9-3-0 и голова разлика +20.",
+            "Отборът има 30 точки от 12 мача (2.5 т./мач).",
+            "Последните мачове все още не са достатъчни за надежден form-rate анализ."
+          ]
+        },
+        {
+          "heading": "2. Защитен профил",
+          "bullets": [
+            "Допуснатите голове в лигата са 9, което очертава дисциплиниран дефанзивен блок.",
+            "Показателят за сухи мрежи ще се уточнява динамично при натрупване на мачови резултати.",
+            "При липса на официални possession данни анализът приоритизира резултатност, допуснати голове и форма."
+          ]
+        },
+        {
+          "heading": "3. Форма и ключов извод",
+          "bullets": [
+            "Последната серия ще се визуализира автоматично, когато има валиден набор от последни резултати.",
+            "Отборът поддържа устойчивост между резултатност в атака и контрол на риска в защита.",
+            "Ако тази ефективност се запази, ЦСКА остава в силна позиция за високо класиране и стабилен сезонен профил."
+          ]
+        }
+      ],
+      "sectionsEn": [
+        {
+          "heading": "1. Output and Efficiency",
+          "bullets": [
+            "In the league, CSKA currently has a 9-3-0 record with a +20 goal difference.",
+            "The team has 30 points from 12 matches (2.5 pts/match).",
+            "Recent matches are not yet sufficient for a stable form-rate estimate."
+          ]
+        },
+        {
+          "heading": "2. Defensive Profile",
+          "bullets": [
+            "9 goals conceded in league play indicates a structured defensive baseline.",
+            "Clean-sheet trend will update dynamically once enough recent results are available.",
+            "When possession metrics are unavailable, the analysis prioritizes measurable output, concessions, and form trends."
+          ]
+        },
+        {
+          "heading": "3. Form and Key Takeaway",
+          "bullets": [
+            "Recent-form split will be generated automatically when valid match results are present.",
+            "CSKA maintains a balanced profile between attacking output and defensive risk control.",
+            "If this efficiency level is sustained, the team remains on track for a strong competitive finish."
+          ]
+        }
+      ],
+      "verdictBg": "Финален извод: към момента профилът на ЦСКА е ефективен и балансиран, с акцент върху резултатност, контрол на риска и постоянство.",
+      "verdictEn": "Final takeaway: CSKA currently shows an efficient and balanced profile, combining output, risk control, and consistency.",
+      "metrics": {
+        "leagueMatches": 12,
+        "wins": 9,
+        "draws": 3,
+        "losses": 0,
+        "goalsFor": 29,
+        "goalsAgainst": 9,
+        "goalDiff": 20,
+        "points": 30,
+        "pointsPerMatch": 2.5,
+        "recentMatches": 0,
+        "recentWins": 0,
+        "recentDraws": 0,
+        "recentLosses": 0,
+        "recentGoalsFor": 0,
+        "recentGoalsAgainst": 0,
+        "cleanSheetsRecent": 0,
+        "recentGoalsForPerMatch": 0,
+        "recentGoalsAgainstPerMatch": 0,
+        "possession": null
+      },
+      "generatedAt": "2026-10-27T15:10:36.570Z"
     }
   }
 }

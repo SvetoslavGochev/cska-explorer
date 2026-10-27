@@ -230,7 +230,7 @@ const I18N = {
     todayMatchesTitle: "Мачове днес",
     lastResultsTitle: "Последни резултати",
     squadTitle: "Състав на ЦСКА",
-    cskaAnalysisTitle: "Анализ на играта на ЦСКА след 17 официални мача (Сезон 2026/27)",
+    cskaAnalysisTitle: "Анализ на играта на ЦСКА",
     groupGoalkeepers: "Вратари",
     groupDefenders: "Защитници",
     groupMidfielders: "Халфове",
@@ -342,7 +342,7 @@ const I18N = {
     todayMatchesTitle: "Matches Today",
     lastResultsTitle: "Recent Results",
     squadTitle: "CSKA Sofia Squad",
-    cskaAnalysisTitle: "CSKA Game Analysis After 17 Official Matches (Season 2026/27)",
+    cskaAnalysisTitle: "CSKA Game Analysis",
     groupGoalkeepers: "Goalkeepers",
     groupDefenders: "Defenders",
     groupMidfielders: "Midfielders",
@@ -542,9 +542,57 @@ function t(key) {
   return I18N[currentLanguage]?.[key] || I18N.bg[key] || key;
 }
 
-function renderAnalysisContent() {
+function escapeHtml(value) {
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function renderAnalysisContent(payload) {
   const analysisContent = document.getElementById("analysisContent");
+  const analysisTitle = document.querySelector("#analysis-section h2");
   if (!analysisContent) return;
+
+  const autoAnalysis = payload?.cska?.analysis;
+  const isEnglish = currentLanguage === "en";
+
+  if (autoAnalysis && typeof autoAnalysis === "object") {
+    const title = isEnglish ? autoAnalysis.titleEn : autoAnalysis.titleBg;
+    const summary = isEnglish ? autoAnalysis.summaryEn : autoAnalysis.summaryBg;
+    const verdict = isEnglish ? autoAnalysis.verdictEn : autoAnalysis.verdictBg;
+    const sections = isEnglish ? autoAnalysis.sectionsEn : autoAnalysis.sectionsBg;
+
+    if (analysisTitle) {
+      analysisTitle.textContent = title || t("cskaAnalysisTitle");
+    }
+
+    const sectionMarkup = Array.isArray(sections)
+      ? sections.map((section) => {
+          const bullets = Array.isArray(section?.bullets) ? section.bullets : [];
+          return `
+            <h3>${escapeHtml(section?.heading || "")}</h3>
+            <ul>
+              ${bullets.map((bullet) => `<li>${escapeHtml(bullet)}</li>`).join("")}
+            </ul>
+          `;
+        }).join("\n")
+      : "";
+
+    analysisContent.innerHTML = `
+      ${summary ? `<p>${escapeHtml(summary)}</p>` : ""}
+      ${sectionMarkup}
+      ${verdict ? `<p class="analysis-verdict"><b>${isEnglish ? "Summary:" : "Финален извод:"}</b> ${escapeHtml(verdict)}</p>` : ""}
+    `;
+    return;
+  }
+
+  if (analysisTitle) {
+    analysisTitle.textContent = t("cskaAnalysisTitle");
+  }
+
   analysisContent.innerHTML = ANALYSIS_CONTENT[currentLanguage] || ANALYSIS_CONTENT.bg;
 }
 
@@ -1244,7 +1292,7 @@ function applyLanguageUI() {
   if (facebookLink) facebookLink.href = CSKA_PARTNER_FACEBOOK_URL;
   if (xLink) xLink.href = CSKA_PARTNER_X_URL;
 
-  renderAnalysisContent();
+  renderAnalysisContent(lastPayload);
   renderLegendProfile();
   renderStandingsStatus();
 
@@ -1577,6 +1625,7 @@ function render(payload, fromCache) {
   renderStandings(payload.standings || []);
 
   renderSquad(payload.cska?.squad || FALLBACK_DATA.cska.squad);
+  renderAnalysisContent(payload);
   renderAnalysisDashboard(payload);
 
   const teamInfoBarEl = document.getElementById("teamInfoBar");
