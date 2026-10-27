@@ -1159,6 +1159,32 @@ body {
   color: #6b4a2e;
 }
 
+.standings-live-status {
+  margin: 2px 0 10px;
+  padding: 7px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(205, 180, 142, 0.56);
+  background: rgba(255, 250, 238, 0.72);
+  color: #4a3423;
+}
+
+.standings-live-status.is-loading {
+  border-color: rgba(196, 140, 72, 0.7);
+  background: rgba(255, 243, 220, 0.84);
+}
+
+.standings-live-status.is-error {
+  border-color: rgba(176, 18, 26, 0.54);
+  background: rgba(255, 230, 230, 0.82);
+  color: #7a1118;
+}
+
+.standings-live-status.is-success {
+  border-color: rgba(31, 122, 61, 0.46);
+  background: rgba(232, 249, 238, 0.86);
+  color: #205a35;
+}
+
 #sourceNote {
   display: grid;
   gap: 6px;

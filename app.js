@@ -236,6 +236,7 @@ function renderSquad(squad) {
 }
 const LOCAL_CACHE_KEY = "cska_explorer_root_cache_v10";
 const LOCAL_CACHE_TTL_MS = 10 * 60 * 1000;
+const STANDINGS_AUTO_REFRESH_MS = 5 * 60 * 1000;
 const LANGUAGE_KEY = "cska_site_language";
 const CSKA_SUPPORT_WALLET = "0xfca710eC5eB0FB036157Bb1E114BADc2310efE37";
 const CSKA_PARTNER_INSTAGRAM_URL = (window.CSKA_PARTNER_INSTAGRAM_URL || "https://www.instagram.com/").trim();
@@ -353,6 +354,10 @@ const I18N = {
     sourceMissingStats: "В таблицата липсващите статистики се допълват с \"-\".",
     statusFromCache: "Показани са данни от локалния кеш (без нова заявка).",
     statusLatest: "Показани са последните данни.",
+    standingsLoading: "Класиране: зареждане на актуални данни...",
+    standingsCache: "Класиране: показани са кеширани данни, правим проверка за обновяване...",
+    standingsUpdated: "Класиране: обновено",
+    standingsRefreshFailed: "Класиране: временен проблем при обновяване. Показваме последните налични данни.",
     noMatchesToday: "Няма мачове за днес",
     stadiumLabel: "Стадион:",
     foundedLabel: "Основан:",
@@ -461,6 +466,10 @@ const I18N = {
     sourceMissingStats: "Missing statistics are shown as \"-\" in the table.",
     statusFromCache: "Showing data from local cache (without a new request).",
     statusLatest: "Showing the latest data.",
+    standingsLoading: "Standings: loading fresh data...",
+    standingsCache: "Standings: cached data is shown while checking for updates...",
+    standingsUpdated: "Standings: updated",
+    standingsRefreshFailed: "Standings: temporary refresh issue. Showing the last available data.",
     noMatchesToday: "No matches today",
     stadiumLabel: "Stadium:",
     foundedLabel: "Founded:",
@@ -473,6 +482,12 @@ let lastPayload = null;
 let lastFromCache = false;
 let squadSectionObserver = null;
 let mainSectionObserver = null;
+let standingsRefreshTimerId = null;
+let lastStandingsRefreshAt = 0;
+let standingsStatusState = {
+  type: "loading",
+  updatedAt: ""
+};
 
 const SQUAD_SECTION_IDS = [
   "squad-group-goalkeepers",
@@ -1272,6 +1287,7 @@ function applyLanguageUI() {
 
   renderAnalysisContent();
   renderLegendProfile();
+  renderStandingsStatus();
 
   requestAnimationFrame(updateStickyNavigationOffsets);
 }
@@ -1392,6 +1408,60 @@ function showError(message) {
   statusLine.textContent = message || t("errLoadData");
   statusLine.classList.add("status-error");
   statusLine.classList.remove("status-ok");
+}
+
+function formatStatusTimestamp(isoString) {
+  if (!isoString) return "";
+  const date = new Date(isoString);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleString(currentLanguage === "en" ? "en-GB" : "bg-BG", {
+    day: "2-digit",
+    month: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
+
+function getStandingsStatusText() {
+  if (standingsStatusState.type === "error") {
+    return t("standingsRefreshFailed");
+  }
+  if (standingsStatusState.type === "cache") {
+    return t("standingsCache");
+  }
+  if (standingsStatusState.type === "success") {
+    const stamp = formatStatusTimestamp(standingsStatusState.updatedAt);
+    return stamp ? `${t("standingsUpdated")}: ${stamp}` : `${t("standingsUpdated")}.`;
+  }
+  return t("standingsLoading");
+}
+
+function renderStandingsStatus() {
+  const statusEl = document.getElementById("standingsLiveStatus");
+  if (!statusEl) return;
+
+  statusEl.textContent = getStandingsStatusText();
+  statusEl.classList.remove("is-loading", "is-error", "is-success");
+
+  if (standingsStatusState.type === "error") {
+    statusEl.classList.add("is-error");
+    return;
+  }
+
+  if (standingsStatusState.type === "success") {
+    statusEl.classList.add("is-success");
+    return;
+  }
+
+  statusEl.classList.add("is-loading");
+}
+
+function setStandingsStatus(type, options = {}) {
+  standingsStatusState = {
+    type,
+    updatedAt: options.updatedAt || ""
+  };
+  renderStandingsStatus();
 }
 
 const FALLBACK_DATA = {
@@ -1576,6 +1646,7 @@ function render(payload, fromCache) {
 }
 
 async function fetchFreshData() {
+  let lastError = null;
   const candidates = [];
 
   if (DATA_API_URL) {
@@ -1599,30 +1670,39 @@ async function fetchFreshData() {
   for (const getPayload of candidates) {
     try {
       return await getPayload();
-    } catch (_) {
+    } catch (error) {
+      lastError = error;
       // Try next source in chain.
     }
   }
 
-  return FALLBACK_DATA;
+  throw lastError || new Error("All data sources failed");
 }
 
 async function loadAndRender({ forceRefresh = false } = {}) {
   const now = Date.now();
   const cachedRaw = localStorage.getItem(LOCAL_CACHE_KEY);
+  let hasValidCache = false;
 
   if (!forceRefresh && cachedRaw) {
     try {
       const cached = JSON.parse(cachedRaw);
       if (cached.expiresAt > now && isValidPayload(cached.payload)) {
+        hasValidCache = true;
         render(cached.payload, true);
+        setStandingsStatus("cache");
       }
     } catch {
       localStorage.removeItem(LOCAL_CACHE_KEY);
     }
   }
 
+  if (!hasValidCache) {
+    setStandingsStatus("loading");
+  }
+
   let fresh = null;
+  let refreshFailed = false;
 
   if (forceRefresh && DATA_API_URL) {
     try {
@@ -1636,12 +1716,18 @@ async function loadAndRender({ forceRefresh = false } = {}) {
         }
       }
     } catch (_) {
+      refreshFailed = true;
       // Fall back to normal chain below.
     }
   }
 
   if (!fresh) {
-    fresh = await fetchFreshData();
+    try {
+      fresh = await fetchFreshData();
+    } catch (_) {
+      refreshFailed = true;
+      fresh = lastPayload || FALLBACK_DATA;
+    }
   }
 
   if (isValidPayload(fresh)) {
@@ -1652,6 +1738,36 @@ async function loadAndRender({ forceRefresh = false } = {}) {
   }
 
   render(fresh, false);
+  if (refreshFailed) {
+    setStandingsStatus("error");
+    return;
+  }
+
+  lastStandingsRefreshAt = Date.now();
+  setStandingsStatus("success", { updatedAt: fresh?.updatedAt });
+}
+
+function setupStandingsAutoRefresh() {
+  if (standingsRefreshTimerId) {
+    clearInterval(standingsRefreshTimerId);
+  }
+
+  standingsRefreshTimerId = window.setInterval(() => {
+    if (document.visibilityState !== "visible") return;
+    setStandingsStatus("loading");
+    loadAndRender({ forceRefresh: true }).catch(() => {
+      setStandingsStatus("error");
+    });
+  }, STANDINGS_AUTO_REFRESH_MS);
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState !== "visible") return;
+    if (Date.now() - lastStandingsRefreshAt < STANDINGS_AUTO_REFRESH_MS) return;
+    setStandingsStatus("loading");
+    loadAndRender({ forceRefresh: true }).catch(() => {
+      setStandingsStatus("error");
+    });
+  });
 }
 
 async function init() {
@@ -1664,6 +1780,7 @@ async function init() {
   updateStickyNavigationOffsets();
   window.addEventListener("resize", updateStickyNavigationOffsets);
   await loadAndRender({ forceRefresh: false });
+  setupStandingsAutoRefresh();
 }
 
 init();

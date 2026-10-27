@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="bg">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Svetoslav Mitkov | CV</title>
+    <style>
+      :root {
+        --primary: #0f172a;
+        --dark: #111827;
+        --muted: #475569;
+        --line: #dbe3ee;
+        --soft: #f8fafc;
+        --accent: #1d4ed8;
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #e5e7eb;
+        color: var(--dark);
+      }
+
+      .page {
+        width: 210mm;
+        min-height: 297mm;
+        background: white;
+        margin: 20px auto;
+        box-shadow: 0 12px 32px rgba(15, 23, 42, 0.14);
+        padding: 18mm 16mm 14mm 16mm;
+      }
+
+      .header {
+        border-bottom: 3px solid var(--primary);
+        padding-bottom: 12px;
+        margin-bottom: 18px;
+      }
+
+      h1 {
+        font-size: 28px;
+        margin: 0 0 4px 0;
+        letter-spacing: 0.3px;
+      }
+
+      .role {
+        font-size: 15px;
+        color: var(--accent);
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      .meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px 18px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .meta span {
+        white-space: nowrap;
+      }
+
+      .two-col {
+        display: grid;
+        grid-template-columns: 1.55fr 1fr;
+        gap: 18px;
+      }
+
+      section {
+        margin-bottom: 14px;
+      }
+
+      h2 {
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: var(--primary);
+        margin: 0 0 8px 0;
+        padding-bottom: 4px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      p, li {
+        font-size: 12px;
+        line-height: 1.45;
+        margin: 0 0 5px 0;
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 18px;
+      }
+
+      .job-title {
+        font-weight: 700;
+        font-size: 12px;
+        margin-bottom: 2px;
+      }
+
+      .company {
+        color: var(--primary);
+        font-weight: 700;
+      }
+
+      .date {
+        color: var(--muted);
+        font-size: 11px;
+        font-weight: 600;
+      }
+
+      .sub-item {
+        margin-top: 4px;
+      }
+
+      .skill-group {
+        margin-bottom: 8px;
+      }
+
+      .skill-group strong {
+        display: block;
+        font-size: 12px;
+        margin-bottom: 3px;
+      }
+
+      .project {
+        margin-bottom: 10px;
+      }
+
+      .project strong {
+        font-size: 12px;
+      }
+
+      .links a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+
+      .education-item {
+        margin-bottom: 8px;
+      }
+
+      @media print {
+        body {
+          background: white;
+          margin: 0;
+        }
+        .page {
+          box-shadow: none;
+          margin: 0;
+          width: 100%;
+          min-height: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header class="header">
+        <h1>SVETOSLAV MITKOV</h1>
+        <div class="role">Software Engineer | Backend &amp; Web Development | Hardware‑Aware Systems</div>
+        <div class="meta">
+          <span>Galabovo, Bulgaria</span>
+          <span>+359 893 548 434</span>
+          <span>svetoslav.gochev@gmail.com</span>
+          <span>LinkedIn: linkedin.com/in/svet-svet-3715a9230</span>
+          <span>GitHub: github.com/SvetoslavGochev</span>
+        </div>
+      </header>
+
+      <div class="two-col">
+        <div>
+          <section>
+            <h2>Summary</h2>
+            <p>
+              Software Engineer with strong experience in C#/.NET, Java, TypeScript, REST APIs, and MS SQL,
+              combined with practical knowledge in PC architecture, system performance, and hardware-aware optimization.
+              Comfortable building backend systems, web applications, dashboards, and solutions that interact with real devices or data pipelines.
+              Bringing a balanced mix of backend engineering, UI development, and system-level understanding.
+            </p>
+          </section>
+
+          <section>
+            <h2>Work Experience</h2>
+
+            <div class="job-item">
+              <div class="job-title">Java Junior Developer</div>
+              <div class="company">IBS Bulgaria</div>
+              <div class="date">03/2022 – Present</div>
+              <ul>
+                <li>Backend features for DigiSign, a secure electronic signature platform</li>
+                <li>API integrations, authentication logic, and document workflows</li>
+                <li>Performance optimization and enterprise reliability improvements</li>
+                <li>Collaboration with cross-functional teams</li>
+              </ul>
+            </div>
+
+            <div class="sub-item job-item">
+              <div class="job-title">Freelance Software Engineer</div>
+              <div class="company">Self-Employed</div>
+              <div class="date">2024 – Present</div>
+              <ul>
+                <li>Custom web applications and backend services</li>
+                <li>REST APIs for automation and business workflows</li>
+                <li>Full-cycle delivery: requirements → implementation → testing → deployment</li>
+              </ul>
+            </div>
+          </section>
+
+          <section>
+            <h2>Projects</h2>
+
+            <div class="project">
+              <strong>MyTires — ASP.NET Core + EF Core + MSSQL</strong>
+              <ul>
+                <li>Modular architecture</li>
+                <li>State management</li>
+                <li>Robust backend operations</li>
+              </ul>
+            </div>
+
+            <div class="project">
+              <strong>Control &amp; Telemetry System — C#/.NET, TypeScript, MS SQL</strong>
+              <ul>
+                <li>REST command interface for movement, rotation, and diagnostics</li>
+                <li>State-based logic and safety constraints</li>
+                <li>Telemetry pipeline for logs, metrics, and thermal data</li>
+                <li>Operator dashboard for real-time visualization</li>
+              </ul>
+            </div>
+
+            <div class="project">
+              <strong>REST API — ASP.NET Web API</strong>
+              <ul>
+                <li>Full CRUD endpoints</li>
+                <li>Automation and integrations</li>
+              </ul>
+            </div>
+
+            <div class="project">
+              <strong>Lucky Profit Calculator — TypeScript, Modern UI</strong>
+              <p><a href="https://lucky-profit-palculator.vercel.app" target="_blank">https://lucky-profit-palculator.vercel.app</a></p>
+              <ul>
+                <li>Crypto profit &amp; fee calculator</li>
+                <li>Dynamic UI logic and forecasting modules</li>
+                <li>Dashboard-style interaction and financial tooling</li>
+              </ul>
+            </div>
+
+            <div class="project">
+              <strong>Game Explorer — Fast Mini‑Games Platform</strong>
+              <p><a href="https://game-explorer.vercel.app" target="_blank">https://game-explorer.vercel.app</a> <a href="https://www.bing.com/search?q=%22https%3A%2F%2Fgame-explorer.vercel.app%2F%22" target="_blank">(game-explorer.vercel.app in Bing)</a></p>
+              <ul>
+                <li>Lightweight web games</li>
+                <li>Event‑driven UI</li>
+                <li>Responsive design and interactive components</li>
+              </ul>
+            </div>
+
+            <div class="project">
+              <strong>Indonesia Travel Guide — Interactive Travel Info</strong>
+              <p><a href="https://indonesia-explorer.vercel.app" target="_blank">https://indonesia-explorer.vercel.app</a> <a href="https://www.bing.com/search?q=%22https%3A%2F%2Findonesia-explorer.vercel.app%2F%22" target="_blank">(indonesia-explorer.vercel.app in Bing)</a></p>
+              <ul>
+                <li>Dynamic content rendering</li>
+                <li>Clean UI/UX</li>
+                <li>Informational platform with structured navigation</li>
+              </ul>
+            </div>
+
+            <div class="project">
+              <strong>Norway Info — Scandinavian Insights</strong>
+              <p><a href="https://norway-info.vercel.app" target="_blank">https://norway-info.vercel.app</a> <a href="https://www.bing.com/search?q=%22https%3A%2F%2Fnorway-info.vercel.app%2F%22" target="_blank">(norway-info.vercel.app in Bing)</a></p>
+              <ul>
+                <li>Structured data presentation</li>
+                <li>UI components for fast navigation</li>
+                <li>Content‑driven web application</li>
+              </ul>
+            </div>
+
+            <div class="project">
+              <strong>CSKA Explorer — Football Analytics Platform</strong>
+              <p><a href="https://cska-explorer.vercel.app" target="_blank">https://cska-explorer.vercel.app</a></p>
+              <ul>
+                <li>Match statistics, player data, history</li>
+                <li>REST‑style data structure</li>
+                <li>Modern UI with dashboards and visual components</li>
+              </ul>
+            </div>
+          </section>
+
+          <section>
+            <h2>Education</h2>
+            <div class="education-item">
+              <div class="job-title">Bachelor of Electrical Engineering</div>
+              <div class="company">Technical University of Gabrovo</div>
+              <div class="date">2012</div>
+            </div>
+
+            <div class="education-item">
+              <div class="job-title">Software Engineering Courses — SoftUni</div>
+              <ul>
+                <li>C# Advanced, C# OOP</li>
+                <li>ASP.NET Core, EF Core</li>
+                <li>JS Applications, TypeScript</li>
+                <li>MS SQL &amp; Databases</li>
+              </ul>
+            </div>
+
+            <div class="education-item">
+              <div class="job-title">Additional Training — SoftUni Digital &amp; Creative</div>
+              <ul>
+                <li>· Content Marketing – SoftUni Digital</li>
+                <li>· Design Basics – SoftUni Creative</li>
+              </ul>
+            </div>
+          </section>
+        </div>
+
+        <div>
+          <section>
+            <h2>Technical Skills</h2>
+
+            <div class="skill-group">
+              <strong>Backend Development</strong>
+              <p>C# / .NET Core</p>
+              <p>ASP.NET Web API</p>
+              <p>Java / Spring Boot</p>
+              <p>EF Core / ORM</p>
+              <p>Modular architectures &amp; business logic</p>
+            </div>
+
+            <div class="skill-group">
+              <strong>Web Development</strong>
+              <p>TypeScript / JavaScript</p>
+              <p>HTML5 / CSS3</p>
+              <p>Interactive dashboards &amp; operator interfaces</p>
+            </div>
+
+            <div class="skill-group">
+              <strong>Databases</strong>
+              <p>MS SQL</p>
+              <p>Schema design &amp; optimization</p>
+              <p>Telemetry pipelines</p>
+            </div>
+
+            <div class="skill-group">
+              <strong>System &amp; Hardware</strong>
+              <p>CPU / GPU architecture</p>
+              <p>Performance diagnostics</p>
+              <p>Windows optimization, Linux fundamentals</p>
+            </div>
+
+            <div class="skill-group">
+              <strong>Tools</strong>
+              <p>Git, SSMS, DbVisualizer</p>
+              <p>xUnit</p>
+              <p>Remix IDE (Solidity)</p>
+              <p>PerformanceTest (benchmarking)</p>
+            </div>
+          </section>
+
+          <section>
+            <h2>Languages</h2>
+            <p>Bulgarian — Native</p>
+            <p>English — Professional Working Proficiency (B2)</p>
+          </section>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
