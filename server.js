@@ -687,6 +687,41 @@ function mergeSquadStats(existingSquad, statsByName) {
   return merged;
 }
 
+function computePlayerImpact(player) {
+  const matches = toNumber(player?.matches, 0);
+  const goals = toNumber(player?.goals, 0);
+  const assists = toNumber(player?.assists, 0);
+  const hattricks = toNumber(player?.hattricks, 0);
+  const impact = (matches * 0.25) + (assists * 0.5) + goals + (hattricks * 2);
+  return Number(impact.toFixed(2));
+}
+
+function normalizeSquadStatsAndImpact(existingSquad) {
+  const groups = ["goalkeepers", "defenders", "midfielders", "forwards"];
+  const normalized = {};
+
+  groups.forEach((group) => {
+    const players = Array.isArray(existingSquad?.[group]) ? existingSquad[group] : [];
+    normalized[group] = players.map((player) => {
+      if (!player || typeof player !== "object") {
+        return player;
+      }
+
+      const normalizedPlayer = {
+        ...player,
+        matches: toNumber(player.matches, 0),
+        goals: toNumber(player.goals, 0),
+        assists: toNumber(player.assists, 0)
+      };
+
+      normalizedPlayer.impact = computePlayerImpact(normalizedPlayer);
+      return normalizedPlayer;
+    });
+  });
+
+  return normalized;
+}
+
 function applyManualSquadOverrides(existingSquad) {
   const groups = ["goalkeepers", "defenders", "midfielders", "forwards"];
   const squad = existingSquad && typeof existingSquad === "object" ? existingSquad : {};
@@ -735,9 +770,18 @@ function applyManualSquadOverrides(existingSquad) {
       return;
     }
 
-    matched.matches = overrideRow.matches;
-    matched.goals = overrideRow.goals;
-    matched.assists = overrideRow.assists;
+    const hasLiveStats =
+      toNumber(matched.matches, 0) > 0 ||
+      toNumber(matched.goals, 0) > 0 ||
+      toNumber(matched.assists, 0) > 0;
+
+    if (hasLiveStats) {
+      return;
+    }
+
+    matched.matches = toNumber(overrideRow.matches, 0);
+    matched.goals = toNumber(overrideRow.goals, 0);
+    matched.assists = toNumber(overrideRow.assists, 0);
   });
 
   return squad;
@@ -1055,6 +1099,7 @@ async function buildFreshPayloadFromSource() {
   }
 
   nextPayload.cska.squad = applyManualSquadOverrides(nextPayload.cska.squad || fallback.cska?.squad || {});
+  nextPayload.cska.squad = normalizeSquadStatsAndImpact(nextPayload.cska.squad || fallback.cska?.squad || {});
 
   if (standingsPageResult.status === "fulfilled") {
     const todayMatches = extractEfbetTodayMatches(standingsPageResult.value);
