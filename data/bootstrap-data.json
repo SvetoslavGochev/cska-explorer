@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-27T15:10:36.194Z",
+  "updatedAt": "2026-10-28T15:07:05.806Z",
   "source": {
     "note": "Automatic server refresh with validation (lastResults fetch failed, nextMatches fetch failed).",
     "validation": {
@@ -26,14 +26,14 @@
     {
       "rank": 2,
       "team": "Левски",
-      "mp": 10,
+      "mp": 11,
       "w": 9,
-      "d": 1,
+      "d": 2,
       "l": 0,
-      "gf": 23,
-      "ga": 4,
+      "gf": 24,
+      "ga": 5,
       "gd": 19,
-      "pts": 28
+      "pts": 29
     },
     {
       "rank": 3,
@@ -74,14 +74,14 @@
     {
       "rank": 6,
       "team": "Арда (Кърджали)",
-      "mp": 11,
+      "mp": 12,
       "w": 5,
-      "d": 2,
+      "d": 3,
       "l": 4,
-      "gf": 15,
-      "ga": 17,
+      "gf": 16,
+      "ga": 18,
       "gd": -2,
-      "pts": 17
+      "pts": 18
     },
     {
       "rank": 7,
@@ -133,6 +133,18 @@
     },
     {
       "rank": 11,
+      "team": "Черно море",
+      "mp": 12,
+      "w": 2,
+      "d": 3,
+      "l": 7,
+      "gf": 13,
+      "ga": 22,
+      "gd": -9,
+      "pts": 9
+    },
+    {
+      "rank": 12,
       "team": "Локомотив (Пловдив)",
       "mp": 12,
       "w": 2,
@@ -144,7 +156,7 @@
       "pts": 9
     },
     {
-      "rank": 12,
+      "rank": 13,
       "team": "Локомотив (София)",
       "mp": 12,
       "w": 1,
@@ -156,28 +168,16 @@
       "pts": 9
     },
     {
-      "rank": 13,
+      "rank": 14,
       "team": "Септември (София)",
       "mp": 12,
       "w": 2,
-      "d": 3,
-      "l": 7,
+      "d": 2,
+      "l": 8,
       "gf": 10,
-      "ga": 21,
-      "gd": -11,
-      "pts": 9
-    },
-    {
-      "rank": 14,
-      "team": "Черно море",
-      "mp": 12,
-      "w": 1,
-      "d": 4,
-      "l": 7,
-      "gf": 11,
-      "ga": 22,
-      "gd": -11,
-      "pts": 7
+      "ga": 23,
+      "gd": -13,
+      "pts": 8
     }
   ],
   "cska": {
@@ -470,14 +470,7 @@
         }
       ]
     },
-    "todayMatches": [
-      {
-        "date": "27.10",
-        "time": "",
-        "home": "Арда",
-        "away": "Левски София"
-      }
-    ],
+    "todayMatches": [],
     "teamInfo": {
       "stadium": "Vasil Levski National Stadium",
       "foundedYear": "1948",
@@ -566,7 +559,7 @@
         "recentGoalsAgainstPerMatch": 0,
         "possession": null
       },
-      "generatedAt": "2026-10-27T15:10:36.570Z"
+      "generatedAt": "2026-10-28T15:07:06.849Z"
     }
   }
 }
