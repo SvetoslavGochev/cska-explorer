@@ -1310,14 +1310,24 @@ function setupCollapsibleSections() {
     const body = section.querySelector(".section-body");
     if (!button || !body) return;
 
-    const applyToggleState = (expanded) => {
-      section.classList.toggle("is-collapsed", !expanded);
-      button.setAttribute("aria-expanded", String(expanded));
+    const syncToggleLabel = () => {
+      const expanded = button.getAttribute("aria-expanded") === "true";
       const labelEl = button.querySelector(".section-toggle-text");
       if (labelEl) {
         labelEl.textContent = expanded ? t(button.dataset.hideKey || "sectionToggleHide") : t(button.dataset.showKey || "sectionToggleShow");
       }
     };
+
+    const applyToggleState = (expanded) => {
+      section.classList.toggle("is-collapsed", !expanded);
+      button.setAttribute("aria-expanded", String(expanded));
+      syncToggleLabel();
+    };
+
+    if (section.dataset.collapsibleBound === "true") {
+      syncToggleLabel();
+      return;
+    }
 
     const defaultOpen = section.dataset.defaultOpen === "true";
     applyToggleState(defaultOpen);
@@ -1326,6 +1336,8 @@ function setupCollapsibleSections() {
       const nextExpanded = button.getAttribute("aria-expanded") !== "true";
       applyToggleState(nextExpanded);
     });
+
+    section.dataset.collapsibleBound = "true";
   });
 }
 
