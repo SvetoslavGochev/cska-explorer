@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-30T16:41:33.960Z",
+  "updatedAt": "2026-10-30T17:52:00.457Z",
   "source": {
     "note": "Automatic server refresh with validation (lastResults fetch failed, nextMatches fetch failed).",
     "validation": {
@@ -42,9 +42,9 @@
       "w": 9,
       "d": 1,
       "l": 3,
-      "gf": 30,
+      "gf": 31,
       "ga": 14,
-      "gd": 16,
+      "gd": 17,
       "pts": 28
     },
     {
@@ -62,14 +62,14 @@
     {
       "rank": 5,
       "team": "Ботев (Пловдив)",
-      "mp": 12,
-      "w": 6,
+      "mp": 13,
+      "w": 7,
       "d": 1,
       "l": 5,
-      "gf": 17,
+      "gf": 18,
       "ga": 18,
-      "gd": -1,
-      "pts": 19
+      "gd": 0,
+      "pts": 22
     },
     {
       "rank": 6,
@@ -91,8 +91,8 @@
       "d": 4,
       "l": 6,
       "gf": 12,
-      "ga": 22,
-      "gd": -10,
+      "ga": 23,
+      "gd": -11,
       "pts": 13
     },
     {
@@ -158,13 +158,13 @@
     {
       "rank": 13,
       "team": "Локомотив (София)",
-      "mp": 12,
+      "mp": 13,
       "w": 1,
       "d": 6,
-      "l": 5,
+      "l": 6,
       "gf": 13,
-      "ga": 20,
-      "gd": -7,
+      "ga": 21,
+      "gd": -8,
       "pts": 9
     },
     {
@@ -470,17 +470,10 @@
         }
       ]
     },
-    "todayMatches": [
-      {
-        "date": "30.10",
-        "time": "",
-        "home": "Локомотив София",
-        "away": "Ботев Пловдив"
-      }
-    ],
+    "todayMatches": [],
     "teamInfo": {
-      "stadium": "Vasil Levski National Stadium",
-      "foundedYear": "1948",
+      "stadium": "Bulgarian Army",
+      "foundedYear": "October 2026",
       "country": "Bulgaria",
       "badge": ""
     },
@@ -566,7 +559,7 @@
         "recentGoalsAgainstPerMatch": 0,
         "possession": null
       },
-      "generatedAt": "2026-10-30T16:41:35.880Z"
+      "generatedAt": "2026-10-30T17:52:01.541Z"
     }
   }
 }

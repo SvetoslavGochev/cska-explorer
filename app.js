@@ -321,7 +321,7 @@ const I18N = {
     standingsRefreshFailed: "Класиране: временен проблем при обновяване. Показваме последните налични данни.",
     noMatchesToday: "Няма мачове за днес",
     stadiumLabel: "Стадион:",
-    foundedLabel: "Основан:",
+    foundedLabel: "Открит:",
     cskaNotes: "Форма:"
   },
   en: {
@@ -435,7 +435,7 @@ const I18N = {
     standingsRefreshFailed: "Standings: temporary refresh issue. Showing the last available data.",
     noMatchesToday: "No matches today",
     stadiumLabel: "Stadium:",
-    foundedLabel: "Founded:",
+    foundedLabel: "Opened:",
     cskaNotes: "Form:"
   }
 };
@@ -1674,8 +1674,18 @@ function render(payload, fromCache) {
   if (teamInfoBarEl) {
     const ti = payload.cska?.teamInfo;
     if (ti?.stadium) {
-      const parts = [`${t("stadiumLabel")} ${ti.stadium}`];
-      if (ti.foundedYear) parts.push(`${t("foundedLabel")} ${ti.foundedYear}`);
+      const stadiumValue = String(ti.stadium).trim();
+      const normalizedStadium = ["Vasil Levski National Stadium", "Vasil Levski Stadium", "Васил Левски", "Българска армия", "Bulgarian Army"].includes(stadiumValue)
+        ? (currentLanguage === "bg" ? "Българска армия" : "Bulgarian Army")
+        : stadiumValue;
+
+      const hasLegacyFoundationYear = ["1948", "2016", "2026", "октомври 2026", "October 2026"].includes(String(ti.foundedYear || ""));
+      const normalizedFoundation = hasLegacyFoundationYear
+        ? (currentLanguage === "bg" ? "октомври 2026" : "October 2026")
+        : String(ti.foundedYear || "");
+
+      const parts = [`${t("stadiumLabel")} ${normalizedStadium}`];
+      if (normalizedFoundation) parts.push(`${t("foundedLabel")} ${normalizedFoundation}`);
       teamInfoBarEl.textContent = parts.join("  ·  ");
     } else {
       teamInfoBarEl.textContent = "";
