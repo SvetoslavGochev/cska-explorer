@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-28T15:07:05.806Z",
+  "updatedAt": "2026-10-30T16:41:33.960Z",
   "source": {
     "note": "Automatic server refresh with validation (lastResults fetch failed, nextMatches fetch failed).",
     "validation": {
@@ -37,6 +37,18 @@
     },
     {
       "rank": 3,
+      "team": "ЦСКА 1948",
+      "mp": 13,
+      "w": 9,
+      "d": 1,
+      "l": 3,
+      "gf": 30,
+      "ga": 14,
+      "gd": 16,
+      "pts": 28
+    },
+    {
+      "rank": 4,
       "team": "Лудогорец",
       "mp": 11,
       "w": 8,
@@ -46,18 +58,6 @@
       "ga": 9,
       "gd": 12,
       "pts": 26
-    },
-    {
-      "rank": 4,
-      "team": "ЦСКА 1948",
-      "mp": 12,
-      "w": 8,
-      "d": 1,
-      "l": 3,
-      "gf": 25,
-      "ga": 13,
-      "gd": 12,
-      "pts": 25
     },
     {
       "rank": 5,
@@ -86,13 +86,13 @@
     {
       "rank": 7,
       "team": "Спартак (Варна)",
-      "mp": 12,
+      "mp": 13,
       "w": 3,
       "d": 4,
-      "l": 5,
-      "gf": 11,
-      "ga": 17,
-      "gd": -6,
+      "l": 6,
+      "gf": 12,
+      "ga": 22,
+      "gd": -10,
       "pts": 13
     },
     {
@@ -212,7 +212,7 @@
         },
         {
           "name": "Даниел Николов",
-          "number": 31,
+          "number": 1,
           "countryName": "България",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
           "matches": 0,
@@ -440,7 +440,7 @@
         },
         {
           "name": "Васил Каймаканов",
-          "number": 34,
+          "number": 11,
           "countryName": "България",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
           "matches": 2,
@@ -470,7 +470,14 @@
         }
       ]
     },
-    "todayMatches": [],
+    "todayMatches": [
+      {
+        "date": "30.10",
+        "time": "",
+        "home": "Локомотив София",
+        "away": "Ботев Пловдив"
+      }
+    ],
     "teamInfo": {
       "stadium": "Vasil Levski National Stadium",
       "foundedYear": "1948",
@@ -559,7 +566,7 @@
         "recentGoalsAgainstPerMatch": 0,
         "possession": null
       },
-      "generatedAt": "2026-10-28T15:07:06.849Z"
+      "generatedAt": "2026-10-30T16:41:35.880Z"
     }
   }
 }

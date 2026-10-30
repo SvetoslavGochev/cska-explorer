@@ -82,80 +82,101 @@
 
     </section>
 
-    <section class="card section-anchor" id="squad-section" style="margin-top:16px;">
-      <h2 data-i18n="squadTitle"><img src="https://static.flashscore.com/res/image/data/MZmpVA7k-nTkb2fj6.png" alt="ЦСКА" style="height:1em;vertical-align:middle;margin-right:0.5em;">Състав на ЦСКА</h2>
-      <div class="squad-nav-wrap">
-        <nav class="squad-nav" aria-label="Навигация по позиции в състава">
-          <a class="squad-nav-link squad-nav-gk" href="#squad-group-goalkeepers"><span class="squad-nav-icon" aria-hidden="true">🧤</span><span data-i18n="squadNavGoalkeepers">ВР</span></a>
-          <a class="squad-nav-link squad-nav-df" href="#squad-group-defenders"><span class="squad-nav-icon" aria-hidden="true">🛡</span><span data-i18n="squadNavDefenders">ЗАЩ</span></a>
-          <a class="squad-nav-link squad-nav-mf" href="#squad-group-midfielders"><span class="squad-nav-icon" aria-hidden="true">🎯</span><span data-i18n="squadNavMidfielders">ХАЛФ</span></a>
-          <a class="squad-nav-link squad-nav-fw" href="#squad-group-forwards"><span class="squad-nav-icon" aria-hidden="true">⚽</span><span data-i18n="squadNavForwards">НАП</span></a>
-        </nav>
+    <section class="card section-anchor collapsible-section" id="squad-section" data-default-open="true" style="margin-top:16px;">
+      <div class="section-header-row">
+        <h2 data-i18n="squadTitle"><img src="https://static.flashscore.com/res/image/data/MZmpVA7k-nTkb2fj6.png" alt="ЦСКА" style="height:1em;vertical-align:middle;margin-right:0.5em;">Състав на ЦСКА</h2>
+        <button class="section-toggle-btn" type="button" data-target="squad-section" data-show-key="sectionToggleShow" data-hide-key="sectionToggleHide" aria-expanded="true">
+          <span class="section-toggle-text">Скрий</span>
+        </button>
       </div>
-      <p class="team-info-bar" id="teamInfoBar"></p>
-      <div class="squad-grid" id="squadGrid"></div>
-      <p class="small" id="sourceNote"></p>
-      <p class="small status-ok" id="statusLine"></p>
+      <div class="section-body">
+        <div class="squad-nav-wrap">
+          <nav class="squad-nav" aria-label="Навигация по позиции в състава">
+            <a class="squad-nav-link squad-nav-gk" href="#squad-group-goalkeepers"><span class="squad-nav-icon" aria-hidden="true">🧤</span><span data-i18n="squadNavGoalkeepers">ВР</span></a>
+            <a class="squad-nav-link squad-nav-df" href="#squad-group-defenders"><span class="squad-nav-icon" aria-hidden="true">🛡</span><span data-i18n="squadNavDefenders">ЗАЩ</span></a>
+            <a class="squad-nav-link squad-nav-mf" href="#squad-group-midfielders"><span class="squad-nav-icon" aria-hidden="true">🎯</span><span data-i18n="squadNavMidfielders">ХАЛФ</span></a>
+            <a class="squad-nav-link squad-nav-fw" href="#squad-group-forwards"><span class="squad-nav-icon" aria-hidden="true">⚽</span><span data-i18n="squadNavForwards">НАП</span></a>
+          </nav>
+        </div>
+        <p class="team-info-bar" id="teamInfoBar"></p>
+        <div class="squad-grid" id="squadGrid"></div>
+        <p class="small" id="sourceNote"></p>
+        <p class="small status-ok" id="statusLine"></p>
+      </div>
     </section>
 
-    <section class="card cska-analysis-card section-anchor" id="analysis-section" style="margin-top:16px;">
-      <h2 data-i18n="cskaAnalysisTitle">Анализ на играта на ЦСКА след 17 официални мача (Сезон 2026/27)</h2>
-      <div class="analysis-content" id="analysisContent">
-        <p>След изиграването на общо <b>17 официални мача</b> (8 в Европа + 9 в Първа лига), профилът на ЦСКА за сезон 2026/27 вече е ясно оформен. Отборът е преминал през тежки европейски квалификации, стабилен старт в първенството и показва ясно изграден стил: <b>силна защита, ефективна атака и тактическа гъвкавост</b>.</p>
-
-        <h3>1. Офанзивна продукция – стабилност и клиничност</h3>
-        <ul>
-          <li><b>Голове:</b> ЦСКА вече е отбелязал <b>24 гола в 17 официални двубоя</b>, което означава средно около <b>1.4 гола на мач</b> в по-тежкия период на европейските квалификации и около <b>2+ гола на мач</b> в първенството.</li>
-          <li><b>Клиничност:</b> Отборът показва способност да реализира качествени положения, да създава възможности и да затваря срещи с различни стилове на игра.</li>
-          <li><b>Най-силен мач:</b> <b>5:0 срещу Ботев Враца</b> остава най-ясният пример за офанзивна увереност и доминиране.</li>
-        </ul>
-
-        <h3>2. Тактическа гъвкавост – адаптация според съперника</h3>
-        <ul>
-          <li><b>Европа:</b> срещу Макаби Тел Авив и Карабах се играе в по-организиран, по-сигурен и защитен модел; това е характерно за квалификационни мачове с високо напрежение.</li>
-          <li><b>Първа лига:</b> в срещите срещу по-слаби опоненти ЦСКА преминава към по-агресивен натиск, повече контрол и по-голям офанзивен натиск.</li>
-          <li><b>Извод:</b> Отборът може да сменя стила си според съперника – това е ключов актив за дълъг сезон.</li>
-        </ul>
-
-        <h3>3. Защитна стабилност – най-силният компонент</h3>
-        <ul>
-          <li><b>Допуснати голове:</b> до този момент защитата остава стабилна, с добра организация и ритъм в центъра на терена.</li>
-          <li><b>Състояние:</b> отборът допуска сравнително малко позиции, а при зададените действия и статичните ситуации остава дисциплиниран.</li>
-          <li><b>Извод:</b> Защитата е един от най-силните елементи на ЦСКА — трябва обаче да се следи дисциплината, защото в напрежение има моменти на риск и агресия.</li>
-        </ul>
-
-        <h3>4. Психологически профил – устойчивост след Европа</h3>
-        <ul>
-          <li><b>Европейския график:</b> има тежки мачове, нулеви срещи и поражения, но отборът не се „счупва“ в психологията и реакцията.</li>
-          <li><b>Първенство:</b> ЦСКА запазва силна форма, стабилна концентрация и увереност в следващите срещи.</li>
-          <li><b>Извод:</b> Отборът показва характер, спокойно реагира на тежки моменти и не изглежда психически отслабнал след европейските елиминации.</li>
-        </ul>
-
-        <h3>5. Хронологична структура на сезона</h3>
-        <ul>
-          <li><b>Европа – 8 мача:</b> Дери Сити (2 мача), Карабах (2 мача), Макаби Тел Авив (2 мача), ОФИ (2 мача).</li>
-          <li><b>Първа лига – 9 мача:</b> силен старт, стабилни победи и натиск в момента на най-силната форма.</li>
-          <li><b>Резултат:</b> отборът се е научил как да играе под напрежение, как да се адаптира и как да запази сериозност при различни сценарии.</li>
-        </ul>
-
-        <p class="analysis-verdict"><b>Финален извод:</b> След 17 официални мача ЦСКА изглежда като <b>зрял, балансиран и стабилен отбор</b>. Има силна защита, ефективна атака, тактическа гъвкавост и психологическа устойчивост. Първенството върви силно, а европейският опит ще е ценен за следващия етап на развитие. Това е отбор, който вече има ясна идентичност и реалистични амбиции.</p>
+    <section class="card cska-analysis-card section-anchor collapsible-section" id="analysis-section" data-default-open="false" style="margin-top:16px;">
+      <div class="section-header-row">
+        <h2 data-i18n="cskaAnalysisTitle">Анализ на играта на ЦСКА след 17 официални мача (Сезон 2026/27)</h2>
+        <button class="section-toggle-btn" type="button" data-target="analysis-section" data-show-key="sectionToggleShow" data-hide-key="sectionToggleHide" aria-expanded="false">
+          <span class="section-toggle-text">Покажи</span>
+        </button>
       </div>
-      <div class="analysis-dashboard" id="analysisDashboard"></div>
+      <div class="section-body">
+        <div class="analysis-content" id="analysisContent">
+          <p>След изиграването на общо <b>17 официални мача</b> (8 в Европа + 9 в Първа лига), профилът на ЦСКА за сезон 2026/27 вече е ясно оформен. Отборът е преминал през тежки европейски квалификации, стабилен старт в първенството и показва ясно изграден стил: <b>силна защита, ефективна атака и тактическа гъвкавост</b>.</p>
+
+          <h3>1. Офанзивна продукция – стабилност и клиничност</h3>
+          <ul>
+            <li><b>Голове:</b> ЦСКА вече е отбелязал <b>24 гола в 17 официални двубоя</b>, което означава средно около <b>1.4 гола на мач</b> в по-тежкия период на европейските квалификации и около <b>2+ гола на мач</b> в първенството.</li>
+            <li><b>Клиничност:</b> Отборът показва способност да реализира качествени положения, да създава възможности и да затваря срещи с различни стилове на игра.</li>
+            <li><b>Най-силен мач:</b> <b>5:0 срещу Ботев Враца</b> остава най-ясният пример за офанзивна увереност и доминиране.</li>
+          </ul>
+
+          <h3>2. Тактическа гъвкавост – адаптация според съперника</h3>
+          <ul>
+            <li><b>Европа:</b> срещу Макаби Тел Авив и Карабах се играе в по-организиран, по-сигурен и защитен модел; това е характерно за квалификационни мачове с високо напрежение.</li>
+            <li><b>Първа лига:</b> в срещите срещу по-слаби опоненти ЦСКА преминава към по-агресивен натиск, повече контрол и по-голям офанзивен натиск.</li>
+            <li><b>Извод:</b> Отборът може да сменя стила си според съперника – това е ключов актив за дълъг сезон.</li>
+          </ul>
+
+          <h3>3. Защитна стабилност – най-силният компонент</h3>
+          <ul>
+            <li><b>Допуснати голове:</b> до този момент защитата остава стабилна, с добра организация и ритъм в центъра на терена.</li>
+            <li><b>Състояние:</b> отборът допуска сравнително малко позиции, а при зададените действия и статичните ситуации остава дисциплиниран.</li>
+            <li><b>Извод:</b> Защитата е един от най-силните елементи на ЦСКА — трябва обаче да се следи дисциплината, защото в напрежение има моменти на риск и агресия.</li>
+          </ul>
+
+          <h3>4. Психологически профил – устойчивост след Европа</h3>
+          <ul>
+            <li><b>Европейския график:</b> има тежки мачове, нулеви срещи и поражения, но отборът не се „счупва“ в психологията и реакцията.</li>
+            <li><b>Първенство:</b> ЦСКА запазва силна форма, стабилна концентрация и увереност в следващите срещи.</li>
+            <li><b>Извод:</b> Отборът показва характер, спокойно реагира на тежки моменти и не изглежда психически отслабнал след европейските елиминации.</li>
+          </ul>
+
+          <h3>5. Хронологична структура на сезона</h3>
+          <ul>
+            <li><b>Европа – 8 мача:</b> Дери Сити (2 мача), Карабах (2 мача), Макаби Тел Авив (2 мача), ОФИ (2 мача).</li>
+            <li><b>Първа лига – 9 мача:</b> силен старт, стабилни победи и натиск в момента на най-силната форма.</li>
+            <li><b>Резултат:</b> отборът се е научил как да играе под напрежение, как да се адаптира и как да запази сериозност при различни сценарии.</li>
+          </ul>
+
+          <p class="analysis-verdict"><b>Финален извод:</b> След 17 официални мача ЦСКА изглежда като <b>зрял, балансиран и стабилен отбор</b>. Има силна защита, ефективна атака, тактическа гъвкавост и психологическа устойчивост. Първенството върви силно, а европейският опит ще е ценен за следващия етап на развитие. Това е отбор, който вече има ясна идентичност и реалистични амбиции.</p>
+        </div>
+        <div class="analysis-dashboard" id="analysisDashboard"></div>
+      </div>
     </section>
 
-    <section class="card stoychkov-profile-card section-anchor" id="legends-section" style="margin-top:16px;">
-      <h2 data-i18n="legendsTitle">Легенди на ЦСКА</h2>
-      <div class="section-mini-nav-wrap">
-        <p class="section-mini-nav-label" data-i18n="legendsNavLabel">Избери легенда</p>
-        <nav class="section-mini-nav" aria-label="Навигация в секцията Легенди на ЦСКА">
-          <button class="section-mini-nav-link legend-switch-btn" type="button" data-legend="hristo-stoichkov" data-i18n="legendNavHristo">Христо Стоичков</button>
-          <button class="section-mini-nav-link legend-switch-btn" type="button" data-legend="dimitar-berbatov" data-i18n="legendNavBerbatov">Димитър Бербатов</button>
-          <button class="section-mini-nav-link legend-switch-btn" type="button" data-legend="petar-zhekov" data-i18n="legendNavZhekov">Петър Жеков</button>
-          <button class="section-mini-nav-link legend-switch-btn" type="button" data-legend="luboslav-penev" data-i18n="legendNavPenev">Любослав Пенев</button>
-          <button class="section-mini-nav-link legend-switch-btn" type="button" data-legend="stoycho-mladenov" data-i18n="legendNavStoycho">Стойчо Младенов</button>
-        </nav>
+    <section class="card stoychkov-profile-card section-anchor collapsible-section" id="legends-section" data-default-open="false" style="margin-top:16px;">
+      <div class="section-header-row">
+        <h2 data-i18n="legendsTitle">Легенди на ЦСКА</h2>
+        <button class="section-toggle-btn" type="button" data-target="legends-section" data-show-key="sectionToggleShow" data-hide-key="sectionToggleHide" aria-expanded="false">
+          <span class="section-toggle-text">Покажи</span>
+        </button>
       </div>
-      <div id="legendProfile"></div>
+      <div class="section-body">
+        <div class="section-mini-nav-wrap">
+          <p class="section-mini-nav-label" data-i18n="legendsNavLabel">Избери легенда</p>
+          <nav class="section-mini-nav" aria-label="Навигация в секцията Легенди на ЦСКА">
+            <button class="section-mini-nav-link legend-switch-btn" type="button" data-legend="hristo-stoichkov" data-i18n="legendNavHristo">Христо Стоичков</button>
+            <button class="section-mini-nav-link legend-switch-btn" type="button" data-legend="dimitar-berbatov" data-i18n="legendNavBerbatov">Димитър Бербатов</button>
+            <button class="section-mini-nav-link legend-switch-btn" type="button" data-legend="petar-zhekov" data-i18n="legendNavZhekov">Петър Жеков</button>
+            <button class="section-mini-nav-link legend-switch-btn" type="button" data-legend="luboslav-penev" data-i18n="legendNavPenev">Любослав Пенев</button>
+            <button class="section-mini-nav-link legend-switch-btn" type="button" data-legend="stoycho-mladenov" data-i18n="legendNavStoycho">Стойчо Младенов</button>
+          </nav>
+        </div>
+        <div id="legendProfile"></div>
+      </div>
     </section>
 
     <section class="card projects-card" style="margin-top:16px;">

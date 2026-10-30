@@ -311,6 +311,8 @@ const I18N = {
     cskaPartnerWalletHint: "Изпращай само през съвместима EVM мрежа.",
     cskaPartnerContactHint: "Пиши ни директно през социалните мрежи за партньорства.",
     sourceMissingStats: "В таблицата липсващите статистики се допълват с \"-\".",
+    sectionToggleShow: "Покажи",
+    sectionToggleHide: "Скрий",
     statusFromCache: "Показани са данни от локалния кеш (без нова заявка).",
     statusLatest: "Показани са последните данни.",
     standingsLoading: "Класиране: зареждане на актуални данни...",
@@ -423,6 +425,8 @@ const I18N = {
     cskaPartnerWalletHint: "Send only on a compatible EVM network.",
     cskaPartnerContactHint: "For partnerships, message us directly on social media.",
     sourceMissingStats: "Missing statistics are shown as \"-\" in the table.",
+    sectionToggleShow: "Show",
+    sectionToggleHide: "Hide",
     statusFromCache: "Showing data from local cache (without a new request).",
     statusLatest: "Showing the latest data.",
     standingsLoading: "Standings: loading fresh data...",
@@ -1295,8 +1299,34 @@ function applyLanguageUI() {
   renderAnalysisContent(lastPayload);
   renderLegendProfile();
   renderStandingsStatus();
+  setupCollapsibleSections();
 
   requestAnimationFrame(updateStickyNavigationOffsets);
+}
+
+function setupCollapsibleSections() {
+  document.querySelectorAll(".collapsible-section").forEach((section) => {
+    const button = section.querySelector(".section-toggle-btn");
+    const body = section.querySelector(".section-body");
+    if (!button || !body) return;
+
+    const applyToggleState = (expanded) => {
+      section.classList.toggle("is-collapsed", !expanded);
+      button.setAttribute("aria-expanded", String(expanded));
+      const labelEl = button.querySelector(".section-toggle-text");
+      if (labelEl) {
+        labelEl.textContent = expanded ? t(button.dataset.hideKey || "sectionToggleHide") : t(button.dataset.showKey || "sectionToggleShow");
+      }
+    };
+
+    const defaultOpen = section.dataset.defaultOpen === "true";
+    applyToggleState(defaultOpen);
+
+    button.addEventListener("click", () => {
+      const nextExpanded = button.getAttribute("aria-expanded") !== "true";
+      applyToggleState(nextExpanded);
+    });
+  });
 }
 
 function setupLanguageSwitch() {

@@ -337,6 +337,51 @@ body {
   scroll-margin-top: calc(var(--sticky-master-top) + var(--sticky-master-height) + 18px);
 }
 
+.section-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.section-header-row h2 {
+  margin: 0;
+  flex: 1;
+}
+
+.section-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(200, 178, 148, 0.7);
+  background: rgba(255, 255, 255, 0.52);
+  color: #2d1d10;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: transform 140ms ease, background-color 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+}
+
+.section-toggle-btn:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.78);
+  border-color: rgba(176, 108, 50, 0.6);
+}
+
+.section-toggle-btn:focus-visible {
+  outline: 2px solid rgba(176, 18, 26, 0.38);
+  outline-offset: 2px;
+}
+
+.collapsible-section.is-collapsed .section-body {
+  display: none;
+}
+
 .section-mini-nav-wrap {
   margin: 14px 0 18px;
   padding: 12px;
