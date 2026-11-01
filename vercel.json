@@ -20,6 +20,7 @@
       },
       "continue": true
     },
+    { "src": "/api/data", "dest": "/api/data.js" },
     { "src": "/api/csp-report", "dest": "/api/csp-report.js" },
     { "src": "/robots.txt", "dest": "/robots.txt" },
     { "src": "/sitemap.xml", "dest": "/sitemap.xml" },
