@@ -34,14 +34,21 @@ jobs:
       - name: Persist validated standings snapshot
         run: node scripts/persist-live-standings.js "$RUNNER_TEMP/standings-response.json" data/bootstrap-data.json
 
+      - name: Refresh squad and player stats when due
+        id: squad-refresh
+        continue-on-error: true
+        env:
+          SQUAD_REFRESH_HOURS: ${{ vars.SQUAD_REFRESH_HOURS || '6' }}
+        run: node scripts/refresh-player-stats.js --if-due
+
       - name: Commit and push changed standings
         run: |
-          if git diff --quiet -- data/bootstrap-data.json; then
-            echo "No standings changes to publish."
+          if git diff --quiet -- data/bootstrap-data.json data/refresh-log.ndjson; then
+            echo "No standings or squad changes to publish."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/bootstrap-data.json
-          git commit -m "chore: refresh live standings snapshot"
+          git add data/bootstrap-data.json data/refresh-log.ndjson
+          git commit -m "chore: refresh live football data"
           git push origin HEAD:main

@@ -319,6 +319,10 @@ const I18N = {
     standingsCache: "Класиране: показани са кеширани данни, правим проверка за обновяване...",
     standingsUpdated: "Класиране: обновено",
     standingsRefreshFailed: "Класиране: временен проблем при обновяване. Показваме последните налични данни.",
+      squadUpdateLabel: "Последна проверка на състава:",
+      playerStatsUpdateLabel: "Статистики на играчите:",
+        playerStatsFallback: "последните валидни запазени",
+      updateTimeUnknown: "няма данни",
     noMatchesToday: "Няма мачове за днес",
     stadiumLabel: "Стадион:",
     foundedLabel: "Открит:",
@@ -433,6 +437,10 @@ const I18N = {
     standingsCache: "Standings: cached data is shown while checking for updates...",
     standingsUpdated: "Standings: updated",
     standingsRefreshFailed: "Standings: temporary refresh issue. Showing the last available data.",
+      squadUpdateLabel: "Squad last checked:",
+      playerStatsUpdateLabel: "Player stats:",
+        playerStatsFallback: "last validated stats retained",
+      updateTimeUnknown: "not available",
     noMatchesToday: "No matches today",
     stadiumLabel: "Stadium:",
     foundedLabel: "Opened:",
@@ -1668,6 +1676,18 @@ function render(payload, fromCache) {
   renderStandings(payload.standings || []);
 
   renderSquad(payload.cska?.squad || FALLBACK_DATA.cska.squad);
+  const squadLiveStatus = document.getElementById("squadLiveStatus");
+  if (squadLiveStatus) {
+    const squadUpdatedAt = formatStatusTimestamp(payload.source?.squadUpdatedAt);
+    const playerStatsUpdatedAt = formatStatusTimestamp(payload.source?.playerStatsUpdatedAt);
+    const statsFallback = payload.source?.squadRefresh?.statsUpdated === false
+      ? ` (${t("playerStatsFallback")})`
+      : "";
+    squadLiveStatus.textContent = [
+      `${t("squadUpdateLabel")} ${squadUpdatedAt || t("updateTimeUnknown")}`,
+      `${t("playerStatsUpdateLabel")} ${playerStatsUpdatedAt || t("updateTimeUnknown")}${statsFallback}`
+    ].join(" · ");
+  }
   renderAnalysisContent(payload);
   renderAnalysisDashboard(payload);
 

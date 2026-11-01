@@ -189,6 +189,7 @@ function withStandings(payload, standings, provider, warnings = []) {
   updated.updatedAt = new Date().toISOString();
   updated.source = {
     ...(updated.source || {}),
+    standingsUpdatedAt: updated.updatedAt,
     note: `Live standings refreshed from ${provider}.`,
     validation: {
       warnings,

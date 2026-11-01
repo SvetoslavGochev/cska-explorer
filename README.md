@@ -86,8 +86,11 @@ https://svetoslavgochev.github.io/cska-explorer/
 ## Backend Auto-Refresh
 
 - Локалният Node server обновява автоматично на всеки 60 минути; Vercel serverless функцията не разчита на `setInterval`
+- Локалният Node server обновява автоматично на всеки 60 минути; Vercel serverless функцията не разчита на `setInterval`
 - `/api/data` използва кратък CDN cache и обновява при изтичането му; `/api/data?refresh=1` задейства live refresh
-- Почасовият GitHub Actions workflow може да се пусне и ръчно от Actions
+- Един почасов GitHub Actions workflow обновява класирането и проверява състава/статистиките; съставът се обновява най-много веднъж на 6 часа (`SQUAD_REFRESH_HOURS`), а workflow-ът може да се пусне и ръчно от Actions
+- Съставът се валидира от Sportal, а статистиките от Flashscore; при недостатъчно разпознати редове старите валидни статистики остават непроменени
+- Snapshot-ът пази отделни `source.standingsUpdatedAt`, `source.squadUpdatedAt` и `source.playerStatsUpdatedAt`; интерфейсът показва часовете за състава и статистиките
 - За защита на принудителния refresh задайте еднакъв `CRON_SECRET` във Vercel и GitHub Actions Secrets; може да зададете и `CSKA_DATA_API_URL` като GitHub Actions Variable
 - При неуспех се връща последният валиден резултат или `data/bootstrap-data.json`, като `source.validation.standingsUpdated` е `false` и UI показва предупреждение
 

@@ -14,6 +14,15 @@ function persistLiveStandings(response, currentPayload) {
     return { changed: false, payload: currentPayload };
   }
 
+  const source = {
+    ...(response.source || {}),
+    ...(currentPayload?.source || {}),
+    validation: response.source?.validation || currentPayload?.source?.validation,
+    standingsUpdatedAt: response.updatedAt || new Date().toISOString(),
+    squadUpdatedAt: currentPayload?.source?.squadUpdatedAt || currentPayload?.updatedAt || null,
+    playerStatsUpdatedAt: currentPayload?.source?.playerStatsUpdatedAt || null
+  };
+
   return {
     changed: true,
     payload: {
@@ -21,8 +30,7 @@ function persistLiveStandings(response, currentPayload) {
       standings: response.standings,
       updatedAt: response.updatedAt || new Date().toISOString(),
       source: {
-        ...(currentPayload?.source || {}),
-        ...(response.source || {}),
+        ...source,
         note: response.source?.note || "Live standings updated by scheduled API refresh."
       }
     }

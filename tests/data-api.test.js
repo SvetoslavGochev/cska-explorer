@@ -78,11 +78,19 @@ function invoke(query = {}) {
 
     assert.throws(() => persistLiveStandings(stale.response.body, {}), /validated live standings/);
     const livePayload = await invoke();
-    const currentPayload = { standings: [], cska: { squad: { defenders: [] } } };
+    const currentPayload = {
+      updatedAt: "2026-10-30T18:51:45.689Z",
+      source: { squadUpdatedAt: "2026-10-30T18:00:00.000Z", playerStatsUpdatedAt: "2026-10-29T12:00:00.000Z" },
+      standings: [],
+      cska: { squad: { defenders: [] } }
+    };
     const persisted = persistLiveStandings(livePayload.response.body, currentPayload);
     assert.equal(persisted.changed, true);
     assert.equal(persisted.payload.standings.length, 16);
     assert.deepEqual(persisted.payload.cska, currentPayload.cska);
+    assert.equal(persisted.payload.source.standingsUpdatedAt, livePayload.response.body.updatedAt);
+    assert.equal(persisted.payload.source.squadUpdatedAt, currentPayload.source.squadUpdatedAt);
+    assert.equal(persisted.payload.source.playerStatsUpdatedAt, currentPayload.source.playerStatsUpdatedAt);
     assert.equal(persistLiveStandings(livePayload.response.body, persisted.payload).changed, false);
   } finally {
     global.fetch = originalFetch;
