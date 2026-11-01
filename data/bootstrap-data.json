@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-30T18:51:45.689Z",
+  "updatedAt": "2026-11-01T12:14:23.954Z",
   "source": {
     "note": "Automatic server refresh with validation (lastResults fetch failed, nextMatches fetch failed).",
     "validation": {
@@ -8,6 +8,16 @@
         "nextMatches fetch failed"
       ],
       "usedFallback": true
+    },
+    "squadUpdatedAt": "2026-11-01T12:14:23.954Z",
+    "playerStatsUpdatedAt": "2026-11-01T12:14:23.954Z",
+    "squadRefresh": {
+      "provider": "sportal+flashscore",
+      "rosterPlayers": 27,
+      "flashscoreRows": 106,
+      "matchedPlayers": 24,
+      "statsUpdated": true,
+      "warnings": []
     }
   },
   "standings": [
@@ -187,16 +197,26 @@
     "squad": {
       "goalkeepers": [
         {
+          "name": "Даниел Николов",
+          "number": 1,
+          "countryName": "България",
+          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
+          "matches": 0,
+          "goals": 0,
+          "assists": 0,
+          "savesPerMatch": null,
+          "penaltiesSaved": null
+        },
+        {
           "name": "Фьодор Лапоухов",
           "number": 21,
           "countryName": "Беларус",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/126-Belarus-flag.png",
-          "matches": 22,
+          "matches": 23,
           "goals": 0,
           "assists": 2,
           "savesPerMatch": null,
-          "penaltiesSaved": null,
-          "impact": 6.5
+          "penaltiesSaved": null
         },
         {
           "name": "Димитър Евтимов",
@@ -207,20 +227,7 @@
           "goals": 0,
           "assists": 1,
           "savesPerMatch": null,
-          "penaltiesSaved": null,
-          "impact": 0.75
-        },
-        {
-          "name": "Даниел Николов",
-          "number": 1,
-          "countryName": "България",
-          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
-          "matches": 0,
-          "goals": 0,
-          "assists": 0,
-          "savesPerMatch": null,
-          "penaltiesSaved": null,
-          "impact": 0
+          "penaltiesSaved": null
         }
       ],
       "defenders": [
@@ -231,8 +238,7 @@
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/16-Brazil-flag.png",
           "matches": 22,
           "goals": 0,
-          "assists": 3,
-          "impact": 7
+          "assists": 3
         },
         {
           "name": "Тамиму Уору",
@@ -241,8 +247,7 @@
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/81-Benin-flag.png",
           "matches": 2,
           "goals": 0,
-          "assists": 0,
-          "impact": 0.5
+          "assists": 0
         },
         {
           "name": "Диниш Алмейда",
@@ -251,28 +256,25 @@
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/31-Portugal-flag.png",
           "matches": 6,
           "goals": 0,
-          "assists": 0,
-          "impact": 1.5
+          "assists": 0
         },
         {
           "name": "Жан-Филип Гбамен",
           "number": 5,
           "countryName": "Кот д'Ивоар",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/1-Ivory-Coast-flag.png",
-          "matches": 19,
+          "matches": 20,
           "goals": 0,
-          "assists": 0,
-          "impact": 4.75
+          "assists": 0
         },
         {
           "name": "Теодор Иванов",
           "number": 14,
           "countryName": "България",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
-          "matches": 21,
+          "matches": 22,
           "goals": 1,
-          "assists": 0,
-          "impact": 6.25
+          "assists": 0
         },
         {
           "name": "Анжело Мартино",
@@ -281,38 +283,34 @@
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/55-Argentina-flag.png",
           "matches": 0,
           "goals": 0,
-          "assists": 0,
-          "impact": 0
+          "assists": 0
         },
         {
           "name": "Андрей Йорданов",
-          "number": 19,
+          "number": 27,
           "countryName": "България",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
-          "matches": 11,
+          "matches": 12,
           "goals": 0,
-          "assists": 2,
-          "impact": 3.75
+          "assists": 2
         },
         {
           "name": "Факундо Родригес",
           "number": 32,
           "countryName": "Аржентина",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/55-Argentina-flag.png",
-          "matches": 18,
+          "matches": 19,
           "goals": 1,
-          "assists": 0,
-          "impact": 5.5
+          "assists": 0
         },
         {
           "name": "Бари Котър",
           "number": 37,
           "countryName": "Ейре",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/7-Ireland-flag.png",
-          "matches": 4,
+          "matches": 5,
           "goals": 0,
-          "assists": 0,
-          "impact": 1
+          "assists": 0
         },
         {
           "name": "Алекс Тунчев",
@@ -321,8 +319,7 @@
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
           "matches": 0,
           "goals": 0,
-          "assists": 0,
-          "impact": 0
+          "assists": 0
         }
       ],
       "midfielders": [
@@ -331,50 +328,45 @@
           "number": 6,
           "countryName": "Португалия",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/31-Portugal-flag.png",
-          "matches": 21,
+          "matches": 22,
           "goals": 3,
-          "assists": 0,
-          "impact": 8.25
-        },
-        {
-          "name": "Макс Ебонг",
-          "number": 7,
-          "countryName": "Беларус",
-          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/126-Belarus-flag.png",
-          "matches": 18,
-          "goals": 1,
-          "assists": 0,
-          "impact": 5.5
+          "assists": 0
         },
         {
           "name": "Стефано Сенси",
           "number": 8,
           "countryName": "Италия",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/30-Italy-flag.png",
-          "matches": 21,
+          "matches": 22,
           "goals": 4,
-          "assists": 5,
-          "impact": 11.75
+          "assists": 5
+        },
+        {
+          "name": "Макс Ебонг",
+          "number": 10,
+          "countryName": "Беларус",
+          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/126-Belarus-flag.png",
+          "matches": 19,
+          "goals": 1,
+          "assists": 0
         },
         {
           "name": "Мохамед Брахими",
           "number": 11,
           "countryName": "Франция",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/28-France-flag.png",
-          "matches": 16,
+          "matches": 17,
           "goals": 0,
-          "assists": 3,
-          "impact": 5.5
+          "assists": 3
         },
         {
           "name": "Петко Панайотов",
-          "number": 30,
+          "number": 24,
           "countryName": "България",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
           "matches": 12,
           "goals": 1,
-          "assists": 0,
-          "impact": 4
+          "assists": 0
         },
         {
           "name": "Георги Чорбаджийски",
@@ -383,28 +375,25 @@
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
           "matches": 0,
           "goals": 0,
-          "assists": 0,
-          "impact": 0
+          "assists": 0
         },
         {
           "name": "Исак Соле",
           "number": 94,
           "countryName": "ЦАР",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/64-Central-African-Rep-flag.png",
-          "matches": 13,
+          "matches": 14,
           "goals": 1,
-          "assists": 1,
-          "impact": 4.75
+          "assists": 1
         },
         {
           "name": "Джеймс Ето'о",
           "number": 99,
           "countryName": "Камерун",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/52-Cameroon-flag.png",
-          "matches": 19,
+          "matches": 20,
           "goals": 1,
-          "assists": 2,
-          "impact": 6.75
+          "assists": 2
         }
       ],
       "forwards": [
@@ -413,10 +402,9 @@
           "number": 9,
           "countryName": "Аржентина",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/55-Argentina-flag.png",
-          "matches": 21,
+          "matches": 22,
           "goals": 7,
-          "assists": 3,
-          "impact": 13.75
+          "assists": 3
         },
         {
           "name": "Жоел Цварц",
@@ -425,18 +413,7 @@
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/25-Netherlands-flag.png",
           "matches": 20,
           "goals": 12,
-          "assists": 2,
-          "impact": 18
-        },
-        {
-          "name": "Йоанис Питас",
-          "number": 28,
-          "countryName": "Кипър",
-          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/140-Cyprus-flag.png",
-          "matches": 22,
-          "goals": 9,
-          "assists": 3,
-          "impact": 16
+          "assists": 2
         },
         {
           "name": "Васил Каймаканов",
@@ -445,8 +422,16 @@
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
           "matches": 2,
           "goals": 0,
-          "assists": 0,
-          "impact": 0.5
+          "assists": 0
+        },
+        {
+          "name": "Йоанис Питас",
+          "number": 28,
+          "countryName": "Кипър",
+          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/140-Cyprus-flag.png",
+          "matches": 23,
+          "goals": 9,
+          "assists": 3
         },
         {
           "name": "Лео Перейра",
@@ -455,8 +440,7 @@
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/16-Brazil-flag.png",
           "matches": 13,
           "goals": 1,
-          "assists": 1,
-          "impact": 4.75
+          "assists": 1
         },
         {
           "name": "Каталин Иту",
@@ -465,8 +449,7 @@
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/20-Romania-flag.png",
           "matches": 9,
           "goals": 0,
-          "assists": 2,
-          "impact": 3.25
+          "assists": 2
         }
       ]
     },
