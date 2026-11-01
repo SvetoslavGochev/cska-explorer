@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-30T17:52:00.457Z",
+  "updatedAt": "2026-10-30T18:51:45.689Z",
   "source": {
     "note": "Automatic server refresh with validation (lastResults fetch failed, nextMatches fetch failed).",
     "validation": {
@@ -559,7 +559,7 @@
         "recentGoalsAgainstPerMatch": 0,
         "possession": null
       },
-      "generatedAt": "2026-10-30T17:52:01.541Z"
+      "generatedAt": "2026-10-30T18:51:46.398Z"
     }
   }
 }

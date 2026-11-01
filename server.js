@@ -3,7 +3,7 @@ const fs = require("fs");
 const path = require("path");
 
 const PORT = process.env.PORT || 3000;
-const CACHE_TTL_MS = 56 * 60 * 60 * 1000;
+const CACHE_TTL_MS = 60 * 60 * 1000;
 const DAILY_REFRESH_LIMIT = Number(process.env.DAILY_REFRESH_LIMIT || 15);
 const AUTO_REFRESH_MINUTES = Number(process.env.AUTO_REFRESH_MINUTES || 60);
 const REQUEST_TIMEOUT_MS = Number(process.env.REQUEST_TIMEOUT_MS || 12000);
@@ -54,22 +54,26 @@ const ROOT_STATIC_FILES = new Set([
 const ROOT_STATIC_PREFIXES = ["assets"];
 
 const TEAM_NAME_MAP = {
+  "Арда (Кърджали)": "Арда",
   "Arda Kardzhali": "Арда",
   "Beroe": "Берое",
   "Botev Plovdiv": "Ботев Пловдив",
+  "Ботев (Пловдив)": "Ботев Пловдив",
   "Botev Vratsa": "Ботев Враца",
   "CSKA 1948": "ЦСКА 1948",
   "CSKA Sofia": "ЦСКА София",
   "Cherno More": "Черно море",
   "Dobrudzha Dobrich": "Добруджа",
   "Levski Sofia": "Левски София",
+  "Левски": "Левски София",
   "Lokomotiv Plovdiv": "Локомотив Пловдив",
   "Lokomotiv Sofia": "Локомотив София",
   "Ludogorets Razgrad": "Лудогорец",
   "Montana": "Монтана",
   "Septemvri Sofia": "Септември София",
   "Slavia Sofia": "Славия София",
-  "Spartak Varna": "Спартак Варна"
+  "Spartak Varna": "Спартак Варна",
+  "Спартак (Варна)": "Спартак Варна"
 };
 
 const EXPECTED_TEAM_KEYS = ["ЦСКА София", "CSKA Sofia", "ЦСКА"];
@@ -105,6 +109,8 @@ const refreshState = {
   lastUsedFallback: false,
   lastWarnings: []
 };
+
+let refreshInFlight = null;
 
 function readJson(filePath) {
   try {
@@ -145,6 +151,16 @@ function getSeasonKey(date = new Date()) {
 function toNumber(value, fallback = 0) {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function firstNumber(row, keys, fallback = 0) {
+  for (const key of keys) {
+    const value = row?.[key];
+    if (value === null || value === undefined || value === "") continue;
+    const parsed = Number(value);
+    if (Number.isFinite(parsed)) return parsed;
+  }
+  return fallback;
 }
 
 function normalizePersonName(name) {
@@ -351,16 +367,17 @@ async function fetchEfbetLeagueStandingsFull() {
 
   return standingRows
     .map((row) => ({
-      rank: toNumber(row?.rank, 0),
-      team: normalizeEfbetLeagueTeamName(row?.team?.name || row?.team),
-      mp: toNumber(row?.played, 0),
-      w: toNumber(row?.wins, 0),
-      d: toNumber(row?.draws, 0),
-      l: toNumber(row?.defeits ?? row?.defeats, 0),
-      gf: toNumber(row?.goals_for, 0),
-      ga: toNumber(row?.goals_against, 0),
-      gd: toNumber(row?.goals_for, 0) - toNumber(row?.goals_against, 0),
-      pts: toNumber(row?.points, 0)
+      rank: firstNumber(row, ["rank", "position", "place"], 0),
+      team: normalizeEfbetLeagueTeamName(row?.team?.name || row?.team?.short_name || row?.team),
+      mp: firstNumber(row, ["played", "matches_played", "played_matches"], 0),
+      w: firstNumber(row, ["wins", "won"], 0),
+      d: firstNumber(row, ["draws", "drawn"], 0),
+      l: firstNumber(row, ["defeits", "defeats", "losses", "lost"], 0),
+      gf: firstNumber(row, ["goals_for", "goals_scored", "gf"], 0),
+      ga: firstNumber(row, ["goals_against", "goals_conceded", "ga"], 0),
+      gd: firstNumber(row, ["goals_for", "goals_scored", "gf"], 0)
+        - firstNumber(row, ["goals_against", "goals_conceded", "ga"], 0),
+      pts: firstNumber(row, ["points", "pts"], 0)
     }))
     .filter((row) => row.rank > 0 && row.team)
     .sort((a, b) => a.rank - b.rank);
@@ -1071,7 +1088,9 @@ function getHealthSnapshot() {
     },
     validation: {
       warnings: Array.isArray(validation.warnings) ? validation.warnings : [],
-      usedFallback: Boolean(validation.usedFallback)
+      usedFallback: Boolean(validation.usedFallback),
+      standingsUpdated: Boolean(validation.standingsUpdated),
+      standingsProvider: validation.standingsProvider || null
     },
     budget: {
       date: budget.date,
@@ -1083,9 +1102,9 @@ function getHealthSnapshot() {
   };
 }
 
-function tryConsumeRefreshBudget() {
+function tryConsumeRefreshBudget({ bypassLimit = false } = {}) {
   const budget = readBudget();
-  if (budget.used >= budget.limit) {
+  if (!bypassLimit && budget.used >= budget.limit) {
     writeBudget(budget);
     return { allowed: false, budget };
   }
@@ -1095,7 +1114,7 @@ function tryConsumeRefreshBudget() {
     used: budget.used + 1
   };
   writeBudget(next);
-  return { allowed: true, budget: next };
+  return { allowed: true, budget: next, bypassedLimit: bypassLimit && budget.used >= budget.limit };
 }
 
 function getBudgetSnapshot() {
@@ -1156,14 +1175,23 @@ async function buildFreshPayloadFromSource() {
   };
 
   let fullEfbetStandings = [];
+  let standingsRefreshed = false;
+  let standingsProvider = "fallback";
   try {
     fullEfbetStandings = await fetchEfbetLeagueStandingsFull();
-  } catch (_) {
+  } catch (error) {
+    warnings.push(`Sportal standings failed: ${error.message}`);
     fullEfbetStandings = [];
   }
 
-  if (Array.isArray(fullEfbetStandings) && fullEfbetStandings.length >= 12) {
+  if (
+    Array.isArray(fullEfbetStandings) &&
+    fullEfbetStandings.length >= 12 &&
+    isLikelyEfbetStandings(fullEfbetStandings)
+  ) {
     nextPayload.standings = fullEfbetStandings;
+    standingsRefreshed = true;
+    standingsProvider = "sportal";
   } else if (standingsResult.status === "fulfilled" && Array.isArray(standingsResult.value?.table)) {
     const parseStandingsTable = (table) => table
       .map((row) => ({
@@ -1185,31 +1213,14 @@ async function buildFreshPayloadFromSource() {
 
     if (isLikelyEfbetStandings(parsedStandings)) {
       nextPayload.standings = parsedStandings;
+      standingsRefreshed = true;
+      standingsProvider = "thesportsdb";
     } else {
-      // Try previous season as fallback if current is incomplete
-      const prevSeason = (() => {
-        const [y1] = season.split("-").map(Number);
-        return `${y1 - 1}-${y1}`;
-      })();
-      try {
-        const prevData = await fetchJson(`${SPORTSDB_BASE}/lookuptable.php?l=${BULGARIAN_LEAGUE_ID}&s=${prevSeason}`);
-        const prevParsed = Array.isArray(prevData?.table) ? parseStandingsTable(prevData.table) : [];
-        if (isLikelyEfbetStandings(prevParsed)) {
-          nextPayload.standings = prevParsed;
-          warnings.push(`standings from ${prevSeason} (current season incomplete)`);
-        } else {
-          warnings.push("standings fallback kept");
-          nextPayload.standings = Array.isArray(fallback.standings) ? fallback.standings : parsedStandings;
-        }
-      } catch (_) {
-        warnings.push("standings fallback kept");
-        nextPayload.standings = Array.isArray(fallback.standings) && fallback.standings.length > 0
-          ? fallback.standings
-          : parsedStandings;
-      }
+      warnings.push("current standings response was incomplete or unrecognized; keeping last known table");
+      nextPayload.standings = Array.isArray(fallback.standings) ? fallback.standings : [];
     }
   } else {
-    warnings.push("standings fetch failed");
+    warnings.push("standings fetch failed; keeping last known table");
     nextPayload.standings = Array.isArray(fallback.standings) ? fallback.standings : [];
   }
 
@@ -1395,8 +1406,13 @@ async function buildFreshPayloadFromSource() {
 
   nextPayload.source.validation = {
     warnings,
-    usedFallback: warnings.length > 0
+    usedFallback: warnings.length > 0,
+    standingsUpdated: standingsRefreshed,
+    standingsProvider
   };
+  nextPayload.updatedAt = standingsRefreshed
+    ? new Date().toISOString()
+    : (fallback.updatedAt || null);
 
   return nextPayload;
 }
@@ -1423,74 +1439,93 @@ function readCache() {
   return cache;
 }
 
+async function refreshLiveData(reason, { invalidateCache = false, bypassBudget = false } = {}) {
+  if (refreshInFlight) return refreshInFlight;
+
+  markRefreshAttempt(reason);
+  const budgetDecision = tryConsumeRefreshBudget({ bypassLimit: bypassBudget });
+  if (!budgetDecision.allowed) {
+    return { payload: null, refreshed: false, budget: budgetDecision.budget, budgetBlocked: true };
+  }
+
+  if (invalidateCache && fs.existsSync(CACHE_FILE)) {
+    fs.unlinkSync(CACHE_FILE);
+  }
+
+  const pending = (async () => {
+    try {
+      const payload = await buildFreshPayloadFromSource();
+      const standingsUpdated = Boolean(payload?.source?.validation?.standingsUpdated);
+      if (!standingsUpdated) {
+        const error = new Error("No valid current-season standings were returned by the live providers");
+        markRefreshFailure(reason, error);
+        return { payload, refreshed: false, budget: budgetDecision.budget, error };
+      }
+
+      const now = Date.now();
+      writeCache(payload, now);
+      writeJson(BOOTSTRAP_FILE, payload);
+      markRefreshSuccess(reason, payload);
+      return { payload, refreshed: true, budget: budgetDecision.budget };
+    } catch (error) {
+      markRefreshFailure(reason, error);
+      return { payload: null, refreshed: false, budget: budgetDecision.budget, error };
+    }
+  })();
+
+  refreshInFlight = pending;
+  try {
+    return await pending;
+  } finally {
+    if (refreshInFlight === pending) refreshInFlight = null;
+  }
+}
+
 async function getCachedData(forceRefresh) {
-  const now = Date.now();
   const cache = readCache();
   const budgetSnapshot = getBudgetSnapshot();
-  const hasCache = Boolean(cache?.payload);
-  const isCacheFresh = Boolean(cache && cache.expiresAt > now);
+  const isCacheFresh = Boolean(cache && cache.expiresAt > Date.now());
 
   if (!forceRefresh && isCacheFresh) {
     return withCacheMeta(cache.payload, "server-cache", budgetSnapshot);
   }
 
-  markRefreshAttempt(forceRefresh ? "api-force" : "api-refresh");
+  const reason = forceRefresh ? "api-force" : "api-refresh";
+  const result = await refreshLiveData(reason, {
+    invalidateCache: forceRefresh || !isCacheFresh,
+    bypassBudget: true
+  });
 
-  const budgetDecision = tryConsumeRefreshBudget();
-  if (!budgetDecision.allowed) {
-    if (hasCache) {
-      console.log(`[budget] exhausted - returning stale cache`);
-      return withCacheMeta(cache.payload, "stale-cache-budget-exhausted", budgetDecision.budget);
-    }
-
-    // No cache yet and budget exhausted - use bootstrap data instead of fresh API call
-    const fallback = readJson(BOOTSTRAP_FILE);
-    console.log(`[budget] exhausted and no cache - using bootstrap data`);
-    return withCacheMeta(fallback, "bootstrap-budget-exhausted", budgetDecision.budget);
+  if (result.refreshed) {
+    return withCacheMeta(result.payload, forceRefresh ? "forced-refresh" : "refresh-after-expiry", result.budget);
   }
 
-  try {
-    const payload = await buildFreshPayloadFromSource();
-    writeCache(payload, now);
-    writeJson(BOOTSTRAP_FILE, payload);
-    markRefreshSuccess(forceRefresh ? "api-force" : "api-refresh", payload);
-    const source = forceRefresh ? "forced-refresh" : "refresh-within-budget";
-    return withCacheMeta(payload, source, budgetDecision.budget);
-  } catch (error) {
-    markRefreshFailure(forceRefresh ? "api-force" : "api-refresh", error);
-    if (hasCache) {
-      return withCacheMeta(cache.payload, "stale-cache-refresh-failed", budgetDecision.budget);
-    }
-
-    const payload = await buildFreshPayloadFromSource();
-    writeCache(payload, now);
-    markRefreshSuccess("api-refresh-fallback-build", payload);
-    return withCacheMeta(payload, "bootstrap-refresh-failed", budgetDecision.budget);
+  if (cache?.payload) {
+    const source = result.budgetBlocked ? "stale-cache-budget-exhausted" : "stale-cache-refresh-failed";
+    return withCacheMeta(cache.payload, source, result.budget || budgetSnapshot);
   }
+
+  const fallback = result.payload || readJson(BOOTSTRAP_FILE);
+  const source = result.budgetBlocked ? "bootstrap-budget-exhausted" : "bootstrap-refresh-failed";
+  return withCacheMeta(fallback, source, result.budget || budgetSnapshot);
 }
 
 let autoRefreshRunning = false;
 
 async function runAutoRefresh(reason) {
-  if (autoRefreshRunning) {
-    return;
-  }
+  if (autoRefreshRunning) return;
 
   autoRefreshRunning = true;
   try {
-    markRefreshAttempt(`auto-${reason}`);
-    const budgetDecision = tryConsumeRefreshBudget();
-    if (!budgetDecision.allowed) {
-      console.log(`[auto-refresh] skipped (${reason}) - budget exhausted. Using cache if available.`);
-      return;
+    const result = await refreshLiveData(`auto-${reason}`, {
+      invalidateCache: true,
+      bypassBudget: true
+    });
+    if (result.refreshed) {
+      console.log(`[auto-refresh] completed (${reason}) at ${new Date().toISOString()}`);
+    } else {
+      console.warn(`[auto-refresh] live standings refresh did not complete (${reason}): ${result.error?.message || "budget blocked"}`);
     }
-
-    const payload = await buildFreshPayloadFromSource();
-    const now = Date.now();
-    writeCache(payload, now);
-    writeJson(BOOTSTRAP_FILE, payload);
-    markRefreshSuccess(`auto-${reason}`, payload);
-    console.log(`[auto-refresh] completed (${reason}) at ${new Date().toISOString()}`);
   } catch (error) {
     markRefreshFailure(`auto-${reason}`, error);
     console.error(`[auto-refresh] failed (${reason}):`, error.message);

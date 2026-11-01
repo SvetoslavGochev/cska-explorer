@@ -1815,7 +1815,7 @@ function setupStandingsAutoRefresh() {
   standingsRefreshTimerId = window.setInterval(() => {
     if (document.visibilityState !== "visible") return;
     setStandingsStatus("loading");
-    loadAndRender({ forceRefresh: true }).catch(() => {
+    loadAndRender({ forceRefresh: false }).catch(() => {
       setStandingsStatus("error");
     });
   }, STANDINGS_AUTO_REFRESH_MS);
@@ -1824,7 +1824,7 @@ function setupStandingsAutoRefresh() {
     if (document.visibilityState !== "visible") return;
     if (Date.now() - lastStandingsRefreshAt < STANDINGS_AUTO_REFRESH_MS) return;
     setStandingsStatus("loading");
-    loadAndRender({ forceRefresh: true }).catch(() => {
+    loadAndRender({ forceRefresh: false }).catch(() => {
       setStandingsStatus("error");
     });
   });
