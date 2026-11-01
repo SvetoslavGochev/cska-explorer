@@ -12,7 +12,7 @@ const SPORTSDB_BASE = "https://www.thesportsdb.com/api/v1/json/3";
 const BULGARIAN_LEAGUE_ID = "4626";
 const CSKA_TEAM_ID = "134088";
 const SPORTAL_FOOTBALL_BASE = "https://football.cache.proxy.sportal365.com";
-const SPORTAL_AUTH = "Basic ZWZiZXQuY29tOktYVWM5dWZ6WEFNQWZBQXVqOTROWlphRXlWYUxpZmt0";
+const { SPORTAL_AUTH } = require("./lib/sportal-config");
 const SPORTAL_CSKA_SOFIA_TEAM_ID = "17";
 
 const MANUAL_SQUAD_OVERRIDES = [

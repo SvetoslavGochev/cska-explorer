@@ -1,0 +1,47 @@
+name: Refresh live standings API
+
+on:
+  schedule:
+    - cron: "7 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Force refresh the live API
+        env:
+          API_URL: ${{ vars.CSKA_DATA_API_URL || 'https://cska-explorer.vercel.app/api/data' }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -n "$CRON_SECRET" ]; then
+            curl --fail-with-body --silent --show-error --get "$API_URL" \
+              --data-urlencode "refresh=1" \
+              --header "Authorization: Bearer $CRON_SECRET" \
+              --output "$RUNNER_TEMP/standings-response.json"
+          else
+            curl --fail-with-body --silent --show-error --get "$API_URL" \
+              --data-urlencode "refresh=1" \
+              --output "$RUNNER_TEMP/standings-response.json"
+          fi
+
+      - name: Persist validated standings snapshot
+        run: node scripts/persist-live-standings.js "$RUNNER_TEMP/standings-response.json" data/bootstrap-data.json
+
+      - name: Commit and push changed standings
+        run: |
+          if git diff --quiet -- data/bootstrap-data.json; then
+            echo "No standings changes to publish."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/bootstrap-data.json
+          git commit -m "chore: refresh live standings snapshot"
+          git push origin HEAD:main

@@ -442,6 +442,7 @@ const I18N = {
 
 let currentLanguage = localStorage.getItem(LANGUAGE_KEY) === "en" ? "en" : "bg";
 let lastPayload = null;
+let lastDataFetchSource = "";
 let lastFromCache = false;
 let squadSectionObserver = null;
 let mainSectionObserver = null;
@@ -1710,26 +1711,28 @@ async function fetchFreshData() {
   const candidates = [];
 
   if (DATA_API_URL) {
-    candidates.push(async () => {
+    candidates.push({ source: "api", fetch: async () => {
       const res = await fetch(DATA_API_URL, { cache: "no-store" });
       if (!res.ok) throw new Error("No live API data");
       const payload = await res.json();
       if (!payload || typeof payload !== "object") throw new Error("Invalid live API payload");
       return payload;
-    });
+    } });
   }
 
-  candidates.push(async () => {
+  candidates.push({ source: "bootstrap", fetch: async () => {
     const res = await fetch("data/bootstrap-data.json", { cache: "no-store" });
     if (!res.ok) throw new Error("No bootstrap data");
     const payload = await res.json();
     if (!payload || typeof payload !== "object") throw new Error("Invalid bootstrap payload");
     return payload;
-  });
+  } });
 
-  for (const getPayload of candidates) {
+  for (const candidate of candidates) {
     try {
-      return await getPayload();
+      const payload = await candidate.fetch();
+      lastDataFetchSource = candidate.source;
+      return payload;
     } catch (error) {
       lastError = error;
       // Try next source in chain.
@@ -1773,6 +1776,7 @@ async function loadAndRender({ forceRefresh = false } = {}) {
         const payload = await res.json();
         if (payload && typeof payload === "object") {
           fresh = payload;
+          lastDataFetchSource = "api";
         }
       }
     } catch (_) {
@@ -1798,7 +1802,8 @@ async function loadAndRender({ forceRefresh = false } = {}) {
   }
 
   render(fresh, false);
-  if (refreshFailed) {
+  const standingsAreLive = fresh?.source?.validation?.standingsUpdated === true;
+  if (refreshFailed || !standingsAreLive || lastDataFetchSource === "bootstrap") {
     setStandingsStatus("error");
     return;
   }

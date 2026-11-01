@@ -59,8 +59,10 @@ https://svetoslavgochev.github.io/cska-explorer/
 ### Vercel
 
 - Vercel използва root [index.html](index.html) като production entry point
-- API функциите се обслужват от [api](api), а fallback route-ът е към root сайта
-- Подходящо е, когато искаш live frontend + serverless API в една deployment среда
+- [api/data.js](api/data.js) обслужва live класирането; GitHub Pages frontend-ът го извиква през `CSKA_DATA_API_URL`
+- При недостъпен източник endpoint-ът запазва последния валиден резултат в паметта на инстанцията и маркира snapshot fallback-а като остарял
+- Почасовото обновяване се задейства от [.github/workflows/refresh-standings-api.yml](.github/workflows/refresh-standings-api.yml)
+- Почасовият workflow обновява endpoint-а и записва само променено, валидирано класиране в snapshot-а за GitHub Pages
 
 ### GitHub Pages
 
@@ -83,11 +85,11 @@ https://svetoslavgochev.github.io/cska-explorer/
 
 ## Backend Auto-Refresh
 
-- Backend refresh цикълът е автоматичен и по подразбиране е `3360` минути, тоест 3 пъти седмично
-- Сървърният cache TTL също е настроен по подразбиране на около 56 часа, за да следва същия по-рядък режим на обновяване при нормални посещения
-- Може да се промени с env променливата `AUTO_REFRESH_MINUTES`
-- При временен проблем с външен източник се пази и подава fallback snapshot от `data/bootstrap-data.json`
-- API endpoint: `/api/data` и `/api/data?refresh=1` за принудително обновяване
+- Локалният Node server обновява автоматично на всеки 60 минути; Vercel serverless функцията не разчита на `setInterval`
+- `/api/data` използва кратък CDN cache и обновява при изтичането му; `/api/data?refresh=1` задейства live refresh
+- Почасовият GitHub Actions workflow може да се пусне и ръчно от Actions
+- За защита на принудителния refresh задайте еднакъв `CRON_SECRET` във Vercel и GitHub Actions Secrets; може да зададете и `CSKA_DATA_API_URL` като GitHub Actions Variable
+- При неуспех се връща последният валиден резултат или `data/bootstrap-data.json`, като `source.validation.standingsUpdated` е `false` и UI показва предупреждение
 
 ## Screenshot
 
