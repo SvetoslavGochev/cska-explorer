@@ -434,6 +434,34 @@ body {
   box-shadow: 0 8px 18px rgba(111, 11, 16, 0.24);
 }
 
+.standings-league-picker {
+  margin-top: 12px;
+  margin-bottom: 12px;
+  padding: 10px;
+}
+
+.standings-league-nav {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(111, 11, 16, 0.42) transparent;
+  padding: 2px 2px 6px;
+}
+
+.standings-league-tab {
+  flex: 0 0 auto;
+  min-width: max-content;
+  font: inherit;
+  cursor: pointer;
+}
+
+.standings-league-tab:focus-visible,
+#standings-panel:focus-visible {
+  outline: 2px solid rgba(176, 18, 26, 0.62);
+  outline-offset: 3px;
+}
+
 .hero-partner-label {
   margin: 10px 2px 0;
   font-size: 0.78rem;

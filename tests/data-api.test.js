@@ -26,6 +26,30 @@ function makeSportalRows(offset) {
   });
 }
 
+const premierLeagueTeams = [
+  "Арсенал", "Манчестър Сити", "Ливърпул", "Челси", "Тотнъм",
+  "Нюкасъл", "Астън Вила", "Манчестър Юнайтед", "Брайтън", "Уест Хям",
+  "Кристъл Палас", "Брентфорд", "Фулъм", "Борнемут", "Евертън",
+  "Нотингам Форест", "Лийдс", "Съндърланд", "Бърнли", "Уулвърхемптън"
+];
+
+function makePremierLeagueRows(offset) {
+  return premierLeagueTeams.slice(offset, offset + 5).map((name, index) => {
+    const rank = offset + index + 1;
+    return {
+      rank,
+      team: { name },
+      played: 9,
+      wins: 6,
+      draws: 2,
+      defeats: 1,
+      goals_for: 18,
+      goals_against: 8,
+      points: 20 - rank
+    };
+  });
+}
+
 function invoke(query = {}) {
   const headers = {};
   const response = {
@@ -45,16 +69,21 @@ function invoke(query = {}) {
   state.lastGoodPayload = null;
   state.lastSuccessAt = 0;
   state.inFlight = null;
+  state.leagueCaches = {};
 
   const originalFetch = global.fetch;
   global.fetch = async (url) => {
     const value = String(url);
+    if (value.includes("/tournaments/3/seasons/latest")) {
+      return { ok: true, json: async () => ({ name: "2026/2027", stages: [{ id: 7003, live: false }] }) };
+    }
     if (value.includes("/seasons/latest")) {
       return { ok: true, json: async () => ({ stages: [{ id: 7001, live: true }] }) };
     }
     if (value.includes("/tournaments/seasons/stages/")) {
       const offset = Number(new URL(value).searchParams.get("row_offset"));
-      return { ok: true, json: async () => ({ standing: makeSportalRows(offset) }) };
+      const rows = value.includes("/7003?") ? makePremierLeagueRows(offset) : makeSportalRows(offset);
+      return { ok: true, json: async () => ({ standing: rows }) };
     }
     throw new Error(`Unexpected fetch URL: ${value}`);
   };
@@ -68,7 +97,22 @@ function invoke(query = {}) {
     assert.equal(headers["Access-Control-Allow-Origin"], "https://svetoslavgochev.github.io");
     assert.match(headers["Cache-Control"], /s-maxage=300/);
 
+    const premier = await invoke({ league: "premier-league" });
+    assert.equal(premier.response.statusCode, 200);
+    assert.equal(premier.response.body.league.id, "premier-league");
+    assert.equal(premier.response.body.league.season, "2026/2027");
+    assert.equal(premier.response.body.source.validation.standingsUpdated, true);
+    assert.equal(premier.response.body.standings.length, 20);
+    assert.equal(premier.response.body.standings[0].team, "Арсенал");
+    assert.match(premier.headers["Cache-Control"], /s-maxage=600/);
+
     global.fetch = async () => { throw new Error("provider offline"); };
+    const stalePremier = await invoke({ league: "premier-league", refresh: "1" });
+    assert.equal(stalePremier.response.statusCode, 200);
+    assert.equal(stalePremier.response.body.source.validation.standingsUpdated, false);
+    assert.equal(stalePremier.response.body.cache.source, "stale-fallback");
+    assert.equal(stalePremier.response.body.standings.length, 20);
+
     const stale = await invoke({ refresh: "1" });
     assert.equal(stale.response.statusCode, 200);
     assert.equal(stale.response.body.source.validation.standingsUpdated, false);
@@ -97,6 +141,7 @@ function invoke(query = {}) {
     state.lastGoodPayload = null;
     state.lastSuccessAt = 0;
     state.inFlight = null;
+    state.leagueCaches = {};
   }
 
   console.log("Standings API tests passed.");

@@ -5,6 +5,7 @@ const SPORTAL_BASE = "https://football.cache.proxy.sportal365.com";
 const SPORTSDB_BASE = "https://www.thesportsdb.com/api/v1/json/3";
 const LEAGUE_ID = "4626";
 const CACHE_TTL_MS = 5 * 60 * 1000;
+const PREMIER_LEAGUE_CACHE_TTL_MS = 10 * 60 * 1000;
 const REQUEST_TIMEOUT_MS = 9000;
 const STATE_KEY = Symbol.for("cska-explorer.standings-api-state");
 const ALLOWED_ORIGINS = new Set([
@@ -54,8 +55,10 @@ const state = globalThis[STATE_KEY] || (globalThis[STATE_KEY] = {
   lastGoodPayload: null,
   lastSuccessAt: 0,
   inFlight: null,
-  lastAttemptAt: 0
+  lastAttemptAt: 0,
+  leagueCaches: {}
 });
+state.leagueCaches ||= {};
 
 function clone(value) {
   return JSON.parse(JSON.stringify(value));
@@ -168,6 +171,113 @@ async function fetchSportalStandings() {
   const parsed = normalizeSportalRows(uniqueRows.length ? uniqueRows : stage.standing);
   if (!isLikelyLeagueTable(parsed)) throw new Error("Sportal standings failed validation");
   return parsed;
+}
+
+function isValidInternationalStandings(rows) {
+  if (!Array.isArray(rows) || rows.length !== 20) return false;
+  const ranks = new Set(rows.map((row) => row.rank));
+  const teams = new Set(rows.map((row) => row.team.toLowerCase()));
+  return ranks.size === rows.length && teams.size === rows.length &&
+    rows.every((row) => row.rank > 0 && row.rank <= rows.length && row.team && Number.isFinite(row.pts));
+}
+
+async function fetchPremierLeagueStandings() {
+  const headers = {
+    "Accept": "application/json, text/plain, */*",
+    "Accept-Language": "bg",
+    "Referer": "https://www.sportal.bg/",
+    "X-Project": "sportal.bg",
+    "Authorization": SPORTAL_AUTH
+  };
+  const latest = await fetchJson(`${SPORTAL_BASE}/tournaments/3/seasons/latest`, headers);
+  const stages = Array.isArray(latest?.stages) ? latest.stages : [];
+  const stage = stages.find((item) => item?.live) || stages[0];
+  if (!stage?.id) throw new Error("Premier League live stage was not found");
+
+  const pages = await Promise.all([0, 5, 10, 15].map(async (offset) => {
+    const data = await fetchJson(
+      `${SPORTAL_BASE}/tournaments/seasons/stages/${encodeURIComponent(String(stage.id))}?expand=standing.rules,standing.form.events&language_code=bg&row_offset=${offset}`,
+      headers
+    );
+    return Array.isArray(data?.standing) ? data.standing : [];
+  }));
+  const sourceRows = pages.flat();
+  const uniqueRows = [...new Map(sourceRows.map((row) => [
+    `${firstNumber(row, ["rank", "position", "place"])}|${normalizeTeamName(row?.team)}`,
+    row
+  ])).values()];
+  const rows = normalizeSportalRows(uniqueRows.length ? uniqueRows : stage.standing);
+  if (!isValidInternationalStandings(rows)) {
+    throw new Error("Premier League standings failed validation");
+  }
+  return { rows, season: latest.name || stage.name || "" };
+}
+
+function premierLeagueStalePayload(payload, warnings) {
+  return {
+    ...payload,
+    source: {
+      ...payload.source,
+      note: "Showing the last valid Premier League standings snapshot; live refresh failed.",
+      validation: {
+        ...payload.source.validation,
+        warnings,
+        usedFallback: true,
+        standingsUpdated: false
+      }
+    }
+  };
+}
+
+async function getPremierLeaguePayload(forceRefresh) {
+  const cache = state.leagueCaches.premierLeague || (state.leagueCaches.premierLeague = {
+    lastGoodPayload: null,
+    lastSuccessAt: 0,
+    inFlight: null
+  });
+  if (!forceRefresh && cache.lastGoodPayload && Date.now() - cache.lastSuccessAt < PREMIER_LEAGUE_CACHE_TTL_MS) {
+    return { payload: cache.lastGoodPayload, fresh: true, source: "memory-cache" };
+  }
+  if (cache.inFlight) return cache.inFlight;
+
+  const pending = (async () => {
+    try {
+      const { rows, season } = await fetchPremierLeagueStandings();
+      const updatedAt = new Date().toISOString();
+      return {
+        payload: {
+          league: { id: "premier-league", name: "Висша лига", season },
+          standings: rows,
+          updatedAt,
+          source: {
+            standingsUpdatedAt: updatedAt,
+            note: "Premier League standings refreshed from Sportal.",
+            validation: { warnings: [], usedFallback: false, standingsUpdated: true, standingsProvider: "sportal" }
+          }
+        },
+        fresh: true,
+        source: "live-refresh"
+      };
+    } catch (error) {
+      const warnings = [`Sportal: ${error.message}`];
+      if (cache.lastGoodPayload) {
+        return { payload: premierLeagueStalePayload(cache.lastGoodPayload, warnings), fresh: false, source: "stale-fallback" };
+      }
+      throw error;
+    }
+  })();
+
+  cache.inFlight = pending;
+  try {
+    const result = await pending;
+    if (result.fresh) {
+      cache.lastGoodPayload = result.payload;
+      cache.lastSuccessAt = Date.now();
+    }
+    return result;
+  } finally {
+    if (cache.inFlight === pending) cache.inFlight = null;
+  }
 }
 
 function getSeasonKey(date = new Date()) {
@@ -299,6 +409,11 @@ module.exports = async function handler(req, res) {
   }
 
   const forceRefresh = String(req.query?.refresh || "") === "1";
+  const requestedLeague = String(req.query?.league || "");
+  if (requestedLeague && requestedLeague !== "premier-league") {
+    res.status(404).json({ error: "Unknown league" });
+    return;
+  }
   const cronSecret = process.env.CRON_SECRET;
   if (
     forceRefresh && cronSecret &&
@@ -309,6 +424,24 @@ module.exports = async function handler(req, res) {
   }
 
   try {
+    if (requestedLeague === "premier-league") {
+      const result = await getPremierLeaguePayload(forceRefresh);
+      res.setHeader("Cache-Control", forceRefresh
+        ? "no-store"
+        : (result.fresh ? "public, s-maxage=600, stale-while-revalidate=1200" : "public, s-maxage=60, stale-while-revalidate=300"));
+      res.status(200).json({
+        ...result.payload,
+        cache: {
+          source: result.source,
+          ttlMinutes: Math.floor(PREMIER_LEAGUE_CACHE_TTL_MS / 60000),
+          refreshedAt: state.leagueCaches.premierLeague?.lastSuccessAt
+            ? new Date(state.leagueCaches.premierLeague.lastSuccessAt).toISOString()
+            : null
+        }
+      });
+      return;
+    }
+
     const result = await getPayload(forceRefresh);
     const response = {
       ...result.payload,
@@ -324,10 +457,20 @@ module.exports = async function handler(req, res) {
     res.status(200).json(response);
   } catch (error) {
     console.error("[api/data] refresh failed:", error.message || error);
+    if (requestedLeague === "premier-league") {
+      res.setHeader("Cache-Control", "no-store");
+      res.status(503).json({
+        league: { id: "premier-league", name: "Висша лига" },
+        standings: [],
+        source: { validation: { standingsUpdated: false, warnings: [String(error.message || error)] } },
+        error: "Premier League standings are temporarily unavailable"
+      });
+      return;
+    }
     const fallback = stalePayload(state.lastGoodPayload || bootstrapData, [String(error.message || error)]);
     res.setHeader("Cache-Control", "no-store");
     res.status(200).json(fallback);
   }
 };
 
-module.exports._test = { isLikelyLeagueTable, normalizeSportalRows, normalizeSportsDbRows, state };
+module.exports._test = { isLikelyLeagueTable, isValidInternationalStandings, normalizeSportalRows, normalizeSportsDbRows, state };

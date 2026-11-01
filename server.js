@@ -13,6 +13,7 @@ const BULGARIAN_LEAGUE_ID = "4626";
 const CSKA_TEAM_ID = "134088";
 const SPORTAL_FOOTBALL_BASE = "https://football.cache.proxy.sportal365.com";
 const { SPORTAL_AUTH } = require("./lib/sportal-config");
+const standingsApiHandler = require("./api/data");
 const SPORTAL_CSKA_SOFIA_TEAM_ID = "17";
 
 const MANUAL_SQUAD_OVERRIDES = [
@@ -1615,6 +1616,35 @@ const server = http.createServer((req, res) => {
   }
 
   if (url.pathname === "/api/data") {
+    if (url.searchParams.get("league") === "premier-league") {
+      (async () => {
+        const headers = {};
+        const response = {
+          statusCode: 200,
+          body: null,
+          setHeader(name, value) { headers[name] = value; },
+          status(code) { this.statusCode = code; return this; },
+          json(body) { this.body = body; return this; },
+          end() { this.body = null; }
+        };
+        try {
+          await standingsApiHandler({
+            method: req.method,
+            query: Object.fromEntries(url.searchParams.entries()),
+            headers: req.headers
+          }, response);
+          res.writeHead(response.statusCode, {
+            "Content-Type": "application/json; charset=utf-8",
+            ...headers
+          });
+          res.end(response.body === null ? "" : JSON.stringify(response.body));
+        } catch (error) {
+          sendJson(res, 500, { error: "Cannot load Premier League standings", details: error.message });
+        }
+      })();
+      return;
+    }
+
     (async () => {
       try {
       const refresh = url.searchParams.get("refresh") === "1";

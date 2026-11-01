@@ -64,9 +64,16 @@
 
     <section class="grid">
       <article class="card section-anchor" id="standings-section">
-        <h2 data-i18n="standingsTitle">Efbet Лига - Класиране</h2>
+        <h2 data-i18n="standingsTitle">Класиране</h2>
+        <div class="section-mini-nav-wrap standings-league-picker">
+          <p class="section-mini-nav-label" data-i18n="standingsLeagueLabel">Избери първенство</p>
+          <nav class="section-mini-nav standings-league-nav" role="tablist" aria-label="Избор на първенство" data-i18n-aria-label="standingsLeagueLabel">
+            <button class="section-mini-nav-link standings-league-tab is-active" id="standings-tab-efbet" type="button" role="tab" aria-selected="true" aria-controls="standings-panel" data-league="efbet" data-i18n="leagueEfbet">Efbet Лига</button>
+            <button class="section-mini-nav-link standings-league-tab" id="standings-tab-premier" type="button" role="tab" aria-selected="false" aria-controls="standings-panel" data-league="premier-league" data-i18n="leaguePremier">Висша лига</button>
+          </nav>
+        </div>
         <p class="small standings-live-status" id="standingsLiveStatus" aria-live="polite"></p>
-        <div class="table-wrap">
+        <div class="table-wrap" id="standings-panel" role="tabpanel" aria-labelledby="standings-tab-efbet" tabindex="0">
           <table class="table" id="standingsTable">
             <thead>
               <tr>
@@ -76,7 +83,7 @@
             <tbody></tbody>
           </table>
         </div>
-        <p class="small"><span data-i18n="sourcePrefix">Източник:</span> <a href="https://www.flashscore.bg/soccer/bulgaria/efbet/#/ID1TwQHr/standings/overall/" target="_blank" rel="noreferrer">Flashscore Efbet standings</a></p>
+        <p class="small"><span data-i18n="sourcePrefix">Източник:</span> <a id="standingsSourceLink" href="https://www.flashscore.bg/soccer/bulgaria/efbet/#/ID1TwQHr/standings/overall/" target="_blank" rel="noreferrer">Flashscore Efbet standings</a></p>
         <p class="small standings-partner-label" data-i18n="partnerLinksLabel">Партньорски линкове</p>
       </article>
 

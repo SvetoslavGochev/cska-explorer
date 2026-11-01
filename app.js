@@ -211,7 +211,14 @@ const DATA_API_URL = (() => {
 
 const I18N = {
   bg: {
-    standingsTitle: "Efbet Лига - Класиране",
+    standingsTitle: "Класиране",
+    standingsLeagueLabel: "Избери първенство",
+    leagueEfbet: "Efbet Лига",
+    leaguePremier: "Висша лига",
+    premierStandingsLoading: "Висша лига: зареждане на актуалното класиране...",
+    premierStandingsCache: "Висша лига: показани са запазени данни; проверяваме за обновяване...",
+    premierStandingsUpdated: "Висша лига: обновено",
+    premierStandingsError: "Висша лига: временен проблем. Показваме последните налични данни, ако има такива.",
     thTeam: "Отбор",
     thMP: "М",
     thW: "П",
@@ -329,7 +336,14 @@ const I18N = {
     cskaNotes: "Форма:"
   },
   en: {
-    standingsTitle: "Efbet League - Standings",
+    standingsTitle: "Standings",
+    standingsLeagueLabel: "Choose a league",
+    leagueEfbet: "Efbet League",
+    leaguePremier: "Premier League",
+    premierStandingsLoading: "Premier League: loading current standings...",
+    premierStandingsCache: "Premier League: showing saved data while checking for updates...",
+    premierStandingsUpdated: "Premier League: updated",
+    premierStandingsError: "Premier League: temporary issue. Showing the latest available data if present.",
     thTeam: "Team",
     thMP: "MP",
     thW: "W",
@@ -460,6 +474,11 @@ let standingsStatusState = {
   type: "loading",
   updatedAt: ""
 };
+const PREMIER_LEAGUE_LOCAL_CACHE_KEY = "cska_explorer_standings_premier_v1";
+let activeStandingsLeague = "efbet";
+let premierLeaguePayload = null;
+let premierLeagueRequest = null;
+let premierStandingsStatusState = { type: "idle", updatedAt: "" };
 
 const SQUAD_SECTION_IDS = [
   "squad-group-goalkeepers",
@@ -1273,6 +1292,11 @@ function applyLanguageUI() {
     el.textContent = t(key);
   });
 
+  document.querySelectorAll("[data-i18n-aria-label]").forEach((el) => {
+    const key = el.getAttribute("data-i18n-aria-label");
+    if (key) el.setAttribute("aria-label", t(key));
+  });
+
   document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
     const key = el.getAttribute("data-i18n-placeholder");
     if (key) {
@@ -1307,6 +1331,7 @@ function applyLanguageUI() {
 
   renderAnalysisContent(lastPayload);
   renderLegendProfile();
+  updateStandingsLeagueControls();
   renderStandingsStatus();
   setupCollapsibleSections();
 
@@ -1498,6 +1523,24 @@ function renderStandingsStatus() {
   const statusEl = document.getElementById("standingsLiveStatus");
   if (!statusEl) return;
 
+  if (activeStandingsLeague === "premier-league") {
+    const premierStatusText = {
+      idle: "",
+      loading: t("premierStandingsLoading"),
+      cache: t("premierStandingsCache"),
+      success: premierStandingsStatusState.updatedAt
+        ? `${t("premierStandingsUpdated")}: ${formatStatusTimestamp(premierStandingsStatusState.updatedAt)}`
+        : `${t("premierStandingsUpdated")}.`,
+      error: t("premierStandingsError")
+    };
+    statusEl.textContent = premierStatusText[premierStandingsStatusState.type] || "";
+    statusEl.classList.remove("is-loading", "is-error", "is-success");
+    if (premierStandingsStatusState.type === "error") statusEl.classList.add("is-error");
+    else if (premierStandingsStatusState.type === "success") statusEl.classList.add("is-success");
+    else if (premierStandingsStatusState.type === "loading" || premierStandingsStatusState.type === "cache") statusEl.classList.add("is-loading");
+    return;
+  }
+
   statusEl.textContent = getStandingsStatusText();
   statusEl.classList.remove("is-loading", "is-error", "is-success");
 
@@ -1604,6 +1647,7 @@ function sortStandingsByRank(standings) {
 
 function renderStandings(standings) {
   const body = document.querySelector("#standingsTable tbody");
+  if (!body) return;
   body.innerHTML = "";
 
   sortStandingsByRank(standings).forEach((row) => {
@@ -1627,6 +1671,123 @@ function renderStandings(standings) {
     `;
     body.appendChild(tr);
   });
+}
+
+function isValidPremierLeaguePayload(payload) {
+  if (!Array.isArray(payload?.standings) || payload.standings.length !== 20) return false;
+  const ranks = new Set(payload.standings.map((row) => Number(row?.rank)));
+  const teams = new Set(payload.standings.map((row) => String(row?.team || "").trim().toLowerCase()));
+  return ranks.size === payload.standings.length && teams.size === payload.standings.length &&
+    payload.standings.every((row) => Number(row.rank) > 0 && Number(row.rank) <= 20 && String(row.team || "").trim());
+}
+
+function readPremierLeagueCache() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(PREMIER_LEAGUE_LOCAL_CACHE_KEY) || "null");
+    return isValidPremierLeaguePayload(saved?.payload) ? saved.payload : null;
+  } catch {
+    localStorage.removeItem(PREMIER_LEAGUE_LOCAL_CACHE_KEY);
+    return null;
+  }
+}
+
+function updateStandingsLeagueControls() {
+  document.querySelectorAll(".standings-league-tab").forEach((button) => {
+    const selected = button.dataset.league === activeStandingsLeague;
+    button.classList.toggle("is-active", selected);
+    button.setAttribute("aria-selected", selected ? "true" : "false");
+    button.tabIndex = selected ? 0 : -1;
+  });
+  const panel = document.getElementById("standings-panel");
+  if (panel) panel.setAttribute("aria-labelledby", activeStandingsLeague === "efbet" ? "standings-tab-efbet" : "standings-tab-premier");
+
+  const sourceLink = document.getElementById("standingsSourceLink");
+  if (sourceLink && activeStandingsLeague === "premier-league") {
+    sourceLink.href = "https://www.sportal.bg/";
+    sourceLink.textContent = currentLanguage === "en" ? "Sportal · Premier League" : "Sportal · Висша лига";
+  } else if (sourceLink) {
+    sourceLink.href = "https://www.flashscore.bg/soccer/bulgaria/efbet/#/ID1TwQHr/standings/overall/";
+    sourceLink.textContent = currentLanguage === "en" ? "Flashscore Efbet standings" : "Flashscore Efbet класиране";
+  }
+}
+
+function renderActiveStandings(payload = lastPayload) {
+  updateStandingsLeagueControls();
+  if (activeStandingsLeague === "premier-league") {
+    renderStandings(premierLeaguePayload?.standings || []);
+  } else {
+    renderStandings(payload?.standings || []);
+  }
+  renderStandingsStatus();
+}
+
+async function loadPremierLeagueStandings() {
+  if (premierLeagueRequest) return premierLeagueRequest;
+  if (!premierLeaguePayload) premierLeaguePayload = readPremierLeagueCache();
+
+  premierStandingsStatusState = premierLeaguePayload
+    ? { type: "cache", updatedAt: premierLeaguePayload.updatedAt || premierLeaguePayload.source?.standingsUpdatedAt || "" }
+    : { type: "loading", updatedAt: "" };
+  renderActiveStandings();
+
+  if (!DATA_API_URL) {
+    premierStandingsStatusState = { type: "error", updatedAt: premierLeaguePayload?.updatedAt || "" };
+    renderStandingsStatus();
+    return;
+  }
+
+  premierLeagueRequest = (async () => {
+    try {
+      const url = new URL(DATA_API_URL, window.location.origin);
+      url.searchParams.set("league", "premier-league");
+      const response = await fetch(url.toString(), { cache: "no-store" });
+      if (!response.ok) throw new Error("Premier League API unavailable");
+      const payload = await response.json();
+      if (!isValidPremierLeaguePayload(payload)) throw new Error("Premier League table failed validation");
+
+      premierLeaguePayload = payload;
+      localStorage.setItem(PREMIER_LEAGUE_LOCAL_CACHE_KEY, JSON.stringify({ payload, savedAt: Date.now() }));
+      premierStandingsStatusState = payload.source?.validation?.standingsUpdated === false
+        ? { type: "error", updatedAt: payload.updatedAt || "" }
+        : { type: "success", updatedAt: payload.updatedAt || payload.source?.standingsUpdatedAt || "" };
+    } catch {
+      premierStandingsStatusState = { type: "error", updatedAt: premierLeaguePayload?.updatedAt || "" };
+    } finally {
+      premierLeagueRequest = null;
+      if (activeStandingsLeague === "premier-league") renderActiveStandings();
+    }
+  })();
+  return premierLeagueRequest;
+}
+
+function selectStandingsLeague(league) {
+  if (!new Set(["efbet", "premier-league"]).has(league) || league === activeStandingsLeague) return;
+  activeStandingsLeague = league;
+  if (league === "premier-league") {
+    loadPremierLeagueStandings();
+  } else {
+    renderActiveStandings(lastPayload);
+  }
+}
+
+function setupStandingsLeagueSwitcher() {
+  const tabs = [...document.querySelectorAll(".standings-league-tab")];
+  tabs.forEach((button) => {
+    button.addEventListener("click", () => selectStandingsLeague(button.dataset.league));
+    button.addEventListener("keydown", (event) => {
+      const currentIndex = tabs.indexOf(button);
+      let nextIndex = currentIndex;
+      if (event.key === "ArrowRight") nextIndex = (currentIndex + 1) % tabs.length;
+      else if (event.key === "ArrowLeft") nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+      else if (event.key === "Home") nextIndex = 0;
+      else if (event.key === "End") nextIndex = tabs.length - 1;
+      else return;
+      event.preventDefault();
+      tabs[nextIndex].focus();
+      selectStandingsLeague(tabs[nextIndex].dataset.league);
+    });
+  });
+  updateStandingsLeagueControls();
 }
 
 function renderMatches(id, rows, formatter) {
@@ -1673,7 +1834,7 @@ function render(payload, fromCache) {
   lastPayload = payload;
   lastFromCache = fromCache;
 
-  renderStandings(payload.standings || []);
+  renderActiveStandings(payload);
 
   renderSquad(payload.cska?.squad || FALLBACK_DATA.cska.squad);
   const squadLiveStatus = document.getElementById("squadLiveStatus");
@@ -1862,6 +2023,7 @@ async function init() {
   setupMainSectionNavigation();
   setupSquadSectionNavigation();
   setupLegendProfileSwitcher();
+  setupStandingsLeagueSwitcher();
   updateStickyNavigationOffsets();
   window.addEventListener("resize", updateStickyNavigationOffsets);
   await loadAndRender({ forceRefresh: false });
