@@ -18,7 +18,9 @@ const ALLOWED_ORIGINS = new Set([
 const INTERNATIONAL_LEAGUES = {
   "premier-league": { tournamentId: 3, name: "Висша лига", englishName: "Premier League", teamCount: 20, cacheTtlMs: PREMIER_LEAGUE_CACHE_TTL_MS },
   "serie-a": { tournamentId: 7, name: "Серия А", englishName: "Serie A", teamCount: 20, cacheTtlMs: SERIE_A_CACHE_TTL_MS },
-  bundesliga: { tournamentId: 6, name: "Бундеслига", englishName: "Bundesliga", teamCount: 18, cacheTtlMs: SERIE_A_CACHE_TTL_MS }
+  bundesliga: { tournamentId: 6, name: "Бундеслига", englishName: "Bundesliga", teamCount: 18, cacheTtlMs: SERIE_A_CACHE_TTL_MS },
+  "la-liga": { tournamentId: 5, name: "Ла Лига", englishName: "La Liga", teamCount: 20, cacheTtlMs: SERIE_A_CACHE_TTL_MS },
+  "ligue-1": { tournamentId: 8, name: "Лига 1", englishName: "Ligue 1", teamCount: 18, cacheTtlMs: SERIE_A_CACHE_TTL_MS }
 };
 
 const TEAM_NAMES = {

@@ -217,6 +217,8 @@ const I18N = {
     leaguePremier: "Висша лига",
     leagueSerieA: "Серия А",
     leagueBundesliga: "Бундеслига",
+    leagueLaLiga: "Ла Лига",
+    leagueLigue1: "Лига 1",
     premierStandingsLoading: "Висша лига: зареждане на актуалното класиране...",
     premierStandingsCache: "Висша лига: показани са запазени данни; проверяваме за обновяване...",
     premierStandingsUpdated: "Висша лига: обновено",
@@ -229,6 +231,14 @@ const I18N = {
     bundesligaStandingsCache: "Бундеслига: показани са запазени данни; проверяваме за обновяване...",
     bundesligaStandingsUpdated: "Бундеслига: обновено",
     bundesligaStandingsError: "Бундеслига: временен проблем. Показваме последните налични данни, ако има такива.",
+    laLigaStandingsLoading: "Ла Лига: зареждане на актуалното класиране...",
+    laLigaStandingsCache: "Ла Лига: показани са запазени данни; проверяваме за обновяване...",
+    laLigaStandingsUpdated: "Ла Лига: обновено",
+    laLigaStandingsError: "Ла Лига: временен проблем. Показваме последните налични данни, ако има такива.",
+    ligue1StandingsLoading: "Лига 1: зареждане на актуалното класиране...",
+    ligue1StandingsCache: "Лига 1: показани са запазени данни; проверяваме за обновяване...",
+    ligue1StandingsUpdated: "Лига 1: обновено",
+    ligue1StandingsError: "Лига 1: временен проблем. Показваме последните налични данни, ако има такива.",
     thTeam: "Отбор",
     thMP: "М",
     thW: "П",
@@ -352,6 +362,8 @@ const I18N = {
     leaguePremier: "Premier League",
     leagueSerieA: "Serie A",
     leagueBundesliga: "Bundesliga",
+    leagueLaLiga: "La Liga",
+    leagueLigue1: "Ligue 1",
     premierStandingsLoading: "Premier League: loading current standings...",
     premierStandingsCache: "Premier League: showing saved data while checking for updates...",
     premierStandingsUpdated: "Premier League: updated",
@@ -364,6 +376,14 @@ const I18N = {
     bundesligaStandingsCache: "Bundesliga: showing saved data while checking for updates...",
     bundesligaStandingsUpdated: "Bundesliga: updated",
     bundesligaStandingsError: "Bundesliga: temporary issue. Showing the latest available data if present.",
+    laLigaStandingsLoading: "La Liga: loading current standings...",
+    laLigaStandingsCache: "La Liga: showing saved data while checking for updates...",
+    laLigaStandingsUpdated: "La Liga: updated",
+    laLigaStandingsError: "La Liga: temporary issue. Showing the latest available data if present.",
+    ligue1StandingsLoading: "Ligue 1: loading current standings...",
+    ligue1StandingsCache: "Ligue 1: showing saved data while checking for updates...",
+    ligue1StandingsUpdated: "Ligue 1: updated",
+    ligue1StandingsError: "Ligue 1: temporary issue. Showing the latest available data if present.",
     thTeam: "Team",
     thMP: "MP",
     thW: "W",
@@ -497,6 +517,8 @@ let standingsStatusState = {
 const PREMIER_LEAGUE_LOCAL_CACHE_KEY = "cska_explorer_standings_premier_v1";
 const SERIE_A_LOCAL_CACHE_KEY = "cska_explorer_standings_serie_a_v1";
 const BUNDESLIGA_LOCAL_CACHE_KEY = "cska_explorer_standings_bundesliga_v1";
+const LA_LIGA_LOCAL_CACHE_KEY = "cska_explorer_standings_la_liga_v1";
+const LIGUE_1_LOCAL_CACHE_KEY = "cska_explorer_standings_ligue_1_v1";
 let activeStandingsLeague = "efbet";
 let premierLeaguePayload = null;
 let premierLeagueRequest = null;
@@ -507,6 +529,12 @@ let serieAStandingsStatusState = { type: "idle", updatedAt: "" };
 let bundesligaPayload = null;
 let bundesligaRequest = null;
 let bundesligaStandingsStatusState = { type: "idle", updatedAt: "" };
+let laLigaPayload = null;
+let laLigaRequest = null;
+let laLigaStandingsStatusState = { type: "idle", updatedAt: "" };
+let ligue1Payload = null;
+let ligue1Request = null;
+let ligue1StandingsStatusState = { type: "idle", updatedAt: "" };
 
 const SQUAD_SECTION_IDS = [
   "squad-group-goalkeepers",
@@ -1602,6 +1630,40 @@ function renderStandingsStatus() {
     else if (bundesligaStandingsStatusState.type === "loading" || bundesligaStandingsStatusState.type === "cache") statusEl.classList.add("is-loading");
     return;
   }
+  if (activeStandingsLeague === "la-liga") {
+    const statusText = {
+      idle: "",
+      loading: t("laLigaStandingsLoading"),
+      cache: t("laLigaStandingsCache"),
+      success: laLigaStandingsStatusState.updatedAt
+        ? `${t("laLigaStandingsUpdated")}: ${formatStatusTimestamp(laLigaStandingsStatusState.updatedAt)}`
+        : `${t("laLigaStandingsUpdated")}.`,
+      error: t("laLigaStandingsError")
+    };
+    statusEl.textContent = statusText[laLigaStandingsStatusState.type] || "";
+    statusEl.classList.remove("is-loading", "is-error", "is-success");
+    if (laLigaStandingsStatusState.type === "error") statusEl.classList.add("is-error");
+    else if (laLigaStandingsStatusState.type === "success") statusEl.classList.add("is-success");
+    else if (laLigaStandingsStatusState.type === "loading" || laLigaStandingsStatusState.type === "cache") statusEl.classList.add("is-loading");
+    return;
+  }
+  if (activeStandingsLeague === "ligue-1") {
+    const statusText = {
+      idle: "",
+      loading: t("ligue1StandingsLoading"),
+      cache: t("ligue1StandingsCache"),
+      success: ligue1StandingsStatusState.updatedAt
+        ? `${t("ligue1StandingsUpdated")}: ${formatStatusTimestamp(ligue1StandingsStatusState.updatedAt)}`
+        : `${t("ligue1StandingsUpdated")}.`,
+      error: t("ligue1StandingsError")
+    };
+    statusEl.textContent = statusText[ligue1StandingsStatusState.type] || "";
+    statusEl.classList.remove("is-loading", "is-error", "is-success");
+    if (ligue1StandingsStatusState.type === "error") statusEl.classList.add("is-error");
+    else if (ligue1StandingsStatusState.type === "success") statusEl.classList.add("is-success");
+    else if (ligue1StandingsStatusState.type === "loading" || ligue1StandingsStatusState.type === "cache") statusEl.classList.add("is-loading");
+    return;
+  }
 
   statusEl.textContent = getStandingsStatusText();
   statusEl.classList.remove("is-loading", "is-error", "is-success");
@@ -1773,12 +1835,34 @@ function readBundesligaCache() {
   }
 }
 
+function readLaLigaCache() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(LA_LIGA_LOCAL_CACHE_KEY) || "null");
+    return isValidPremierLeaguePayload(saved?.payload, 20) ? saved.payload : null;
+  } catch {
+    localStorage.removeItem(LA_LIGA_LOCAL_CACHE_KEY);
+    return null;
+  }
+}
+
+function readLigue1Cache() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(LIGUE_1_LOCAL_CACHE_KEY) || "null");
+    return isValidPremierLeaguePayload(saved?.payload, 18) ? saved.payload : null;
+  } catch {
+    localStorage.removeItem(LIGUE_1_LOCAL_CACHE_KEY);
+    return null;
+  }
+}
+
 function updateStandingsLeagueControls() {
   const tabIds = {
     efbet: "standings-tab-efbet",
     "premier-league": "standings-tab-premier",
     "serie-a": "standings-tab-serie-a",
-    bundesliga: "standings-tab-bundesliga"
+    bundesliga: "standings-tab-bundesliga",
+    "la-liga": "standings-tab-la-liga",
+    "ligue-1": "standings-tab-ligue-1"
   };
   document.querySelectorAll(".standings-league-tab").forEach((button) => {
     const selected = button.dataset.league === activeStandingsLeague;
@@ -1800,7 +1884,9 @@ function updateStandingsLeagueControls() {
       efbet: currentLanguage === "en" ? "Flashscore Efbet standings" : "Flashscore Efbet класиране",
       "premier-league": currentLanguage === "en" ? "Sportal · Premier League" : "Sportal · Висша лига",
       "serie-a": currentLanguage === "en" ? "Sportal · Serie A" : "Sportal · Серия А",
-      bundesliga: currentLanguage === "en" ? "Sportal · Bundesliga" : "Sportal · Бундеслига"
+      bundesliga: currentLanguage === "en" ? "Sportal · Bundesliga" : "Sportal · Бундеслига",
+      "la-liga": currentLanguage === "en" ? "Sportal · La Liga" : "Sportal · Ла Лига",
+      "ligue-1": currentLanguage === "en" ? "Sportal · Ligue 1" : "Sportal · Лига 1"
     };
     sourceLink.textContent = names[activeStandingsLeague] || names.efbet;
   }
@@ -1814,6 +1900,10 @@ function renderActiveStandings(payload = lastPayload) {
     renderStandings(serieAPayload?.standings || []);
   } else if (activeStandingsLeague === "bundesliga") {
     renderStandings(bundesligaPayload?.standings || []);
+  } else if (activeStandingsLeague === "la-liga") {
+    renderStandings(laLigaPayload?.standings || []);
+  } else if (activeStandingsLeague === "ligue-1") {
+    renderStandings(ligue1Payload?.standings || []);
   } else {
     renderStandings(payload?.standings || []);
   }
@@ -1937,8 +2027,86 @@ async function loadBundesligaStandings() {
   return bundesligaRequest;
 }
 
+async function loadLaLigaStandings() {
+  if (laLigaRequest) return laLigaRequest;
+  if (!laLigaPayload) laLigaPayload = readLaLigaCache();
+
+  laLigaStandingsStatusState = laLigaPayload
+    ? { type: "cache", updatedAt: laLigaPayload.updatedAt || laLigaPayload.source?.standingsUpdatedAt || "" }
+    : { type: "loading", updatedAt: "" };
+  renderActiveStandings();
+
+  if (!DATA_API_URL) {
+    laLigaStandingsStatusState = { type: "error", updatedAt: laLigaPayload?.updatedAt || "" };
+    renderStandingsStatus();
+    return;
+  }
+
+  laLigaRequest = (async () => {
+    try {
+      const url = new URL(DATA_API_URL, window.location.origin);
+      url.searchParams.set("league", "la-liga");
+      const response = await fetch(url.toString(), { cache: "no-store" });
+      if (!response.ok) throw new Error("La Liga API unavailable");
+      const payload = await response.json();
+      if (!isValidPremierLeaguePayload(payload, 20)) throw new Error("La Liga table failed validation");
+
+      laLigaPayload = payload;
+      localStorage.setItem(LA_LIGA_LOCAL_CACHE_KEY, JSON.stringify({ payload, savedAt: Date.now() }));
+      laLigaStandingsStatusState = payload.source?.validation?.standingsUpdated === false
+        ? { type: "error", updatedAt: payload.updatedAt || "" }
+        : { type: "success", updatedAt: payload.updatedAt || payload.source?.standingsUpdatedAt || "" };
+    } catch {
+      laLigaStandingsStatusState = { type: "error", updatedAt: laLigaPayload?.updatedAt || "" };
+    } finally {
+      laLigaRequest = null;
+      if (activeStandingsLeague === "la-liga") renderActiveStandings();
+    }
+  })();
+  return laLigaRequest;
+}
+
+async function loadLigue1Standings() {
+  if (ligue1Request) return ligue1Request;
+  if (!ligue1Payload) ligue1Payload = readLigue1Cache();
+
+  ligue1StandingsStatusState = ligue1Payload
+    ? { type: "cache", updatedAt: ligue1Payload.updatedAt || ligue1Payload.source?.standingsUpdatedAt || "" }
+    : { type: "loading", updatedAt: "" };
+  renderActiveStandings();
+
+  if (!DATA_API_URL) {
+    ligue1StandingsStatusState = { type: "error", updatedAt: ligue1Payload?.updatedAt || "" };
+    renderStandingsStatus();
+    return;
+  }
+
+  ligue1Request = (async () => {
+    try {
+      const url = new URL(DATA_API_URL, window.location.origin);
+      url.searchParams.set("league", "ligue-1");
+      const response = await fetch(url.toString(), { cache: "no-store" });
+      if (!response.ok) throw new Error("Ligue 1 API unavailable");
+      const payload = await response.json();
+      if (!isValidPremierLeaguePayload(payload, 18)) throw new Error("Ligue 1 table failed validation");
+
+      ligue1Payload = payload;
+      localStorage.setItem(LIGUE_1_LOCAL_CACHE_KEY, JSON.stringify({ payload, savedAt: Date.now() }));
+      ligue1StandingsStatusState = payload.source?.validation?.standingsUpdated === false
+        ? { type: "error", updatedAt: payload.updatedAt || "" }
+        : { type: "success", updatedAt: payload.updatedAt || payload.source?.standingsUpdatedAt || "" };
+    } catch {
+      ligue1StandingsStatusState = { type: "error", updatedAt: ligue1Payload?.updatedAt || "" };
+    } finally {
+      ligue1Request = null;
+      if (activeStandingsLeague === "ligue-1") renderActiveStandings();
+    }
+  })();
+  return ligue1Request;
+}
+
 function selectStandingsLeague(league) {
-  if (!new Set(["efbet", "premier-league", "serie-a", "bundesliga"]).has(league) || league === activeStandingsLeague) return;
+  if (!new Set(["efbet", "premier-league", "serie-a", "bundesliga", "la-liga", "ligue-1"]).has(league) || league === activeStandingsLeague) return;
   activeStandingsLeague = league;
   if (league === "premier-league") {
     loadPremierLeagueStandings();
@@ -1946,6 +2114,10 @@ function selectStandingsLeague(league) {
     loadSerieAStandings();
   } else if (league === "bundesliga") {
     loadBundesligaStandings();
+  } else if (league === "la-liga") {
+    loadLaLigaStandings();
+  } else if (league === "ligue-1") {
+    loadLigue1Standings();
   } else {
     renderActiveStandings(lastPayload);
   }
