@@ -2160,7 +2160,9 @@ body {
     min-height: 30px;
   }
 
-  .grid { grid-template-columns: 1fr; }
+  .grid { grid-template-columns: minmax(0, 1fr); }
+  .grid > article.card { min-width: 0; }
+  .table-wrap { min-width: 0; max-width: 100%; }
   .squad-grid { grid-template-columns: 1fr; }
   .squad-group-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .projects-grid { grid-template-columns: 1fr; }
@@ -2169,6 +2171,27 @@ body {
   }
   .hero-nav-link {
     flex: 1 1 180px;
+  }
+}
+
+@media (max-width: 600px) {
+  .standings-league-nav {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    overflow: visible;
+    padding: 2px;
+  }
+
+  .standings-league-tab {
+    min-width: 0;
+    min-height: 44px;
+    width: 100%;
+    padding: 8px 6px;
+    text-align: center;
+    white-space: normal;
+    line-height: 1.15;
+    font-size: 0.78rem;
   }
 }
 
