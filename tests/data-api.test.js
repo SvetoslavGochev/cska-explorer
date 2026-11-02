@@ -50,6 +50,29 @@ function makePremierLeagueRows(offset) {
   });
 }
 
+const serieATeams = [
+  "Лацио", "Интер", "Рома", "Комо", "Ювентус", "Милан", "Наполи", "Аталанта",
+  "Болоня", "Фиорентина", "Торино", "Удинезе", "Сасуоло", "Каляри", "Парма",
+  "Дженоа", "Верона", "Лече", "Пиза", "Кремонезе"
+];
+
+function makeSerieARows(offset) {
+  return serieATeams.slice(offset, offset + 5).map((name, index) => {
+    const rank = offset + index + 1;
+    return {
+      rank,
+      team: { name },
+      played: 10,
+      wins: 7,
+      draws: 2,
+      defeats: 1,
+      goals_for: 21,
+      goals_against: 8,
+      points: 23 - rank
+    };
+  });
+}
+
 function invoke(query = {}) {
   const headers = {};
   const response = {
@@ -77,12 +100,19 @@ function invoke(query = {}) {
     if (value.includes("/tournaments/3/seasons/latest")) {
       return { ok: true, json: async () => ({ name: "2026/2027", stages: [{ id: 7003, live: false }] }) };
     }
+    if (value.includes("/tournaments/7/seasons/latest")) {
+      return { ok: true, json: async () => ({ name: "2026/2027", stages: [{ id: 7007, live: false }] }) };
+    }
     if (value.includes("/seasons/latest")) {
       return { ok: true, json: async () => ({ stages: [{ id: 7001, live: true }] }) };
     }
     if (value.includes("/tournaments/seasons/stages/")) {
       const offset = Number(new URL(value).searchParams.get("row_offset"));
-      const rows = value.includes("/7003?") ? makePremierLeagueRows(offset) : makeSportalRows(offset);
+      const rows = value.includes("/7003?")
+        ? makePremierLeagueRows(offset)
+        : value.includes("/7007?")
+          ? makeSerieARows(offset)
+          : makeSportalRows(offset);
       return { ok: true, json: async () => ({ standing: rows }) };
     }
     throw new Error(`Unexpected fetch URL: ${value}`);
@@ -106,12 +136,27 @@ function invoke(query = {}) {
     assert.equal(premier.response.body.standings[0].team, "Арсенал");
     assert.match(premier.headers["Cache-Control"], /s-maxage=600/);
 
+    const serieA = await invoke({ league: "serie-a" });
+    assert.equal(serieA.response.statusCode, 200);
+    assert.equal(serieA.response.body.league.id, "serie-a");
+    assert.equal(serieA.response.body.league.season, "2026/2027");
+    assert.equal(serieA.response.body.source.validation.standingsUpdated, true);
+    assert.equal(serieA.response.body.standings.length, 20);
+    assert.equal(serieA.response.body.standings[0].team, "Лацио");
+    assert.match(serieA.headers["Cache-Control"], /s-maxage=600/);
+
     global.fetch = async () => { throw new Error("provider offline"); };
     const stalePremier = await invoke({ league: "premier-league", refresh: "1" });
     assert.equal(stalePremier.response.statusCode, 200);
     assert.equal(stalePremier.response.body.source.validation.standingsUpdated, false);
     assert.equal(stalePremier.response.body.cache.source, "stale-fallback");
     assert.equal(stalePremier.response.body.standings.length, 20);
+
+    const staleSerieA = await invoke({ league: "serie-a", refresh: "1" });
+    assert.equal(staleSerieA.response.statusCode, 200);
+    assert.equal(staleSerieA.response.body.source.validation.standingsUpdated, false);
+    assert.equal(staleSerieA.response.body.cache.source, "stale-fallback");
+    assert.equal(staleSerieA.response.body.standings.length, 20);
 
     const stale = await invoke({ refresh: "1" });
     assert.equal(stale.response.statusCode, 200);

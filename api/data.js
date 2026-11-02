@@ -6,6 +6,7 @@ const SPORTSDB_BASE = "https://www.thesportsdb.com/api/v1/json/3";
 const LEAGUE_ID = "4626";
 const CACHE_TTL_MS = 5 * 60 * 1000;
 const PREMIER_LEAGUE_CACHE_TTL_MS = 10 * 60 * 1000;
+const SERIE_A_CACHE_TTL_MS = 10 * 60 * 1000;
 const REQUEST_TIMEOUT_MS = 9000;
 const STATE_KEY = Symbol.for("cska-explorer.standings-api-state");
 const ALLOWED_ORIGINS = new Set([
@@ -14,6 +15,10 @@ const ALLOWED_ORIGINS = new Set([
   "http://localhost:3000",
   "http://127.0.0.1:3000"
 ]);
+const INTERNATIONAL_LEAGUES = {
+  "premier-league": { tournamentId: 3, name: "Висша лига", englishName: "Premier League", cacheTtlMs: PREMIER_LEAGUE_CACHE_TTL_MS },
+  "serie-a": { tournamentId: 7, name: "Серия А", englishName: "Serie A", cacheTtlMs: SERIE_A_CACHE_TTL_MS }
+};
 
 const TEAM_NAMES = {
   "Arda Kardzhali": "Арда",
@@ -181,7 +186,7 @@ function isValidInternationalStandings(rows) {
     rows.every((row) => row.rank > 0 && row.rank <= rows.length && row.team && Number.isFinite(row.pts));
 }
 
-async function fetchPremierLeagueStandings() {
+async function fetchInternationalStandings(tournamentId, leagueName) {
   const headers = {
     "Accept": "application/json, text/plain, */*",
     "Accept-Language": "bg",
@@ -189,10 +194,10 @@ async function fetchPremierLeagueStandings() {
     "X-Project": "sportal.bg",
     "Authorization": SPORTAL_AUTH
   };
-  const latest = await fetchJson(`${SPORTAL_BASE}/tournaments/3/seasons/latest`, headers);
+  const latest = await fetchJson(`${SPORTAL_BASE}/tournaments/${tournamentId}/seasons/latest`, headers);
   const stages = Array.isArray(latest?.stages) ? latest.stages : [];
   const stage = stages.find((item) => item?.live) || stages[0];
-  if (!stage?.id) throw new Error("Premier League live stage was not found");
+  if (!stage?.id) throw new Error(`${leagueName} live stage was not found`);
 
   const pages = await Promise.all([0, 5, 10, 15].map(async (offset) => {
     const data = await fetchJson(
@@ -208,17 +213,17 @@ async function fetchPremierLeagueStandings() {
   ])).values()];
   const rows = normalizeSportalRows(uniqueRows.length ? uniqueRows : stage.standing);
   if (!isValidInternationalStandings(rows)) {
-    throw new Error("Premier League standings failed validation");
+    throw new Error(`${leagueName} standings failed validation`);
   }
   return { rows, season: latest.name || stage.name || "" };
 }
 
-function premierLeagueStalePayload(payload, warnings) {
+function internationalLeagueStalePayload(payload, warnings, league) {
   return {
     ...payload,
     source: {
       ...payload.source,
-      note: "Showing the last valid Premier League standings snapshot; live refresh failed.",
+      note: `Showing the last valid ${league.englishName} standings snapshot; live refresh failed.`,
       validation: {
         ...payload.source.validation,
         warnings,
@@ -229,29 +234,30 @@ function premierLeagueStalePayload(payload, warnings) {
   };
 }
 
-async function getPremierLeaguePayload(forceRefresh) {
-  const cache = state.leagueCaches.premierLeague || (state.leagueCaches.premierLeague = {
+async function getInternationalLeaguePayload(leagueId, forceRefresh) {
+  const league = INTERNATIONAL_LEAGUES[leagueId];
+  const cache = state.leagueCaches[leagueId] || (state.leagueCaches[leagueId] = {
     lastGoodPayload: null,
     lastSuccessAt: 0,
     inFlight: null
   });
-  if (!forceRefresh && cache.lastGoodPayload && Date.now() - cache.lastSuccessAt < PREMIER_LEAGUE_CACHE_TTL_MS) {
+  if (!forceRefresh && cache.lastGoodPayload && Date.now() - cache.lastSuccessAt < league.cacheTtlMs) {
     return { payload: cache.lastGoodPayload, fresh: true, source: "memory-cache" };
   }
   if (cache.inFlight) return cache.inFlight;
 
   const pending = (async () => {
     try {
-      const { rows, season } = await fetchPremierLeagueStandings();
+      const { rows, season } = await fetchInternationalStandings(league.tournamentId, league.englishName);
       const updatedAt = new Date().toISOString();
       return {
         payload: {
-          league: { id: "premier-league", name: "Висша лига", season },
+          league: { id: leagueId, name: league.name, season },
           standings: rows,
           updatedAt,
           source: {
             standingsUpdatedAt: updatedAt,
-            note: "Premier League standings refreshed from Sportal.",
+            note: `${league.englishName} standings refreshed from Sportal.`,
             validation: { warnings: [], usedFallback: false, standingsUpdated: true, standingsProvider: "sportal" }
           }
         },
@@ -261,7 +267,7 @@ async function getPremierLeaguePayload(forceRefresh) {
     } catch (error) {
       const warnings = [`Sportal: ${error.message}`];
       if (cache.lastGoodPayload) {
-        return { payload: premierLeagueStalePayload(cache.lastGoodPayload, warnings), fresh: false, source: "stale-fallback" };
+        return { payload: internationalLeagueStalePayload(cache.lastGoodPayload, warnings, league), fresh: false, source: "stale-fallback" };
       }
       throw error;
     }
@@ -410,7 +416,7 @@ module.exports = async function handler(req, res) {
 
   const forceRefresh = String(req.query?.refresh || "") === "1";
   const requestedLeague = String(req.query?.league || "");
-  if (requestedLeague && requestedLeague !== "premier-league") {
+  if (requestedLeague && !INTERNATIONAL_LEAGUES[requestedLeague]) {
     res.status(404).json({ error: "Unknown league" });
     return;
   }
@@ -424,18 +430,21 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    if (requestedLeague === "premier-league") {
-      const result = await getPremierLeaguePayload(forceRefresh);
+    if (requestedLeague) {
+      const league = INTERNATIONAL_LEAGUES[requestedLeague];
+      const result = await getInternationalLeaguePayload(requestedLeague, forceRefresh);
       res.setHeader("Cache-Control", forceRefresh
         ? "no-store"
-        : (result.fresh ? "public, s-maxage=600, stale-while-revalidate=1200" : "public, s-maxage=60, stale-while-revalidate=300"));
+        : (result.fresh
+          ? `public, s-maxage=${Math.floor(league.cacheTtlMs / 1000)}, stale-while-revalidate=1200`
+          : "public, s-maxage=60, stale-while-revalidate=300"));
       res.status(200).json({
         ...result.payload,
         cache: {
           source: result.source,
-          ttlMinutes: Math.floor(PREMIER_LEAGUE_CACHE_TTL_MS / 60000),
-          refreshedAt: state.leagueCaches.premierLeague?.lastSuccessAt
-            ? new Date(state.leagueCaches.premierLeague.lastSuccessAt).toISOString()
+          ttlMinutes: Math.floor(league.cacheTtlMs / 60000),
+          refreshedAt: state.leagueCaches[requestedLeague]?.lastSuccessAt
+            ? new Date(state.leagueCaches[requestedLeague].lastSuccessAt).toISOString()
             : null
         }
       });
@@ -457,13 +466,14 @@ module.exports = async function handler(req, res) {
     res.status(200).json(response);
   } catch (error) {
     console.error("[api/data] refresh failed:", error.message || error);
-    if (requestedLeague === "premier-league") {
+    if (requestedLeague && INTERNATIONAL_LEAGUES[requestedLeague]) {
+      const league = INTERNATIONAL_LEAGUES[requestedLeague];
       res.setHeader("Cache-Control", "no-store");
       res.status(503).json({
-        league: { id: "premier-league", name: "Висша лига" },
+        league: { id: requestedLeague, name: league.name },
         standings: [],
         source: { validation: { standingsUpdated: false, warnings: [String(error.message || error)] } },
-        error: "Premier League standings are temporarily unavailable"
+        error: `${league.englishName} standings are temporarily unavailable`
       });
       return;
     }
