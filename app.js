@@ -503,6 +503,7 @@ const I18N = {
 };
 
 let currentLanguage = localStorage.getItem(LANGUAGE_KEY) === "en" ? "en" : "bg";
+let standingsLanguageGeneration = 0;
 let lastPayload = null;
 let lastDataFetchSource = "";
 let lastFromCache = false;
@@ -1439,9 +1440,11 @@ function setupLanguageSwitch() {
       currentLanguage = chosen;
       localStorage.setItem(LANGUAGE_KEY, chosen);
       applyLanguageUI();
+      resetInternationalStandingsForLanguageChange();
       if (lastPayload) {
         render(lastPayload, lastFromCache);
       }
+      loadActiveInternationalStandings();
     });
   });
 }
@@ -1732,10 +1735,31 @@ const TEAM_NAME_ALIASES = {
   "Локомотив (Пловдив)": "Локомотив Пловдив",
   "Локомотив (София)": "Локомотив София",
   "Арда (Кърджали)": "Арда",
+  "Дунав (Русе)": "Дунав Русе",
   "Ботев (Враца)": "Ботев Враца",
   "Ботев (Пловдив)": "Ботев Пловдив",
   "Спартак (Варна)": "Спартак Варна",
   "Септември (София)": "Септември София"
+};
+
+const TEAM_ENGLISH_NAMES = {
+  "Левски София": "Levski Sofia",
+  "Лудогорец": "Ludogorets Razgrad",
+  "ЦСКА 1948": "CSKA 1948",
+  "ЦСКА София": "CSKA Sofia",
+  "Черно море": "Cherno More",
+  "Арда": "Arda Kardzhali",
+  "Ботев Пловдив": "Botev Plovdiv",
+  "Локомотив Пловдив": "Lokomotiv Plovdiv",
+  "Локомотив София": "Lokomotiv Sofia",
+  "Славия София": "Slavia Sofia",
+  "Ботев Враца": "Botev Vratsa",
+  "Добруджа": "Dobrudzha",
+  "Спартак Варна": "Spartak Varna",
+  "Берое": "Beroe",
+  "Септември София": "Septemvri Sofia",
+  "Монтана": "Montana",
+  "Дунав Русе": "Dunav Ruse"
 };
 
 function isValidPayload(payload) {
@@ -1749,9 +1773,11 @@ function normalizeTeamName(team) {
 function formatTeamDisplayName(team) {
   const normalized = normalizeTeamName(team);
   const logo = getTeamLogo(team);
-  let displayName = normalized;
+  let displayName = currentLanguage === "en"
+    ? (TEAM_ENGLISH_NAMES[normalized] || normalized)
+    : normalized;
   // Ако е ЦСКА, винаги изписвай "ЦСКА"
-  if (normalized === 'ЦСКА София' || team === 'ЦСКА') {
+  if (currentLanguage === "bg" && (normalized === 'ЦСКА София' || team === 'ЦСКА')) {
     displayName = 'ЦСКА';
   }
   return logo ? `<img src="${logo}" alt="${displayName}" style="height:1em;vertical-align:middle;margin-right:0.3em">${displayName}` : displayName;
@@ -1759,6 +1785,25 @@ function formatTeamDisplayName(team) {
 
 function getTeamLogo(team) {
   return TEAM_LOGOS[normalizeTeamName(team)] || "";
+}
+
+function getSafeSportalLogoUrl(value) {
+  try {
+    const url = new URL(String(value || ""));
+    return url.protocol === "https:" && url.hostname === "sportal365images.com" ? url.href : "";
+  } catch {
+    return "";
+  }
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (character) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "\"": "&quot;",
+    "'": "&#39;"
+  })[character]);
 }
 
 function sortStandingsByRank(standings) {
@@ -1769,15 +1814,19 @@ function sortStandingsByRank(standings) {
   });
 }
 
-function renderStandings(standings) {
+function renderStandings(standings, { showTeamLogos = false } = {}) {
   const body = document.querySelector("#standingsTable tbody");
   if (!body) return;
   body.innerHTML = "";
 
   sortStandingsByRank(standings).forEach((row) => {
-    const logo = getTeamLogo(row.team);
     const tr = document.createElement("tr");
     const rank = Number(row.rank);
+    const teamName = String(row.team ?? "-");
+    const logoUrl = showTeamLogos ? getSafeSportalLogoUrl(row.logo) : "";
+    const teamMarkup = logoUrl
+      ? `<img class="team-logo standings-team-logo" src="${escapeHtml(logoUrl)}" alt="" aria-hidden="true" loading="lazy">${escapeHtml(teamName)}`
+      : formatTeamDisplayName(teamName);
     if (rank === 1) tr.classList.add("zone-champion");
     else if (rank === 2) tr.classList.add("zone-ucl");
     else if (rank === 3) tr.classList.add("zone-uel");
@@ -1788,7 +1837,7 @@ function renderStandings(standings) {
       <td>${row.rank ?? "-"}</td>
       <td>
         <div class="team-cell">
-          <span class="standings-team-bubble" title="${row.team ?? "-"}">${formatTeamDisplayName(row.team ?? "-")}</span>
+          <span class="standings-team-bubble" title="${escapeHtml(teamName)}">${teamMarkup}</span>
         </div>
       </td>
       <td><span class="standings-stat-bubble standings-stat-bubble-strong">${row.pts ?? "-"}</span></td>
@@ -1805,52 +1854,61 @@ function isValidPremierLeaguePayload(payload, expectedTeamCount = 20) {
     payload.standings.every((row) => Number(row.rank) > 0 && Number(row.rank) <= expectedTeamCount && String(row.team || "").trim());
 }
 
+function localizedStandingsCacheKey(cacheKey) {
+  return `${cacheKey}_${currentLanguage}`;
+}
+
 function readPremierLeagueCache() {
   try {
-    const saved = JSON.parse(localStorage.getItem(PREMIER_LEAGUE_LOCAL_CACHE_KEY) || "null");
+    const cacheKey = localizedStandingsCacheKey(PREMIER_LEAGUE_LOCAL_CACHE_KEY);
+    const saved = JSON.parse(localStorage.getItem(cacheKey) || "null");
     return isValidPremierLeaguePayload(saved?.payload) ? saved.payload : null;
   } catch {
-    localStorage.removeItem(PREMIER_LEAGUE_LOCAL_CACHE_KEY);
+    localStorage.removeItem(localizedStandingsCacheKey(PREMIER_LEAGUE_LOCAL_CACHE_KEY));
     return null;
   }
 }
 
 function readSerieACache() {
   try {
-    const saved = JSON.parse(localStorage.getItem(SERIE_A_LOCAL_CACHE_KEY) || "null");
+    const cacheKey = localizedStandingsCacheKey(SERIE_A_LOCAL_CACHE_KEY);
+    const saved = JSON.parse(localStorage.getItem(cacheKey) || "null");
     return isValidPremierLeaguePayload(saved?.payload) ? saved.payload : null;
   } catch {
-    localStorage.removeItem(SERIE_A_LOCAL_CACHE_KEY);
+    localStorage.removeItem(localizedStandingsCacheKey(SERIE_A_LOCAL_CACHE_KEY));
     return null;
   }
 }
 
 function readBundesligaCache() {
   try {
-    const saved = JSON.parse(localStorage.getItem(BUNDESLIGA_LOCAL_CACHE_KEY) || "null");
+    const cacheKey = localizedStandingsCacheKey(BUNDESLIGA_LOCAL_CACHE_KEY);
+    const saved = JSON.parse(localStorage.getItem(cacheKey) || "null");
     return isValidPremierLeaguePayload(saved?.payload, 18) ? saved.payload : null;
   } catch {
-    localStorage.removeItem(BUNDESLIGA_LOCAL_CACHE_KEY);
+    localStorage.removeItem(localizedStandingsCacheKey(BUNDESLIGA_LOCAL_CACHE_KEY));
     return null;
   }
 }
 
 function readLaLigaCache() {
   try {
-    const saved = JSON.parse(localStorage.getItem(LA_LIGA_LOCAL_CACHE_KEY) || "null");
+    const cacheKey = localizedStandingsCacheKey(LA_LIGA_LOCAL_CACHE_KEY);
+    const saved = JSON.parse(localStorage.getItem(cacheKey) || "null");
     return isValidPremierLeaguePayload(saved?.payload, 20) ? saved.payload : null;
   } catch {
-    localStorage.removeItem(LA_LIGA_LOCAL_CACHE_KEY);
+    localStorage.removeItem(localizedStandingsCacheKey(LA_LIGA_LOCAL_CACHE_KEY));
     return null;
   }
 }
 
 function readLigue1Cache() {
   try {
-    const saved = JSON.parse(localStorage.getItem(LIGUE_1_LOCAL_CACHE_KEY) || "null");
+    const cacheKey = localizedStandingsCacheKey(LIGUE_1_LOCAL_CACHE_KEY);
+    const saved = JSON.parse(localStorage.getItem(cacheKey) || "null");
     return isValidPremierLeaguePayload(saved?.payload, 18) ? saved.payload : null;
   } catch {
-    localStorage.removeItem(LIGUE_1_LOCAL_CACHE_KEY);
+    localStorage.removeItem(localizedStandingsCacheKey(LIGUE_1_LOCAL_CACHE_KEY));
     return null;
   }
 }
@@ -1895,7 +1953,7 @@ function updateStandingsLeagueControls() {
 function renderActiveStandings(payload = lastPayload) {
   updateStandingsLeagueControls();
   if (activeStandingsLeague === "premier-league") {
-    renderStandings(premierLeaguePayload?.standings || []);
+    renderStandings(premierLeaguePayload?.standings || [], { showTeamLogos: true });
   } else if (activeStandingsLeague === "serie-a") {
     renderStandings(serieAPayload?.standings || []);
   } else if (activeStandingsLeague === "bundesliga") {
@@ -1911,6 +1969,8 @@ function renderActiveStandings(payload = lastPayload) {
 }
 
 async function loadPremierLeagueStandings() {
+  const requestGeneration = standingsLanguageGeneration;
+  const requestLanguage = currentLanguage;
   if (premierLeagueRequest) return premierLeagueRequest;
   if (!premierLeaguePayload) premierLeaguePayload = readPremierLeagueCache();
 
@@ -1929,27 +1989,34 @@ async function loadPremierLeagueStandings() {
     try {
       const url = new URL(DATA_API_URL, window.location.origin);
       url.searchParams.set("league", "premier-league");
+      url.searchParams.set("lang", requestLanguage);
       const response = await fetch(url.toString(), { cache: "no-store" });
       if (!response.ok) throw new Error("Premier League API unavailable");
       const payload = await response.json();
+      if (requestGeneration !== standingsLanguageGeneration) return;
       if (!isValidPremierLeaguePayload(payload)) throw new Error("Premier League table failed validation");
 
       premierLeaguePayload = payload;
-      localStorage.setItem(PREMIER_LEAGUE_LOCAL_CACHE_KEY, JSON.stringify({ payload, savedAt: Date.now() }));
+      localStorage.setItem(localizedStandingsCacheKey(PREMIER_LEAGUE_LOCAL_CACHE_KEY), JSON.stringify({ payload, savedAt: Date.now() }));
       premierStandingsStatusState = payload.source?.validation?.standingsUpdated === false
         ? { type: "error", updatedAt: payload.updatedAt || "" }
         : { type: "success", updatedAt: payload.updatedAt || payload.source?.standingsUpdatedAt || "" };
     } catch {
+      if (requestGeneration !== standingsLanguageGeneration) return;
       premierStandingsStatusState = { type: "error", updatedAt: premierLeaguePayload?.updatedAt || "" };
     } finally {
-      premierLeagueRequest = null;
-      if (activeStandingsLeague === "premier-league") renderActiveStandings();
+      if (requestGeneration === standingsLanguageGeneration) {
+        premierLeagueRequest = null;
+        if (activeStandingsLeague === "premier-league") renderActiveStandings();
+      }
     }
   })();
   return premierLeagueRequest;
 }
 
 async function loadSerieAStandings() {
+  const requestGeneration = standingsLanguageGeneration;
+  const requestLanguage = currentLanguage;
   if (serieARequest) return serieARequest;
   if (!serieAPayload) serieAPayload = readSerieACache();
 
@@ -1968,27 +2035,34 @@ async function loadSerieAStandings() {
     try {
       const url = new URL(DATA_API_URL, window.location.origin);
       url.searchParams.set("league", "serie-a");
+      url.searchParams.set("lang", requestLanguage);
       const response = await fetch(url.toString(), { cache: "no-store" });
       if (!response.ok) throw new Error("Serie A API unavailable");
       const payload = await response.json();
+      if (requestGeneration !== standingsLanguageGeneration) return;
       if (!isValidPremierLeaguePayload(payload)) throw new Error("Serie A table failed validation");
 
       serieAPayload = payload;
-      localStorage.setItem(SERIE_A_LOCAL_CACHE_KEY, JSON.stringify({ payload, savedAt: Date.now() }));
+      localStorage.setItem(localizedStandingsCacheKey(SERIE_A_LOCAL_CACHE_KEY), JSON.stringify({ payload, savedAt: Date.now() }));
       serieAStandingsStatusState = payload.source?.validation?.standingsUpdated === false
         ? { type: "error", updatedAt: payload.updatedAt || "" }
         : { type: "success", updatedAt: payload.updatedAt || payload.source?.standingsUpdatedAt || "" };
     } catch {
+      if (requestGeneration !== standingsLanguageGeneration) return;
       serieAStandingsStatusState = { type: "error", updatedAt: serieAPayload?.updatedAt || "" };
     } finally {
-      serieARequest = null;
-      if (activeStandingsLeague === "serie-a") renderActiveStandings();
+      if (requestGeneration === standingsLanguageGeneration) {
+        serieARequest = null;
+        if (activeStandingsLeague === "serie-a") renderActiveStandings();
+      }
     }
   })();
   return serieARequest;
 }
 
 async function loadBundesligaStandings() {
+  const requestGeneration = standingsLanguageGeneration;
+  const requestLanguage = currentLanguage;
   if (bundesligaRequest) return bundesligaRequest;
   if (!bundesligaPayload) bundesligaPayload = readBundesligaCache();
 
@@ -2007,27 +2081,34 @@ async function loadBundesligaStandings() {
     try {
       const url = new URL(DATA_API_URL, window.location.origin);
       url.searchParams.set("league", "bundesliga");
+      url.searchParams.set("lang", requestLanguage);
       const response = await fetch(url.toString(), { cache: "no-store" });
       if (!response.ok) throw new Error("Bundesliga API unavailable");
       const payload = await response.json();
+      if (requestGeneration !== standingsLanguageGeneration) return;
       if (!isValidPremierLeaguePayload(payload, 18)) throw new Error("Bundesliga table failed validation");
 
       bundesligaPayload = payload;
-      localStorage.setItem(BUNDESLIGA_LOCAL_CACHE_KEY, JSON.stringify({ payload, savedAt: Date.now() }));
+      localStorage.setItem(localizedStandingsCacheKey(BUNDESLIGA_LOCAL_CACHE_KEY), JSON.stringify({ payload, savedAt: Date.now() }));
       bundesligaStandingsStatusState = payload.source?.validation?.standingsUpdated === false
         ? { type: "error", updatedAt: payload.updatedAt || "" }
         : { type: "success", updatedAt: payload.updatedAt || payload.source?.standingsUpdatedAt || "" };
     } catch {
+      if (requestGeneration !== standingsLanguageGeneration) return;
       bundesligaStandingsStatusState = { type: "error", updatedAt: bundesligaPayload?.updatedAt || "" };
     } finally {
-      bundesligaRequest = null;
-      if (activeStandingsLeague === "bundesliga") renderActiveStandings();
+      if (requestGeneration === standingsLanguageGeneration) {
+        bundesligaRequest = null;
+        if (activeStandingsLeague === "bundesliga") renderActiveStandings();
+      }
     }
   })();
   return bundesligaRequest;
 }
 
 async function loadLaLigaStandings() {
+  const requestGeneration = standingsLanguageGeneration;
+  const requestLanguage = currentLanguage;
   if (laLigaRequest) return laLigaRequest;
   if (!laLigaPayload) laLigaPayload = readLaLigaCache();
 
@@ -2046,27 +2127,34 @@ async function loadLaLigaStandings() {
     try {
       const url = new URL(DATA_API_URL, window.location.origin);
       url.searchParams.set("league", "la-liga");
+      url.searchParams.set("lang", requestLanguage);
       const response = await fetch(url.toString(), { cache: "no-store" });
       if (!response.ok) throw new Error("La Liga API unavailable");
       const payload = await response.json();
+      if (requestGeneration !== standingsLanguageGeneration) return;
       if (!isValidPremierLeaguePayload(payload, 20)) throw new Error("La Liga table failed validation");
 
       laLigaPayload = payload;
-      localStorage.setItem(LA_LIGA_LOCAL_CACHE_KEY, JSON.stringify({ payload, savedAt: Date.now() }));
+      localStorage.setItem(localizedStandingsCacheKey(LA_LIGA_LOCAL_CACHE_KEY), JSON.stringify({ payload, savedAt: Date.now() }));
       laLigaStandingsStatusState = payload.source?.validation?.standingsUpdated === false
         ? { type: "error", updatedAt: payload.updatedAt || "" }
         : { type: "success", updatedAt: payload.updatedAt || payload.source?.standingsUpdatedAt || "" };
     } catch {
+      if (requestGeneration !== standingsLanguageGeneration) return;
       laLigaStandingsStatusState = { type: "error", updatedAt: laLigaPayload?.updatedAt || "" };
     } finally {
-      laLigaRequest = null;
-      if (activeStandingsLeague === "la-liga") renderActiveStandings();
+      if (requestGeneration === standingsLanguageGeneration) {
+        laLigaRequest = null;
+        if (activeStandingsLeague === "la-liga") renderActiveStandings();
+      }
     }
   })();
   return laLigaRequest;
 }
 
 async function loadLigue1Standings() {
+  const requestGeneration = standingsLanguageGeneration;
+  const requestLanguage = currentLanguage;
   if (ligue1Request) return ligue1Request;
   if (!ligue1Payload) ligue1Payload = readLigue1Cache();
 
@@ -2085,21 +2173,26 @@ async function loadLigue1Standings() {
     try {
       const url = new URL(DATA_API_URL, window.location.origin);
       url.searchParams.set("league", "ligue-1");
+      url.searchParams.set("lang", requestLanguage);
       const response = await fetch(url.toString(), { cache: "no-store" });
       if (!response.ok) throw new Error("Ligue 1 API unavailable");
       const payload = await response.json();
+      if (requestGeneration !== standingsLanguageGeneration) return;
       if (!isValidPremierLeaguePayload(payload, 18)) throw new Error("Ligue 1 table failed validation");
 
       ligue1Payload = payload;
-      localStorage.setItem(LIGUE_1_LOCAL_CACHE_KEY, JSON.stringify({ payload, savedAt: Date.now() }));
+      localStorage.setItem(localizedStandingsCacheKey(LIGUE_1_LOCAL_CACHE_KEY), JSON.stringify({ payload, savedAt: Date.now() }));
       ligue1StandingsStatusState = payload.source?.validation?.standingsUpdated === false
         ? { type: "error", updatedAt: payload.updatedAt || "" }
         : { type: "success", updatedAt: payload.updatedAt || payload.source?.standingsUpdatedAt || "" };
     } catch {
+      if (requestGeneration !== standingsLanguageGeneration) return;
       ligue1StandingsStatusState = { type: "error", updatedAt: ligue1Payload?.updatedAt || "" };
     } finally {
-      ligue1Request = null;
-      if (activeStandingsLeague === "ligue-1") renderActiveStandings();
+      if (requestGeneration === standingsLanguageGeneration) {
+        ligue1Request = null;
+        if (activeStandingsLeague === "ligue-1") renderActiveStandings();
+      }
     }
   })();
   return ligue1Request;
@@ -2121,6 +2214,36 @@ function selectStandingsLeague(league) {
   } else {
     renderActiveStandings(lastPayload);
   }
+}
+
+function resetInternationalStandingsForLanguageChange() {
+  standingsLanguageGeneration += 1;
+  premierLeaguePayload = null;
+  premierLeagueRequest = null;
+  premierStandingsStatusState = { type: "idle", updatedAt: "" };
+  serieAPayload = null;
+  serieARequest = null;
+  serieAStandingsStatusState = { type: "idle", updatedAt: "" };
+  bundesligaPayload = null;
+  bundesligaRequest = null;
+  bundesligaStandingsStatusState = { type: "idle", updatedAt: "" };
+  laLigaPayload = null;
+  laLigaRequest = null;
+  laLigaStandingsStatusState = { type: "idle", updatedAt: "" };
+  ligue1Payload = null;
+  ligue1Request = null;
+  ligue1StandingsStatusState = { type: "idle", updatedAt: "" };
+}
+
+function loadActiveInternationalStandings() {
+  const loaders = {
+    "premier-league": loadPremierLeagueStandings,
+    "serie-a": loadSerieAStandings,
+    bundesliga: loadBundesligaStandings,
+    "la-liga": loadLaLigaStandings,
+    "ligue-1": loadLigue1Standings
+  };
+  loaders[activeStandingsLeague]?.();
 }
 
 function setupStandingsLeagueSwitcher() {

@@ -96,14 +96,16 @@ function isLikelyLeagueTable(rows) {
   return hits >= required && hasCska && ranks.size === rows.length;
 }
 
-function normalizeSportalRows(rows) {
+function normalizeSportalRows(rows, language = "bg") {
   return (Array.isArray(rows) ? rows : [])
     .map((row) => {
       const gf = firstNumber(row, ["goals_for", "goals_scored", "gf"]);
       const ga = firstNumber(row, ["goals_against", "goals_conceded", "ga"]);
+      const sourceTeamName = String(row?.team?.name || row?.team?.short_name || row?.team || "").trim();
       return {
         rank: firstNumber(row, ["rank", "position", "place"]),
-        team: normalizeTeamName(row?.team),
+        team: language === "en" ? sourceTeamName : normalizeTeamName(row?.team),
+        logo: typeof row?.team?.url_logo === "string" ? row.team.url_logo : "",
         mp: firstNumber(row, ["played", "matches_played", "played_matches"]),
         w: firstNumber(row, ["wins", "won"]),
         d: firstNumber(row, ["draws", "drawn"]),
@@ -189,10 +191,10 @@ function isValidInternationalStandings(rows, expectedTeamCount = 20) {
     rows.every((row) => row.rank > 0 && row.rank <= rows.length && row.team && Number.isFinite(row.pts));
 }
 
-async function fetchInternationalStandings(tournamentId, leagueName, expectedTeamCount) {
+async function fetchInternationalStandings(tournamentId, leagueName, expectedTeamCount, language) {
   const headers = {
     "Accept": "application/json, text/plain, */*",
-    "Accept-Language": "bg",
+    "Accept-Language": language,
     "Referer": "https://www.sportal.bg/",
     "X-Project": "sportal.bg",
     "Authorization": SPORTAL_AUTH
@@ -204,7 +206,7 @@ async function fetchInternationalStandings(tournamentId, leagueName, expectedTea
 
   const pages = await Promise.all([0, 5, 10, 15].map(async (offset) => {
     const data = await fetchJson(
-      `${SPORTAL_BASE}/tournaments/seasons/stages/${encodeURIComponent(String(stage.id))}?expand=standing.rules,standing.form.events&language_code=bg&row_offset=${offset}`,
+      `${SPORTAL_BASE}/tournaments/seasons/stages/${encodeURIComponent(String(stage.id))}?expand=standing.rules,standing.form.events&language_code=${language}&row_offset=${offset}`,
       headers
     );
     return Array.isArray(data?.standing) ? data.standing : [];
@@ -214,7 +216,7 @@ async function fetchInternationalStandings(tournamentId, leagueName, expectedTea
     `${firstNumber(row, ["rank", "position", "place"])}|${normalizeTeamName(row?.team)}`,
     row
   ])).values()];
-  const rows = normalizeSportalRows(uniqueRows.length ? uniqueRows : stage.standing);
+  const rows = normalizeSportalRows(uniqueRows.length ? uniqueRows : stage.standing, language);
   if (!isValidInternationalStandings(rows, expectedTeamCount)) {
     throw new Error(`${leagueName} standings failed validation`);
   }
@@ -237,9 +239,10 @@ function internationalLeagueStalePayload(payload, warnings, league) {
   };
 }
 
-async function getInternationalLeaguePayload(leagueId, forceRefresh) {
+async function getInternationalLeaguePayload(leagueId, forceRefresh, language) {
   const league = INTERNATIONAL_LEAGUES[leagueId];
-  const cache = state.leagueCaches[leagueId] || (state.leagueCaches[leagueId] = {
+  const cacheKey = `${leagueId}:${language}`;
+  const cache = state.leagueCaches[cacheKey] || (state.leagueCaches[cacheKey] = {
     lastGoodPayload: null,
     lastSuccessAt: 0,
     inFlight: null
@@ -251,11 +254,11 @@ async function getInternationalLeaguePayload(leagueId, forceRefresh) {
 
   const pending = (async () => {
     try {
-      const { rows, season } = await fetchInternationalStandings(league.tournamentId, league.englishName, league.teamCount);
+      const { rows, season } = await fetchInternationalStandings(league.tournamentId, league.englishName, league.teamCount, language);
       const updatedAt = new Date().toISOString();
       return {
         payload: {
-          league: { id: leagueId, name: league.name, season },
+          league: { id: leagueId, name: language === "en" ? league.englishName : league.name, season },
           standings: rows,
           updatedAt,
           source: {
@@ -419,6 +422,7 @@ module.exports = async function handler(req, res) {
 
   const forceRefresh = String(req.query?.refresh || "") === "1";
   const requestedLeague = String(req.query?.league || "");
+  const language = String(req.query?.lang || "bg") === "en" ? "en" : "bg";
   if (requestedLeague && !INTERNATIONAL_LEAGUES[requestedLeague]) {
     res.status(404).json({ error: "Unknown league" });
     return;
@@ -435,7 +439,8 @@ module.exports = async function handler(req, res) {
   try {
     if (requestedLeague) {
       const league = INTERNATIONAL_LEAGUES[requestedLeague];
-      const result = await getInternationalLeaguePayload(requestedLeague, forceRefresh);
+      const cacheKey = `${requestedLeague}:${language}`;
+      const result = await getInternationalLeaguePayload(requestedLeague, forceRefresh, language);
       res.setHeader("Cache-Control", forceRefresh
         ? "no-store"
         : (result.fresh
@@ -446,8 +451,8 @@ module.exports = async function handler(req, res) {
         cache: {
           source: result.source,
           ttlMinutes: Math.floor(league.cacheTtlMs / 60000),
-          refreshedAt: state.leagueCaches[requestedLeague]?.lastSuccessAt
-            ? new Date(state.leagueCaches[requestedLeague].lastSuccessAt).toISOString()
+          refreshedAt: state.leagueCaches[cacheKey]?.lastSuccessAt
+            ? new Date(state.leagueCaches[cacheKey].lastSuccessAt).toISOString()
             : null
         }
       });

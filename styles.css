@@ -1066,6 +1066,10 @@ body {
   line-height: 1.2;
 }
 
+.standings-team-bubble .standings-team-logo {
+  margin-right: 6px;
+}
+
 .standings-stat-bubble {
   display: inline-flex;
   align-items: center;

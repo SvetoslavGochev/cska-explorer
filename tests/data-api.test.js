@@ -33,12 +33,20 @@ const premierLeagueTeams = [
   "Нотингам Форест", "Лийдс", "Съндърланд", "Бърнли", "Уулвърхемптън"
 ];
 
-function makePremierLeagueRows(offset) {
-  return premierLeagueTeams.slice(offset, offset + 5).map((name, index) => {
+const premierLeagueEnglishTeams = [
+  "Arsenal", "Manchester City", "Liverpool", "Chelsea", "Tottenham Hotspur",
+  "Newcastle United", "Aston Villa", "Manchester United", "Brighton & Hove Albion", "West Ham United",
+  "Crystal Palace", "Brentford", "Fulham", "Bournemouth", "Everton",
+  "Nottingham Forest", "Leeds United", "Sunderland", "Burnley", "Wolverhampton Wanderers"
+];
+
+function makePremierLeagueRows(offset, language = "bg") {
+  const teamsForLanguage = language === "en" ? premierLeagueEnglishTeams : premierLeagueTeams;
+  return teamsForLanguage.slice(offset, offset + 5).map((name, index) => {
     const rank = offset + index + 1;
     return {
       rank,
-      team: { name },
+      team: { name, url_logo: `https://sportal365images.com/assets/premier-${rank}.png` },
       played: 9,
       wins: 6,
       draws: 2,
@@ -189,7 +197,7 @@ function invoke(query = {}) {
     if (value.includes("/tournaments/seasons/stages/")) {
       const offset = Number(new URL(value).searchParams.get("row_offset"));
       const rows = value.includes("/7003?")
-        ? makePremierLeagueRows(offset)
+        ? makePremierLeagueRows(offset, new URL(value).searchParams.get("language_code"))
         : value.includes("/7007?")
           ? makeSerieARows(offset)
           : value.includes("/7006?")
@@ -220,7 +228,15 @@ function invoke(query = {}) {
     assert.equal(premier.response.body.source.validation.standingsUpdated, true);
     assert.equal(premier.response.body.standings.length, 20);
     assert.equal(premier.response.body.standings[0].team, "Арсенал");
+    assert.equal(premier.response.body.standings[0].logo, "https://sportal365images.com/assets/premier-1.png");
     assert.match(premier.headers["Cache-Control"], /s-maxage=600/);
+
+    const premierEnglish = await invoke({ league: "premier-league", lang: "en" });
+    assert.equal(premierEnglish.response.statusCode, 200);
+    assert.equal(premierEnglish.response.body.league.name, "Premier League");
+    assert.equal(premierEnglish.response.body.standings.length, 20);
+    assert.equal(premierEnglish.response.body.standings[0].team, "Arsenal");
+    assert.equal(premierEnglish.response.body.standings[0].logo, "https://sportal365images.com/assets/premier-1.png");
 
     const serieA = await invoke({ league: "serie-a" });
     assert.equal(serieA.response.statusCode, 200);
@@ -264,6 +280,12 @@ function invoke(query = {}) {
     assert.equal(stalePremier.response.body.source.validation.standingsUpdated, false);
     assert.equal(stalePremier.response.body.cache.source, "stale-fallback");
     assert.equal(stalePremier.response.body.standings.length, 20);
+
+    const stalePremierEnglish = await invoke({ league: "premier-league", lang: "en", refresh: "1" });
+    assert.equal(stalePremierEnglish.response.statusCode, 200);
+    assert.equal(stalePremierEnglish.response.body.source.validation.standingsUpdated, false);
+    assert.equal(stalePremierEnglish.response.body.cache.source, "stale-fallback");
+    assert.equal(stalePremierEnglish.response.body.standings[0].team, "Arsenal");
 
     const staleSerieA = await invoke({ league: "serie-a", refresh: "1" });
     assert.equal(staleSerieA.response.statusCode, 200);
