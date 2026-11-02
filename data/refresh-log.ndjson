@@ -3,3 +3,4 @@
 {"timestamp":"2026-08-02T09:05:40.109Z","source":"scripts/refresh-player-stats.js","players":27,"withFlags":27,"withMatches":18,"statsRowsFromFlashscore":86,"updatedAt":"2026-08-02T09:05:40.107Z"}
 {"timestamp":"2026-11-01T12:14:23.954Z","source":"scripts/refresh-player-stats.js","players":27,"withFlags":27,"withMatches":23,"statsRowsFromFlashscore":106,"matchedPlayers":24,"statsUpdated":true,"warnings":[],"updatedAt":"2026-11-01T12:14:23.954Z"}
 {"timestamp":"2026-11-01T18:16:05.279Z","source":"scripts/refresh-player-stats.js","players":27,"withFlags":27,"withMatches":23,"statsRowsFromFlashscore":106,"matchedPlayers":24,"statsUpdated":true,"warnings":[],"updatedAt":"2026-11-01T18:16:05.279Z"}
+{"timestamp":"2026-11-02T00:37:56.269Z","source":"scripts/refresh-player-stats.js","players":27,"withFlags":27,"withMatches":23,"statsRowsFromFlashscore":106,"matchedPlayers":24,"statsUpdated":true,"warnings":[],"updatedAt":"2026-11-02T00:37:56.269Z"}
