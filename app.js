@@ -1955,7 +1955,7 @@ function renderActiveStandings(payload = lastPayload) {
   if (activeStandingsLeague === "premier-league") {
     renderStandings(premierLeaguePayload?.standings || [], { showTeamLogos: true });
   } else if (activeStandingsLeague === "serie-a") {
-    renderStandings(serieAPayload?.standings || []);
+    renderStandings(serieAPayload?.standings || [], { showTeamLogos: true });
   } else if (activeStandingsLeague === "bundesliga") {
     renderStandings(bundesligaPayload?.standings || []);
   } else if (activeStandingsLeague === "la-liga") {

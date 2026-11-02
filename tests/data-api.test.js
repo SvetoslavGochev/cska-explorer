@@ -69,7 +69,7 @@ function makeSerieARows(offset) {
     const rank = offset + index + 1;
     return {
       rank,
-      team: { name },
+      team: { name, url_logo: `https://sportal365images.com/assets/serie-a-${rank}.png` },
       played: 10,
       wins: 7,
       draws: 2,
@@ -245,6 +245,7 @@ function invoke(query = {}) {
     assert.equal(serieA.response.body.source.validation.standingsUpdated, true);
     assert.equal(serieA.response.body.standings.length, 20);
     assert.equal(serieA.response.body.standings[0].team, "Лацио");
+    assert.equal(serieA.response.body.standings[0].logo, "https://sportal365images.com/assets/serie-a-1.png");
     assert.match(serieA.headers["Cache-Control"], /s-maxage=600/);
 
     const bundesliga = await invoke({ league: "bundesliga" });
