@@ -93,7 +93,7 @@ function makeBundesligaRows(offset) {
     const rank = offset + index + 1;
     return {
       rank,
-      team: { name },
+      team: { name, url_logo: `https://sportal365images.com/assets/bundesliga-${rank}.png` },
       played: 8,
       wins: 5,
       draws: 2,
@@ -117,7 +117,7 @@ function makeLaLigaRows(offset) {
     const rank = offset + index + 1;
     return {
       rank,
-      team: { name },
+      team: { name, url_logo: `https://sportal365images.com/assets/la-liga-${rank}.png` },
       played: 11,
       wins: 7,
       draws: 2,
@@ -140,7 +140,7 @@ function makeLigue1Rows(offset) {
     const rank = offset + index + 1;
     return {
       rank,
-      team: { name },
+      team: { name, url_logo: `https://sportal365images.com/assets/ligue-1-${rank}.png` },
       played: 10,
       wins: 6,
       draws: 2,
@@ -255,6 +255,7 @@ function invoke(query = {}) {
     assert.equal(bundesliga.response.body.source.validation.standingsUpdated, true);
     assert.equal(bundesliga.response.body.standings.length, 18);
     assert.equal(bundesliga.response.body.standings[0].team, "Байерн (Мюнхен)");
+    assert.equal(bundesliga.response.body.standings[0].logo, "https://sportal365images.com/assets/bundesliga-1.png");
     assert.match(bundesliga.headers["Cache-Control"], /s-maxage=600/);
 
     const laLiga = await invoke({ league: "la-liga" });
@@ -264,6 +265,7 @@ function invoke(query = {}) {
     assert.equal(laLiga.response.body.source.validation.standingsUpdated, true);
     assert.equal(laLiga.response.body.standings.length, 20);
     assert.equal(laLiga.response.body.standings[0].team, "FC Barcelona");
+    assert.equal(laLiga.response.body.standings[0].logo, "https://sportal365images.com/assets/la-liga-1.png");
     assert.match(laLiga.headers["Cache-Control"], /s-maxage=600/);
 
     const ligue1 = await invoke({ league: "ligue-1" });
@@ -273,6 +275,7 @@ function invoke(query = {}) {
     assert.equal(ligue1.response.body.source.validation.standingsUpdated, true);
     assert.equal(ligue1.response.body.standings.length, 18);
     assert.equal(ligue1.response.body.standings[0].team, "Пари Сен Жермен");
+    assert.equal(ligue1.response.body.standings[0].logo, "https://sportal365images.com/assets/ligue-1-1.png");
     assert.match(ligue1.headers["Cache-Control"], /s-maxage=600/);
 
     global.fetch = async () => { throw new Error("provider offline"); };

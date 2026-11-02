@@ -1957,11 +1957,11 @@ function renderActiveStandings(payload = lastPayload) {
   } else if (activeStandingsLeague === "serie-a") {
     renderStandings(serieAPayload?.standings || [], { showTeamLogos: true });
   } else if (activeStandingsLeague === "bundesliga") {
-    renderStandings(bundesligaPayload?.standings || []);
+    renderStandings(bundesligaPayload?.standings || [], { showTeamLogos: true });
   } else if (activeStandingsLeague === "la-liga") {
-    renderStandings(laLigaPayload?.standings || []);
+    renderStandings(laLigaPayload?.standings || [], { showTeamLogos: true });
   } else if (activeStandingsLeague === "ligue-1") {
-    renderStandings(ligue1Payload?.standings || []);
+    renderStandings(ligue1Payload?.standings || [], { showTeamLogos: true });
   } else {
     renderStandings(payload?.standings || []);
   }
