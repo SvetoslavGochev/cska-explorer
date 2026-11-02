@@ -1616,7 +1616,7 @@ const server = http.createServer((req, res) => {
   }
 
   if (url.pathname === "/api/data") {
-    if (["premier-league", "serie-a"].includes(url.searchParams.get("league"))) {
+    if (["premier-league", "serie-a", "bundesliga"].includes(url.searchParams.get("league"))) {
       (async () => {
         const headers = {};
         const response = {

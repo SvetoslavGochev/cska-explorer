@@ -73,6 +73,30 @@ function makeSerieARows(offset) {
   });
 }
 
+const bundesligaTeams = [
+  "Байерн (Мюнхен)", "Борусия (Дортмунд)", "Фрайбург", "Вердер (Бремен)",
+  "РБ Лайпциг", "Байер (Леверкузен)", "Щутгарт", "Айнтрахт (Франкфурт)",
+  "Хофенхайм", "Майнц", "Волфсбург", "Аугсбург", "Борусия (Мьонхенгладбах)",
+  "Унион Берлин", "Кьолн", "Хамбургер", "Санкт Паули", "Хайденхайм"
+];
+
+function makeBundesligaRows(offset) {
+  return bundesligaTeams.slice(offset, offset + 5).map((name, index) => {
+    const rank = offset + index + 1;
+    return {
+      rank,
+      team: { name },
+      played: 8,
+      wins: 5,
+      draws: 2,
+      defeats: 1,
+      goals_for: 16,
+      goals_against: 7,
+      points: 18 - rank
+    };
+  });
+}
+
 function invoke(query = {}) {
   const headers = {};
   const response = {
@@ -103,6 +127,9 @@ function invoke(query = {}) {
     if (value.includes("/tournaments/7/seasons/latest")) {
       return { ok: true, json: async () => ({ name: "2026/2027", stages: [{ id: 7007, live: false }] }) };
     }
+    if (value.includes("/tournaments/6/seasons/latest")) {
+      return { ok: true, json: async () => ({ name: "2026/2027", stages: [{ id: 7006, live: false }] }) };
+    }
     if (value.includes("/seasons/latest")) {
       return { ok: true, json: async () => ({ stages: [{ id: 7001, live: true }] }) };
     }
@@ -112,6 +139,8 @@ function invoke(query = {}) {
         ? makePremierLeagueRows(offset)
         : value.includes("/7007?")
           ? makeSerieARows(offset)
+          : value.includes("/7006?")
+            ? makeBundesligaRows(offset)
           : makeSportalRows(offset);
       return { ok: true, json: async () => ({ standing: rows }) };
     }
@@ -145,6 +174,15 @@ function invoke(query = {}) {
     assert.equal(serieA.response.body.standings[0].team, "Лацио");
     assert.match(serieA.headers["Cache-Control"], /s-maxage=600/);
 
+    const bundesliga = await invoke({ league: "bundesliga" });
+    assert.equal(bundesliga.response.statusCode, 200);
+    assert.equal(bundesliga.response.body.league.id, "bundesliga");
+    assert.equal(bundesliga.response.body.league.season, "2026/2027");
+    assert.equal(bundesliga.response.body.source.validation.standingsUpdated, true);
+    assert.equal(bundesliga.response.body.standings.length, 18);
+    assert.equal(bundesliga.response.body.standings[0].team, "Байерн (Мюнхен)");
+    assert.match(bundesliga.headers["Cache-Control"], /s-maxage=600/);
+
     global.fetch = async () => { throw new Error("provider offline"); };
     const stalePremier = await invoke({ league: "premier-league", refresh: "1" });
     assert.equal(stalePremier.response.statusCode, 200);
@@ -157,6 +195,12 @@ function invoke(query = {}) {
     assert.equal(staleSerieA.response.body.source.validation.standingsUpdated, false);
     assert.equal(staleSerieA.response.body.cache.source, "stale-fallback");
     assert.equal(staleSerieA.response.body.standings.length, 20);
+
+    const staleBundesliga = await invoke({ league: "bundesliga", refresh: "1" });
+    assert.equal(staleBundesliga.response.statusCode, 200);
+    assert.equal(staleBundesliga.response.body.source.validation.standingsUpdated, false);
+    assert.equal(staleBundesliga.response.body.cache.source, "stale-fallback");
+    assert.equal(staleBundesliga.response.body.standings.length, 18);
 
     const stale = await invoke({ refresh: "1" });
     assert.equal(stale.response.statusCode, 200);

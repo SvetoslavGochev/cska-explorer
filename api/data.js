@@ -16,8 +16,9 @@ const ALLOWED_ORIGINS = new Set([
   "http://127.0.0.1:3000"
 ]);
 const INTERNATIONAL_LEAGUES = {
-  "premier-league": { tournamentId: 3, name: "Висша лига", englishName: "Premier League", cacheTtlMs: PREMIER_LEAGUE_CACHE_TTL_MS },
-  "serie-a": { tournamentId: 7, name: "Серия А", englishName: "Serie A", cacheTtlMs: SERIE_A_CACHE_TTL_MS }
+  "premier-league": { tournamentId: 3, name: "Висша лига", englishName: "Premier League", teamCount: 20, cacheTtlMs: PREMIER_LEAGUE_CACHE_TTL_MS },
+  "serie-a": { tournamentId: 7, name: "Серия А", englishName: "Serie A", teamCount: 20, cacheTtlMs: SERIE_A_CACHE_TTL_MS },
+  bundesliga: { tournamentId: 6, name: "Бундеслига", englishName: "Bundesliga", teamCount: 18, cacheTtlMs: SERIE_A_CACHE_TTL_MS }
 };
 
 const TEAM_NAMES = {
@@ -178,15 +179,15 @@ async function fetchSportalStandings() {
   return parsed;
 }
 
-function isValidInternationalStandings(rows) {
-  if (!Array.isArray(rows) || rows.length !== 20) return false;
+function isValidInternationalStandings(rows, expectedTeamCount = 20) {
+  if (!Array.isArray(rows) || rows.length !== expectedTeamCount) return false;
   const ranks = new Set(rows.map((row) => row.rank));
   const teams = new Set(rows.map((row) => row.team.toLowerCase()));
   return ranks.size === rows.length && teams.size === rows.length &&
     rows.every((row) => row.rank > 0 && row.rank <= rows.length && row.team && Number.isFinite(row.pts));
 }
 
-async function fetchInternationalStandings(tournamentId, leagueName) {
+async function fetchInternationalStandings(tournamentId, leagueName, expectedTeamCount) {
   const headers = {
     "Accept": "application/json, text/plain, */*",
     "Accept-Language": "bg",
@@ -212,7 +213,7 @@ async function fetchInternationalStandings(tournamentId, leagueName) {
     row
   ])).values()];
   const rows = normalizeSportalRows(uniqueRows.length ? uniqueRows : stage.standing);
-  if (!isValidInternationalStandings(rows)) {
+  if (!isValidInternationalStandings(rows, expectedTeamCount)) {
     throw new Error(`${leagueName} standings failed validation`);
   }
   return { rows, season: latest.name || stage.name || "" };
@@ -248,7 +249,7 @@ async function getInternationalLeaguePayload(leagueId, forceRefresh) {
 
   const pending = (async () => {
     try {
-      const { rows, season } = await fetchInternationalStandings(league.tournamentId, league.englishName);
+      const { rows, season } = await fetchInternationalStandings(league.tournamentId, league.englishName, league.teamCount);
       const updatedAt = new Date().toISOString();
       return {
         payload: {
