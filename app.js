@@ -1796,16 +1796,6 @@ function getSafeSportalLogoUrl(value) {
   }
 }
 
-function escapeHtml(value) {
-  return String(value).replace(/[&<>"']/g, (character) => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    "\"": "&quot;",
-    "'": "&#39;"
-  })[character]);
-}
-
 function sortStandingsByRank(standings) {
   return [...(standings || [])].sort((left, right) => {
     const leftRank = Number(left?.rank) || Number.MAX_SAFE_INTEGER;
