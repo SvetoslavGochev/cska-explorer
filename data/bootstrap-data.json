@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-02T14:18:36.504Z",
+  "updatedAt": "2026-11-03T09:16:57.593Z",
   "source": {
     "note": "Live standings refreshed from sportal.",
     "validation": {
@@ -8,8 +8,8 @@
       "standingsUpdated": true,
       "standingsProvider": "sportal"
     },
-    "squadUpdatedAt": "2026-11-02T14:18:36.504Z",
-    "playerStatsUpdatedAt": "2026-11-02T14:18:36.504Z",
+    "squadUpdatedAt": "2026-11-03T09:16:57.593Z",
+    "playerStatsUpdatedAt": "2026-11-03T09:16:57.593Z",
     "squadRefresh": {
       "provider": "sportal+flashscore",
       "rosterPlayers": 27,
@@ -18,7 +18,7 @@
       "statsUpdated": true,
       "warnings": []
     },
-    "standingsUpdatedAt": "2026-11-02T14:18:36.248Z"
+    "standingsUpdatedAt": "2026-11-02T18:18:29.139Z"
   },
   "standings": [
     {
@@ -90,14 +90,14 @@
       "rank": 6,
       "team": "Арда",
       "logo": "https://sportal365images.com/process/smp-images-production/assets/21082025/4942be1a-cf85-4ba1-a6d5-38ec7cd7cfba.png?operations=crop(0:0:150:150)",
-      "mp": 12,
-      "w": 5,
+      "mp": 13,
+      "w": 6,
       "d": 3,
       "l": 4,
-      "gf": 16,
-      "ga": 18,
-      "gd": -2,
-      "pts": 18
+      "gf": 18,
+      "ga": 19,
+      "gd": -1,
+      "pts": 21
     },
     {
       "rank": 7,
@@ -127,6 +127,19 @@
     },
     {
       "rank": 9,
+      "team": "Черно море",
+      "logo": "https://sportal365images.com/process/smp-images-production/assets/team/logo/15-Cherno-More-Varna-logo.png",
+      "mp": 13,
+      "w": 3,
+      "d": 3,
+      "l": 7,
+      "gf": 14,
+      "ga": 22,
+      "gd": -8,
+      "pts": 12
+    },
+    {
+      "rank": 10,
       "team": "Дунав Русе",
       "logo": "https://sportal365images.com/process/smp-images-production/assets/10112025/d9092e78-145d-4704-ba13-54c08cda588d.png?operations=autocrop(150:150)",
       "mp": 13,
@@ -139,30 +152,17 @@
       "pts": 11
     },
     {
-      "rank": 10,
+      "rank": 11,
       "team": "Ботев Враца",
       "logo": "https://sportal365images.com/process/smp-images-production/assets/11092026/2f1ad6ca-e949-41d2-b213-c86ff42b3291.png?operations=autocrop(150:150)",
-      "mp": 12,
+      "mp": 13,
       "w": 2,
       "d": 4,
-      "l": 6,
-      "gf": 10,
-      "ga": 21,
-      "gd": -11,
-      "pts": 10
-    },
-    {
-      "rank": 11,
-      "team": "Черно море",
-      "logo": "https://sportal365images.com/process/smp-images-production/assets/team/logo/15-Cherno-More-Varna-logo.png",
-      "mp": 12,
-      "w": 2,
-      "d": 3,
       "l": 7,
-      "gf": 13,
+      "gf": 10,
       "ga": 22,
-      "gd": -9,
-      "pts": 9
+      "gd": -12,
+      "pts": 10
     },
     {
       "rank": 12,
@@ -194,13 +194,13 @@
       "rank": 14,
       "team": "Септември София",
       "logo": "https://sportal365images.com/process/smp-images-production/assets/01032021/1614602934115.png?operations=autocrop(150:150)",
-      "mp": 12,
+      "mp": 13,
       "w": 2,
       "d": 2,
-      "l": 8,
-      "gf": 10,
-      "ga": 23,
-      "gd": -13,
+      "l": 9,
+      "gf": 11,
+      "ga": 25,
+      "gd": -14,
       "pts": 8
     }
   ],
