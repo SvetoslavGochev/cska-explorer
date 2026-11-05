@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-05T14:16:20.080Z",
+  "updatedAt": "2026-11-05T21:12:32.224Z",
   "source": {
     "note": "Live standings refreshed from sportal.",
     "validation": {
@@ -8,8 +8,8 @@
       "standingsUpdated": true,
       "standingsProvider": "sportal"
     },
-    "squadUpdatedAt": "2026-11-05T14:16:20.080Z",
-    "playerStatsUpdatedAt": "2026-11-05T14:16:20.080Z",
+    "squadUpdatedAt": "2026-11-05T21:12:32.224Z",
+    "playerStatsUpdatedAt": "2026-11-05T21:12:32.224Z",
     "squadRefresh": {
       "provider": "sportal+flashscore",
       "rosterPlayers": 27,
@@ -301,7 +301,7 @@
         },
         {
           "name": "Андрей Йорданов",
-          "number": 27,
+          "number": 19,
           "countryName": "България",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
           "matches": 12,
@@ -347,6 +347,15 @@
           "assists": 0
         },
         {
+          "name": "Макс Ебонг",
+          "number": 7,
+          "countryName": "Беларус",
+          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/126-Belarus-flag.png",
+          "matches": 19,
+          "goals": 1,
+          "assists": 0
+        },
+        {
           "name": "Стефано Сенси",
           "number": 8,
           "countryName": "Италия",
@@ -354,15 +363,6 @@
           "matches": 22,
           "goals": 4,
           "assists": 5
-        },
-        {
-          "name": "Макс Ебонг",
-          "number": 10,
-          "countryName": "Беларус",
-          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/126-Belarus-flag.png",
-          "matches": 19,
-          "goals": 1,
-          "assists": 0
         },
         {
           "name": "Мохамед Брахими",
@@ -375,7 +375,7 @@
         },
         {
           "name": "Петко Панайотов",
-          "number": 24,
+          "number": 30,
           "countryName": "България",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
           "matches": 12,
@@ -430,15 +430,6 @@
           "assists": 2
         },
         {
-          "name": "Васил Каймаканов",
-          "number": 11,
-          "countryName": "България",
-          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
-          "matches": 2,
-          "goals": 0,
-          "assists": 0
-        },
-        {
           "name": "Йоанис Питас",
           "number": 28,
           "countryName": "Кипър",
@@ -446,6 +437,15 @@
           "matches": 23,
           "goals": 9,
           "assists": 3
+        },
+        {
+          "name": "Васил Каймаканов",
+          "number": 34,
+          "countryName": "България",
+          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
+          "matches": 2,
+          "goals": 0,
+          "assists": 0
         },
         {
           "name": "Лео Перейра",
