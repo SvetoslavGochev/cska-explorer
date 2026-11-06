@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-06T10:14:44.887Z",
+  "updatedAt": "2026-11-06T16:16:35.656Z",
   "source": {
     "note": "Live standings refreshed from sportal.",
     "validation": {
@@ -8,8 +8,8 @@
       "standingsUpdated": true,
       "standingsProvider": "sportal"
     },
-    "squadUpdatedAt": "2026-11-06T10:14:44.887Z",
-    "playerStatsUpdatedAt": "2026-11-06T10:14:44.887Z",
+    "squadUpdatedAt": "2026-11-06T16:16:35.656Z",
+    "playerStatsUpdatedAt": "2026-11-06T16:16:35.656Z",
     "squadRefresh": {
       "provider": "sportal+flashscore",
       "rosterPlayers": 27,
@@ -18,7 +18,7 @@
       "statsUpdated": true,
       "warnings": []
     },
-    "standingsUpdatedAt": "2026-11-02T18:18:29.139Z"
+    "standingsUpdatedAt": "2026-11-06T16:16:35.333Z"
   },
   "standings": [
     {
@@ -166,6 +166,19 @@
     },
     {
       "rank": 12,
+      "team": "Локомотив София",
+      "logo": "https://sportal365images.com/process/smp-images-production/assets/01032021/1614602582012.png?operations=autocrop(150:150)",
+      "mp": 14,
+      "w": 1,
+      "d": 7,
+      "l": 6,
+      "gf": 15,
+      "ga": 25,
+      "gd": -10,
+      "pts": 10
+    },
+    {
+      "rank": 13,
       "team": "Локомотив Пловдив",
       "logo": "https://sportal365images.com/process/smp-images-production/assets/20072021/1626789441187.png?operations=crop(0:0:150:150)",
       "mp": 13,
@@ -178,30 +191,17 @@
       "pts": 9
     },
     {
-      "rank": 13,
-      "team": "Локомотив София",
-      "logo": "https://sportal365images.com/process/smp-images-production/assets/01032021/1614602582012.png?operations=autocrop(150:150)",
-      "mp": 13,
-      "w": 1,
-      "d": 6,
-      "l": 6,
-      "gf": 15,
-      "ga": 25,
-      "gd": -10,
-      "pts": 9
-    },
-    {
       "rank": 14,
       "team": "Септември София",
       "logo": "https://sportal365images.com/process/smp-images-production/assets/01032021/1614602934115.png?operations=autocrop(150:150)",
-      "mp": 13,
+      "mp": 14,
       "w": 2,
-      "d": 2,
+      "d": 3,
       "l": 9,
       "gf": 11,
       "ga": 25,
       "gd": -14,
-      "pts": 8
+      "pts": 9
     }
   ],
   "cska": {
