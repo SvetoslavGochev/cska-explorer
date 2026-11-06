@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-06T16:16:35.656Z",
+  "updatedAt": "2026-11-06T17:14:10.029Z",
   "source": {
     "note": "Live standings refreshed from sportal.",
     "validation": {
@@ -18,7 +18,7 @@
       "statsUpdated": true,
       "warnings": []
     },
-    "standingsUpdatedAt": "2026-11-06T16:16:35.333Z"
+    "standingsUpdatedAt": "2026-11-06T17:14:10.029Z"
   },
   "standings": [
     {
@@ -153,6 +153,19 @@
     },
     {
       "rank": 11,
+      "team": "Септември София",
+      "logo": "https://sportal365images.com/process/smp-images-production/assets/01032021/1614602934115.png?operations=autocrop(150:150)",
+      "mp": 14,
+      "w": 3,
+      "d": 2,
+      "l": 9,
+      "gf": 12,
+      "ga": 25,
+      "gd": -13,
+      "pts": 11
+    },
+    {
+      "rank": 12,
       "team": "Ботев Враца",
       "logo": "https://sportal365images.com/process/smp-images-production/assets/11092026/2f1ad6ca-e949-41d2-b213-c86ff42b3291.png?operations=autocrop(150:150)",
       "mp": 13,
@@ -162,19 +175,6 @@
       "gf": 10,
       "ga": 22,
       "gd": -12,
-      "pts": 10
-    },
-    {
-      "rank": 12,
-      "team": "Локомотив София",
-      "logo": "https://sportal365images.com/process/smp-images-production/assets/01032021/1614602582012.png?operations=autocrop(150:150)",
-      "mp": 14,
-      "w": 1,
-      "d": 7,
-      "l": 6,
-      "gf": 15,
-      "ga": 25,
-      "gd": -10,
       "pts": 10
     },
     {
@@ -192,15 +192,15 @@
     },
     {
       "rank": 14,
-      "team": "Септември София",
-      "logo": "https://sportal365images.com/process/smp-images-production/assets/01032021/1614602934115.png?operations=autocrop(150:150)",
+      "team": "Локомотив София",
+      "logo": "https://sportal365images.com/process/smp-images-production/assets/01032021/1614602582012.png?operations=autocrop(150:150)",
       "mp": 14,
-      "w": 2,
-      "d": 3,
-      "l": 9,
-      "gf": 11,
-      "ga": 25,
-      "gd": -14,
+      "w": 1,
+      "d": 6,
+      "l": 7,
+      "gf": 15,
+      "ga": 26,
+      "gd": -11,
       "pts": 9
     }
   ],
