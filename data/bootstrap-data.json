@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-06T17:14:10.029Z",
+  "updatedAt": "2026-11-06T18:19:16.022Z",
   "source": {
     "note": "Live standings refreshed from sportal.",
     "validation": {
@@ -18,7 +18,7 @@
       "statsUpdated": true,
       "warnings": []
     },
-    "standingsUpdatedAt": "2026-11-06T17:14:10.029Z"
+    "standingsUpdatedAt": "2026-11-06T18:19:16.022Z"
   },
   "standings": [
     {
@@ -77,14 +77,14 @@
       "rank": 5,
       "team": "Ботев Пловдив",
       "logo": "https://sportal365images.com/process/smp-images-production/assets/15032021/1615811475705.png?operations=autocrop(150:150)",
-      "mp": 13,
+      "mp": 14,
       "w": 7,
-      "d": 1,
+      "d": 2,
       "l": 5,
       "gf": 22,
       "ga": 20,
       "gd": 2,
-      "pts": 22
+      "pts": 23
     },
     {
       "rank": 6,
@@ -142,14 +142,14 @@
       "rank": 10,
       "team": "Дунав Русе",
       "logo": "https://sportal365images.com/process/smp-images-production/assets/10112025/d9092e78-145d-4704-ba13-54c08cda588d.png?operations=autocrop(150:150)",
-      "mp": 13,
+      "mp": 14,
       "w": 3,
-      "d": 2,
+      "d": 3,
       "l": 8,
       "gf": 15,
       "ga": 22,
       "gd": -7,
-      "pts": 11
+      "pts": 12
     },
     {
       "rank": 11,
