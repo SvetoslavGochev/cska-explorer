@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-07T05:13:45.208Z",
+  "updatedAt": "2026-11-07T12:18:56.592Z",
   "source": {
     "note": "Live standings refreshed from sportal.",
     "validation": {
@@ -8,8 +8,8 @@
       "standingsUpdated": true,
       "standingsProvider": "sportal"
     },
-    "squadUpdatedAt": "2026-11-07T05:13:45.208Z",
-    "playerStatsUpdatedAt": "2026-11-07T05:13:45.208Z",
+    "squadUpdatedAt": "2026-11-07T12:18:56.592Z",
+    "playerStatsUpdatedAt": "2026-11-07T12:18:56.592Z",
     "squadRefresh": {
       "provider": "sportal+flashscore",
       "rosterPlayers": 27,
@@ -18,7 +18,7 @@
       "statsUpdated": true,
       "warnings": []
     },
-    "standingsUpdatedAt": "2026-11-06T20:14:47.072Z"
+    "standingsUpdatedAt": "2026-11-07T12:18:56.348Z"
   },
   "standings": [
     {
@@ -153,6 +153,19 @@
     },
     {
       "rank": 11,
+      "team": "Локомотив Пловдив",
+      "logo": "https://sportal365images.com/process/smp-images-production/assets/20072021/1626789441187.png?operations=crop(0:0:150:150)",
+      "mp": 14,
+      "w": 3,
+      "d": 3,
+      "l": 8,
+      "gf": 7,
+      "ga": 17,
+      "gd": -10,
+      "pts": 12
+    },
+    {
+      "rank": 12,
       "team": "Септември София",
       "logo": "https://sportal365images.com/process/smp-images-production/assets/01032021/1614602934115.png?operations=autocrop(150:150)",
       "mp": 14,
@@ -165,30 +178,17 @@
       "pts": 11
     },
     {
-      "rank": 12,
+      "rank": 13,
       "team": "Ботев Враца",
       "logo": "https://sportal365images.com/process/smp-images-production/assets/11092026/2f1ad6ca-e949-41d2-b213-c86ff42b3291.png?operations=autocrop(150:150)",
-      "mp": 13,
+      "mp": 14,
       "w": 2,
       "d": 4,
-      "l": 7,
-      "gf": 10,
-      "ga": 22,
-      "gd": -12,
-      "pts": 10
-    },
-    {
-      "rank": 13,
-      "team": "Локомотив Пловдив",
-      "logo": "https://sportal365images.com/process/smp-images-production/assets/20072021/1626789441187.png?operations=crop(0:0:150:150)",
-      "mp": 13,
-      "w": 2,
-      "d": 3,
       "l": 8,
-      "gf": 6,
-      "ga": 17,
-      "gd": -11,
-      "pts": 9
+      "gf": 10,
+      "ga": 23,
+      "gd": -13,
+      "pts": 10
     },
     {
       "rank": 14,
