@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-07T12:18:56.592Z",
+  "updatedAt": "2026-11-07T14:13:20.889Z",
   "source": {
     "note": "Live standings refreshed from sportal.",
     "validation": {
@@ -18,7 +18,7 @@
       "statsUpdated": true,
       "warnings": []
     },
-    "standingsUpdatedAt": "2026-11-07T12:18:56.348Z"
+    "standingsUpdatedAt": "2026-11-07T14:13:20.889Z"
   },
   "standings": [
     {
@@ -103,17 +103,30 @@
       "rank": 7,
       "team": "Славия",
       "logo": "https://sportal365images.com/process/smp-images-production/assets/27012025/2e5c7ae3-7b01-4b9e-90a9-20bd0cf94111.png?operations=autocrop(150:150)",
-      "mp": 13,
+      "mp": 14,
       "w": 2,
-      "d": 7,
+      "d": 8,
       "l": 4,
       "gf": 9,
       "ga": 9,
       "gd": 0,
-      "pts": 13
+      "pts": 14
     },
     {
       "rank": 8,
+      "team": "Черно море",
+      "logo": "https://sportal365images.com/process/smp-images-production/assets/team/logo/15-Cherno-More-Varna-logo.png",
+      "mp": 14,
+      "w": 3,
+      "d": 4,
+      "l": 7,
+      "gf": 14,
+      "ga": 22,
+      "gd": -8,
+      "pts": 13
+    },
+    {
+      "rank": 9,
       "team": "Спартак Варна",
       "logo": "https://sportal365images.com/process/smp-images-production/assets/11032021/1615465401411.png?operations=autocrop(150:150)",
       "mp": 13,
@@ -124,19 +137,6 @@
       "ga": 23,
       "gd": -11,
       "pts": 13
-    },
-    {
-      "rank": 9,
-      "team": "Черно море",
-      "logo": "https://sportal365images.com/process/smp-images-production/assets/team/logo/15-Cherno-More-Varna-logo.png",
-      "mp": 13,
-      "w": 3,
-      "d": 3,
-      "l": 7,
-      "gf": 14,
-      "ga": 22,
-      "gd": -8,
-      "pts": 12
     },
     {
       "rank": 10,
@@ -159,8 +159,8 @@
       "w": 3,
       "d": 3,
       "l": 8,
-      "gf": 7,
-      "ga": 17,
+      "gf": 8,
+      "ga": 18,
       "gd": -10,
       "pts": 12
     },
@@ -185,8 +185,8 @@
       "w": 2,
       "d": 4,
       "l": 8,
-      "gf": 10,
-      "ga": 23,
+      "gf": 11,
+      "ga": 24,
       "gd": -13,
       "pts": 10
     },
