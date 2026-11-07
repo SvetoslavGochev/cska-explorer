@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-07T14:13:20.889Z",
+  "updatedAt": "2026-11-07T18:15:43.484Z",
   "source": {
     "note": "Live standings refreshed from sportal.",
     "validation": {
@@ -18,7 +18,7 @@
       "statsUpdated": true,
       "warnings": []
     },
-    "standingsUpdatedAt": "2026-11-07T14:13:20.889Z"
+    "standingsUpdatedAt": "2026-11-07T18:15:43.484Z"
   },
   "standings": [
     {
@@ -49,29 +49,29 @@
     },
     {
       "rank": 3,
-      "team": "Лудогорец",
-      "logo": "https://sportal365images.com/process/smp-images-production/sports-data-sportal365/27042026/d5401300-fba0-4094-94dd-43c860cd3c8d.png?operations=fit(70:70)",
-      "mp": 12,
-      "w": 9,
-      "d": 2,
-      "l": 1,
-      "gf": 24,
-      "ga": 9,
-      "gd": 15,
-      "pts": 29
+      "team": "ЦСКА 1948",
+      "logo": "https://sportal365images.com/process/smp-images-production/assets/team/logo/20147-CSKA-1948-logo-1.png",
+      "mp": 14,
+      "w": 10,
+      "d": 1,
+      "l": 3,
+      "gf": 33,
+      "ga": 15,
+      "gd": 18,
+      "pts": 31
     },
     {
       "rank": 4,
-      "team": "ЦСКА 1948",
-      "logo": "https://sportal365images.com/process/smp-images-production/assets/team/logo/20147-CSKA-1948-logo-1.png",
+      "team": "Лудогорец",
+      "logo": "https://sportal365images.com/process/smp-images-production/sports-data-sportal365/27042026/d5401300-fba0-4094-94dd-43c860cd3c8d.png?operations=fit(70:70)",
       "mp": 13,
       "w": 9,
-      "d": 1,
-      "l": 3,
-      "gf": 31,
-      "ga": 14,
-      "gd": 17,
-      "pts": 28
+      "d": 2,
+      "l": 2,
+      "gf": 25,
+      "ga": 11,
+      "gd": 14,
+      "pts": 29
     },
     {
       "rank": 5,
