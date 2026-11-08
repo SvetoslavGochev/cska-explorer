@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-08T15:12:43.490Z",
+  "updatedAt": "2026-11-08T16:13:52.818Z",
   "source": {
     "note": "Live standings refreshed from sportal.",
     "validation": {
@@ -18,34 +18,34 @@
       "statsUpdated": true,
       "warnings": []
     },
-    "standingsUpdatedAt": "2026-11-08T14:13:05.440Z"
+    "standingsUpdatedAt": "2026-11-08T16:13:52.818Z"
   },
   "standings": [
     {
       "rank": 1,
-      "team": "Левски София",
-      "logo": "https://sportal365images.com/process/smp-images-production/assets/07092026/74fe7b4c-544a-4410-afc5-8d59fe9fabb5.png?operations=autocrop(150:150)",
-      "mp": 12,
+      "team": "ЦСКА София",
+      "logo": "https://sportal365images.com/process/smp-images-production/assets/03092025/9456e279-8cf2-4895-9443-7df8c0bf213e.png?operations=autocrop(150:150)",
+      "mp": 14,
       "w": 10,
-      "d": 2,
+      "d": 4,
       "l": 0,
-      "gf": 25,
-      "ga": 5,
-      "gd": 20,
-      "pts": 32
+      "gf": 31,
+      "ga": 9,
+      "gd": 22,
+      "pts": 34
     },
     {
       "rank": 2,
-      "team": "ЦСКА София",
-      "logo": "https://sportal365images.com/process/smp-images-production/assets/03092025/9456e279-8cf2-4895-9443-7df8c0bf213e.png?operations=autocrop(150:150)",
+      "team": "Левски София",
+      "logo": "https://sportal365images.com/process/smp-images-production/assets/07092026/74fe7b4c-544a-4410-afc5-8d59fe9fabb5.png?operations=autocrop(150:150)",
       "mp": 13,
-      "w": 9,
-      "d": 4,
-      "l": 0,
-      "gf": 29,
-      "ga": 9,
-      "gd": 20,
-      "pts": 31
+      "w": 10,
+      "d": 2,
+      "l": 1,
+      "gf": 25,
+      "ga": 7,
+      "gd": 18,
+      "pts": 32
     },
     {
       "rank": 3,
