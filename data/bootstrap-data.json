@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-09T11:14:38.630Z",
+  "updatedAt": "2026-11-09T17:15:11.781Z",
   "source": {
     "note": "Live standings refreshed from sportal.",
     "validation": {
@@ -8,8 +8,8 @@
       "standingsUpdated": true,
       "standingsProvider": "sportal"
     },
-    "squadUpdatedAt": "2026-11-09T11:14:38.630Z",
-    "playerStatsUpdatedAt": "2026-11-09T11:14:38.630Z",
+    "squadUpdatedAt": "2026-11-09T17:15:11.781Z",
+    "playerStatsUpdatedAt": "2026-11-09T17:15:11.781Z",
     "squadRefresh": {
       "provider": "sportal+flashscore",
       "rosterPlayers": 27,
@@ -366,7 +366,7 @@
         },
         {
           "name": "Мохамед Брахими",
-          "number": 11,
+          "number": 17,
           "countryName": "Франция",
           "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/28-France-flag.png",
           "matches": 18,
@@ -430,6 +430,15 @@
           "assists": 2
         },
         {
+          "name": "Васил Каймаканов",
+          "number": 11,
+          "countryName": "България",
+          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
+          "matches": 2,
+          "goals": 0,
+          "assists": 0
+        },
+        {
           "name": "Йоанис Питас",
           "number": 28,
           "countryName": "Кипър",
@@ -437,15 +446,6 @@
           "matches": 25,
           "goals": 10,
           "assists": 3
-        },
-        {
-          "name": "Васил Каймаканов",
-          "number": 34,
-          "countryName": "България",
-          "countryFlagUrl": "https://sportal365images.com/process/smp-images-production/assets/country/flag/14-Bulgaria-flag.png",
-          "matches": 2,
-          "goals": 0,
-          "assists": 0
         },
         {
           "name": "Лео Перейра",
