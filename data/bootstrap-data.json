@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-20T10:15:56.307Z",
+  "updatedAt": "2026-11-20T16:15:44.450Z",
   "source": {
     "note": "Live standings refreshed from sportal.",
     "validation": {
@@ -18,7 +18,7 @@
       "statsUpdated": true,
       "warnings": []
     },
-    "standingsUpdatedAt": "2026-11-08T18:15:43.671Z"
+    "standingsUpdatedAt": "2026-11-20T16:15:44.450Z"
   },
   "standings": [
     {
@@ -140,6 +140,19 @@
     },
     {
       "rank": 10,
+      "team": "Локомотив Пловдив",
+      "logo": "https://sportal365images.com/process/smp-images-production/assets/20072021/1626789441187.png?operations=crop(0:0:150:150)",
+      "mp": 15,
+      "w": 3,
+      "d": 4,
+      "l": 8,
+      "gf": 8,
+      "ga": 18,
+      "gd": -10,
+      "pts": 13
+    },
+    {
+      "rank": 11,
       "team": "Дунав Русе",
       "logo": "https://sportal365images.com/process/smp-images-production/assets/10112025/d9092e78-145d-4704-ba13-54c08cda588d.png?operations=autocrop(150:150)",
       "mp": 14,
@@ -152,30 +165,17 @@
       "pts": 12
     },
     {
-      "rank": 11,
-      "team": "Локомотив Пловдив",
-      "logo": "https://sportal365images.com/process/smp-images-production/assets/20072021/1626789441187.png?operations=crop(0:0:150:150)",
-      "mp": 14,
-      "w": 3,
-      "d": 3,
-      "l": 8,
-      "gf": 8,
-      "ga": 18,
-      "gd": -10,
-      "pts": 12
-    },
-    {
       "rank": 12,
       "team": "Септември София",
       "logo": "https://sportal365images.com/process/smp-images-production/assets/01032021/1614602934115.png?operations=autocrop(150:150)",
-      "mp": 14,
+      "mp": 15,
       "w": 3,
-      "d": 2,
+      "d": 3,
       "l": 9,
       "gf": 12,
       "ga": 25,
       "gd": -13,
-      "pts": 11
+      "pts": 12
     },
     {
       "rank": 13,
