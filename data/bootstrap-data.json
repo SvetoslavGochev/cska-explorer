@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-21T12:19:21.419Z",
+  "updatedAt": "2026-11-21T14:13:45.029Z",
   "source": {
     "note": "Live standings refreshed from sportal.",
     "validation": {
@@ -18,7 +18,7 @@
       "statsUpdated": true,
       "warnings": []
     },
-    "standingsUpdatedAt": "2026-11-20T16:15:44.450Z"
+    "standingsUpdatedAt": "2026-11-21T14:13:45.029Z"
   },
   "standings": [
     {
@@ -75,6 +75,19 @@
     },
     {
       "rank": 5,
+      "team": "Арда",
+      "logo": "https://sportal365images.com/process/smp-images-production/assets/21082025/4942be1a-cf85-4ba1-a6d5-38ec7cd7cfba.png?operations=crop(0:0:150:150)",
+      "mp": 15,
+      "w": 7,
+      "d": 3,
+      "l": 5,
+      "gf": 21,
+      "ga": 22,
+      "gd": -1,
+      "pts": 24
+    },
+    {
+      "rank": 6,
       "team": "Ботев Пловдив",
       "logo": "https://sportal365images.com/process/smp-images-production/assets/15032021/1615811475705.png?operations=autocrop(150:150)",
       "mp": 14,
@@ -85,19 +98,6 @@
       "ga": 21,
       "gd": 2,
       "pts": 23
-    },
-    {
-      "rank": 6,
-      "team": "Арда",
-      "logo": "https://sportal365images.com/process/smp-images-production/assets/21082025/4942be1a-cf85-4ba1-a6d5-38ec7cd7cfba.png?operations=crop(0:0:150:150)",
-      "mp": 14,
-      "w": 6,
-      "d": 3,
-      "l": 5,
-      "gf": 20,
-      "ga": 22,
-      "gd": -2,
-      "pts": 21
     },
     {
       "rank": 7,
@@ -116,13 +116,13 @@
       "rank": 8,
       "team": "Славия",
       "logo": "https://sportal365images.com/process/smp-images-production/assets/27012025/2e5c7ae3-7b01-4b9e-90a9-20bd0cf94111.png?operations=autocrop(150:150)",
-      "mp": 14,
+      "mp": 15,
       "w": 2,
       "d": 8,
-      "l": 4,
+      "l": 5,
       "gf": 9,
-      "ga": 9,
-      "gd": 0,
+      "ga": 10,
+      "gd": -1,
       "pts": 14
     },
     {
