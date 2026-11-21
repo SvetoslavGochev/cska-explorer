@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-21T14:13:45.029Z",
+  "updatedAt": "2026-11-21T16:15:16.168Z",
   "source": {
     "note": "Live standings refreshed from sportal.",
     "validation": {
@@ -18,7 +18,7 @@
       "statsUpdated": true,
       "warnings": []
     },
-    "standingsUpdatedAt": "2026-11-21T14:13:45.029Z"
+    "standingsUpdatedAt": "2026-11-21T16:15:16.168Z"
   },
   "standings": [
     {
@@ -75,19 +75,6 @@
     },
     {
       "rank": 5,
-      "team": "Арда",
-      "logo": "https://sportal365images.com/process/smp-images-production/assets/21082025/4942be1a-cf85-4ba1-a6d5-38ec7cd7cfba.png?operations=crop(0:0:150:150)",
-      "mp": 15,
-      "w": 7,
-      "d": 3,
-      "l": 5,
-      "gf": 21,
-      "ga": 22,
-      "gd": -1,
-      "pts": 24
-    },
-    {
-      "rank": 6,
       "team": "Ботев Пловдив",
       "logo": "https://sportal365images.com/process/smp-images-production/assets/15032021/1615811475705.png?operations=autocrop(150:150)",
       "mp": 14,
@@ -100,17 +87,30 @@
       "pts": 23
     },
     {
+      "rank": 6,
+      "team": "Арда",
+      "logo": "https://sportal365images.com/process/smp-images-production/assets/21082025/4942be1a-cf85-4ba1-a6d5-38ec7cd7cfba.png?operations=crop(0:0:150:150)",
+      "mp": 15,
+      "w": 6,
+      "d": 4,
+      "l": 5,
+      "gf": 21,
+      "ga": 23,
+      "gd": -2,
+      "pts": 22
+    },
+    {
       "rank": 7,
       "team": "Спартак Варна",
       "logo": "https://sportal365images.com/process/smp-images-production/assets/11032021/1615465401411.png?operations=autocrop(150:150)",
-      "mp": 14,
+      "mp": 15,
       "w": 4,
-      "d": 4,
+      "d": 5,
       "l": 6,
       "gf": 15,
       "ga": 25,
       "gd": -10,
-      "pts": 16
+      "pts": 17
     },
     {
       "rank": 8,
@@ -118,25 +118,25 @@
       "logo": "https://sportal365images.com/process/smp-images-production/assets/27012025/2e5c7ae3-7b01-4b9e-90a9-20bd0cf94111.png?operations=autocrop(150:150)",
       "mp": 15,
       "w": 2,
-      "d": 8,
-      "l": 5,
-      "gf": 9,
+      "d": 9,
+      "l": 4,
+      "gf": 10,
       "ga": 10,
-      "gd": -1,
-      "pts": 14
+      "gd": 0,
+      "pts": 15
     },
     {
       "rank": 9,
       "team": "Черно море",
       "logo": "https://sportal365images.com/process/smp-images-production/assets/team/logo/15-Cherno-More-Varna-logo.png",
-      "mp": 14,
+      "mp": 15,
       "w": 3,
-      "d": 4,
+      "d": 5,
       "l": 7,
       "gf": 14,
       "ga": 22,
       "gd": -8,
-      "pts": 13
+      "pts": 14
     },
     {
       "rank": 10,
