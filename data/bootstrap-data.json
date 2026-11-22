@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-22T16:15:01.051Z",
+  "updatedAt": "2026-11-22T18:16:57.555Z",
   "source": {
     "note": "Live standings refreshed from sportal.",
     "validation": {
@@ -18,7 +18,7 @@
       "statsUpdated": true,
       "warnings": []
     },
-    "standingsUpdatedAt": "2026-11-22T16:15:01.051Z"
+    "standingsUpdatedAt": "2026-11-22T18:16:57.555Z"
   },
   "standings": [
     {
@@ -29,8 +29,8 @@
       "w": 10,
       "d": 5,
       "l": 0,
-      "gf": 32,
-      "ga": 9,
+      "gf": 35,
+      "ga": 12,
       "gd": 23,
       "pts": 35
     },
@@ -81,8 +81,8 @@
       "w": 7,
       "d": 3,
       "l": 5,
-      "gf": 23,
-      "ga": 21,
+      "gf": 26,
+      "ga": 24,
       "gd": 2,
       "pts": 24
     },
