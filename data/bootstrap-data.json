@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-22T12:19:30.747Z",
+  "updatedAt": "2026-11-22T14:13:46.071Z",
   "source": {
     "note": "Live standings refreshed from sportal.",
     "validation": {
@@ -18,11 +18,24 @@
       "statsUpdated": true,
       "warnings": []
     },
-    "standingsUpdatedAt": "2026-11-22T12:19:30.747Z"
+    "standingsUpdatedAt": "2026-11-22T14:13:46.071Z"
   },
   "standings": [
     {
       "rank": 1,
+      "team": "Левски София",
+      "logo": "https://sportal365images.com/process/smp-images-production/assets/07092026/74fe7b4c-544a-4410-afc5-8d59fe9fabb5.png?operations=autocrop(150:150)",
+      "mp": 14,
+      "w": 11,
+      "d": 2,
+      "l": 1,
+      "gf": 27,
+      "ga": 8,
+      "gd": 19,
+      "pts": 35
+    },
+    {
+      "rank": 2,
       "team": "ЦСКА София",
       "logo": "https://sportal365images.com/process/smp-images-production/assets/03092025/9456e279-8cf2-4895-9443-7df8c0bf213e.png?operations=autocrop(150:150)",
       "mp": 14,
@@ -33,19 +46,6 @@
       "ga": 9,
       "gd": 23,
       "pts": 34
-    },
-    {
-      "rank": 2,
-      "team": "Левски София",
-      "logo": "https://sportal365images.com/process/smp-images-production/assets/07092026/74fe7b4c-544a-4410-afc5-8d59fe9fabb5.png?operations=autocrop(150:150)",
-      "mp": 13,
-      "w": 10,
-      "d": 2,
-      "l": 1,
-      "gf": 25,
-      "ga": 8,
-      "gd": 17,
-      "pts": 32
     },
     {
       "rank": 3,
@@ -194,13 +194,13 @@
       "rank": 14,
       "team": "Локомотив София",
       "logo": "https://sportal365images.com/process/smp-images-production/assets/01032021/1614602582012.png?operations=autocrop(150:150)",
-      "mp": 14,
+      "mp": 15,
       "w": 1,
       "d": 6,
-      "l": 7,
+      "l": 8,
       "gf": 15,
-      "ga": 26,
-      "gd": -11,
+      "ga": 28,
+      "gd": -13,
       "pts": 9
     }
   ],
