@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-22T15:13:29.728Z",
+  "updatedAt": "2026-11-22T16:15:01.051Z",
   "source": {
     "note": "Live standings refreshed from sportal.",
     "validation": {
@@ -18,34 +18,34 @@
       "statsUpdated": true,
       "warnings": []
     },
-    "standingsUpdatedAt": "2026-11-22T14:13:46.071Z"
+    "standingsUpdatedAt": "2026-11-22T16:15:01.051Z"
   },
   "standings": [
     {
       "rank": 1,
+      "team": "ЦСКА София",
+      "logo": "https://sportal365images.com/process/smp-images-production/assets/03092025/9456e279-8cf2-4895-9443-7df8c0bf213e.png?operations=autocrop(150:150)",
+      "mp": 15,
+      "w": 10,
+      "d": 5,
+      "l": 0,
+      "gf": 32,
+      "ga": 9,
+      "gd": 23,
+      "pts": 35
+    },
+    {
+      "rank": 2,
       "team": "Левски София",
       "logo": "https://sportal365images.com/process/smp-images-production/assets/07092026/74fe7b4c-544a-4410-afc5-8d59fe9fabb5.png?operations=autocrop(150:150)",
       "mp": 14,
       "w": 11,
       "d": 2,
       "l": 1,
-      "gf": 27,
-      "ga": 8,
-      "gd": 19,
-      "pts": 35
-    },
-    {
-      "rank": 2,
-      "team": "ЦСКА София",
-      "logo": "https://sportal365images.com/process/smp-images-production/assets/03092025/9456e279-8cf2-4895-9443-7df8c0bf213e.png?operations=autocrop(150:150)",
-      "mp": 14,
-      "w": 10,
-      "d": 4,
-      "l": 0,
-      "gf": 32,
+      "gf": 29,
       "ga": 9,
-      "gd": 23,
-      "pts": 34
+      "gd": 20,
+      "pts": 35
     },
     {
       "rank": 3,
@@ -77,14 +77,14 @@
       "rank": 5,
       "team": "Ботев Пловдив",
       "logo": "https://sportal365images.com/process/smp-images-production/assets/15032021/1615811475705.png?operations=autocrop(150:150)",
-      "mp": 14,
+      "mp": 15,
       "w": 7,
-      "d": 2,
+      "d": 3,
       "l": 5,
       "gf": 23,
       "ga": 21,
       "gd": 2,
-      "pts": 23
+      "pts": 24
     },
     {
       "rank": 6,
@@ -198,9 +198,9 @@
       "w": 1,
       "d": 6,
       "l": 8,
-      "gf": 15,
-      "ga": 28,
-      "gd": -13,
+      "gf": 16,
+      "ga": 30,
+      "gd": -14,
       "pts": 9
     }
   ],
