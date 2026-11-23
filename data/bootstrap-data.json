@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-23T17:14:28.658Z",
+  "updatedAt": "2026-11-23T18:17:47.307Z",
   "source": {
     "note": "Live standings refreshed from sportal.",
     "validation": {
@@ -18,7 +18,7 @@
       "statsUpdated": true,
       "warnings": []
     },
-    "standingsUpdatedAt": "2026-11-23T16:16:16.709Z"
+    "standingsUpdatedAt": "2026-11-23T18:17:47.307Z"
   },
   "standings": [
     {
@@ -52,13 +52,13 @@
       "team": "Лудогорец",
       "logo": "https://sportal365images.com/process/smp-images-production/sports-data-sportal365/27042026/d5401300-fba0-4094-94dd-43c860cd3c8d.png?operations=fit(70:70)",
       "mp": 14,
-      "w": 9,
-      "d": 4,
+      "w": 10,
+      "d": 3,
       "l": 1,
-      "gf": 26,
+      "gf": 27,
       "ga": 11,
-      "gd": 15,
-      "pts": 31
+      "gd": 16,
+      "pts": 33
     },
     {
       "rank": 4,
@@ -140,19 +140,6 @@
     },
     {
       "rank": 10,
-      "team": "Дунав Русе",
-      "logo": "https://sportal365images.com/process/smp-images-production/assets/10112025/d9092e78-145d-4704-ba13-54c08cda588d.png?operations=autocrop(150:150)",
-      "mp": 15,
-      "w": 3,
-      "d": 4,
-      "l": 8,
-      "gf": 16,
-      "ga": 23,
-      "gd": -7,
-      "pts": 13
-    },
-    {
-      "rank": 11,
       "team": "Локомотив Пловдив",
       "logo": "https://sportal365images.com/process/smp-images-production/assets/20072021/1626789441187.png?operations=crop(0:0:150:150)",
       "mp": 15,
@@ -163,6 +150,19 @@
       "ga": 18,
       "gd": -10,
       "pts": 13
+    },
+    {
+      "rank": 11,
+      "team": "Дунав Русе",
+      "logo": "https://sportal365images.com/process/smp-images-production/assets/10112025/d9092e78-145d-4704-ba13-54c08cda588d.png?operations=autocrop(150:150)",
+      "mp": 15,
+      "w": 3,
+      "d": 3,
+      "l": 9,
+      "gf": 16,
+      "ga": 24,
+      "gd": -8,
+      "pts": 12
     },
     {
       "rank": 12,
