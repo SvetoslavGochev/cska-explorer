@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-28T08:17:45.053Z",
+  "updatedAt": "2026-11-28T12:19:24.050Z",
   "source": {
     "note": "Live standings refreshed from sportal.",
     "validation": {
@@ -18,7 +18,7 @@
       "statsUpdated": true,
       "warnings": []
     },
-    "standingsUpdatedAt": "2026-11-27T18:17:25.759Z"
+    "standingsUpdatedAt": "2026-11-28T12:19:24.050Z"
   },
   "standings": [
     {
@@ -103,13 +103,13 @@
       "rank": 7,
       "team": "Спартак Варна",
       "logo": "https://sportal365images.com/process/smp-images-production/assets/11032021/1615465401411.png?operations=autocrop(150:150)",
-      "mp": 15,
+      "mp": 16,
       "w": 4,
       "d": 5,
-      "l": 6,
+      "l": 7,
       "gf": 15,
-      "ga": 25,
-      "gd": -10,
+      "ga": 26,
+      "gd": -11,
       "pts": 17
     },
     {
@@ -127,6 +127,19 @@
     },
     {
       "rank": 9,
+      "team": "Локомотив Пловдив",
+      "logo": "https://sportal365images.com/process/smp-images-production/assets/20072021/1626789441187.png?operations=crop(0:0:150:150)",
+      "mp": 16,
+      "w": 4,
+      "d": 4,
+      "l": 8,
+      "gf": 9,
+      "ga": 18,
+      "gd": -9,
+      "pts": 16
+    },
+    {
+      "rank": 10,
       "team": "Черно море",
       "logo": "https://sportal365images.com/process/smp-images-production/assets/team/logo/15-Cherno-More-Varna-logo.png",
       "mp": 15,
@@ -137,19 +150,6 @@
       "ga": 22,
       "gd": -8,
       "pts": 14
-    },
-    {
-      "rank": 10,
-      "team": "Локомотив Пловдив",
-      "logo": "https://sportal365images.com/process/smp-images-production/assets/20072021/1626789441187.png?operations=crop(0:0:150:150)",
-      "mp": 15,
-      "w": 3,
-      "d": 4,
-      "l": 8,
-      "gf": 8,
-      "ga": 18,
-      "gd": -10,
-      "pts": 13
     },
     {
       "rank": 11,
