@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-27T19:12:19.862Z",
+  "updatedAt": "2026-11-28T01:16:37.069Z",
   "source": {
     "note": "Live standings refreshed from sportal.",
     "validation": {
@@ -8,8 +8,8 @@
       "standingsUpdated": true,
       "standingsProvider": "sportal"
     },
-    "squadUpdatedAt": "2026-11-27T19:12:19.862Z",
-    "playerStatsUpdatedAt": "2026-11-27T19:12:19.862Z",
+    "squadUpdatedAt": "2026-11-28T01:16:37.069Z",
+    "playerStatsUpdatedAt": "2026-11-28T01:16:37.069Z",
     "squadRefresh": {
       "provider": "sportal+flashscore",
       "rosterPlayers": 27,
